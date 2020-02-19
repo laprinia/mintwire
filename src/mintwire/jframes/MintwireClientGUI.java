@@ -7,6 +7,7 @@ import java.awt.Font;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -17,14 +18,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -48,6 +53,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 public class MintwireClientGUI extends javax.swing.JFrame {
 
     //my vars
+    private String alias;
+    private String password;
     private RSyntaxTextArea textArea ;
     private String filePath;
     private String langPre="SyntaxConstants.SYNTAX_STYLE_";
@@ -63,12 +70,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     public MintwireClientGUI(String alias, String passw)
     {  
        
-        
+        this.alias=alias;
+        this.password=password;
         setTabbedDesign();
         initComponents();
         setStitchLabelOn();
         initRSyntax(RequestSPanel);
         connToServer(alias);
+        
         initFileSpore();
         
          
@@ -391,7 +400,23 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         if (!(f2.exists()))
          {
              f2.mkdir();
+             //CREATE PFP FOLDER
+             File f3=new File("C:\\MINTWIRE\\"+alias+"\\pfp");
+             f3.mkdir();
+             File f4=new File( "src/mintwire/res/pngs/profilepic.png");
+            try{ BufferedImage bi=ImageIO.read(f4);
+            //am citit acum o salvez ca pfp pentru prima logare
+            File outputF=new File( "C:\\MINTWIRE\\"+alias+"\\pfp\\pfp.png");
+            ImageIO.write(bi,"PNG",outputF);
+            
+            
+            }catch(Exception ex)
+            {
+                System.out.println(ex.getMessage());
+            }
+            
          }
+       
         Path path = Paths.get("C:\\MINTWIRE\\"+alias);
         try{
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
@@ -615,7 +640,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         FileHaulLabel = new javax.swing.JLabel();
         PreferencesLabel = new javax.swing.JLabel();
         IdentityLabel = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
+        pfpLabel = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         MainLayeredPane = new javax.swing.JLayeredPane();
         CodeStitchPanel = new javax.swing.JPanel();
@@ -856,8 +881,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/profilepic.png"))); // NOI18N
+        pfpLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -865,7 +889,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(MintRequestLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(FileHaulLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pfpLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(jLabel1)
@@ -887,7 +911,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(IdentityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 28, Short.MAX_VALUE))
         );
 
@@ -996,7 +1020,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                         .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 389, Short.MAX_VALUE)))
+                        .addGap(0, 372, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1056,7 +1080,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 19, Short.MAX_VALUE))
+                .addGap(0, 36, Short.MAX_VALUE))
         );
         MintLynxPanelLayout.setVerticalGroup(
             MintLynxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1255,6 +1279,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void MintRequestLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintRequestLabelMouseClicked
        MintRequestLabel.setBackground(new Color(53,53,53));
+       //START MINTREQUESTS
+         MintRequests mr=new MintRequests();
+	  mr.pack();
+          mr.setLocationRelativeTo(null);
+          mr.setVisible(true);
     }//GEN-LAST:event_MintRequestLabelMouseClicked
 
     private void FileHaulLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseClicked
@@ -1263,10 +1292,20 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void PreferencesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseClicked
         PreferencesLabel.setBackground(new Color(53,53,53));
+        //START PREFERENCES
+          Preferences pr=new Preferences();
+	  pr.pack();
+          pr.setLocationRelativeTo(null);
+          pr.setVisible(true);
     }//GEN-LAST:event_PreferencesLabelMouseClicked
 
     private void IdentityLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabelMouseClicked
        IdentityLabel.setBackground(new Color(53,53,53));
+       //START IDENTITY
+         Identity identity=new Identity(alias);
+	  identity.pack();
+          identity.setLocationRelativeTo(null);
+          identity.setVisible(true);
     }//GEN-LAST:event_IdentityLabelMouseClicked
 
     private void CStitchPartyLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchPartyLabelMouseClicked
@@ -1376,7 +1415,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -1387,6 +1425,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel pfpLabel;
     private javax.swing.JScrollPane sporeScroll;
     private javax.swing.JButton sporeSearch;
     private javax.swing.JTable sporeTable;
