@@ -6,26 +6,76 @@
 package mintwire.jframes;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.ColorUIResource;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
+import mdlaf.MaterialLookAndFeel;
+import mdlaf.themes.MaterialLiteTheme;
 
-/**
- *
- * @author Lavinia
- */
+
 public class Identity extends javax.swing.JFrame {
 
+    
+    
   
     public Identity() {
+        
         initComponents();
        
     }
+    //custom render
+    public class ExampleRenderer extends DefaultListCellRenderer {
+  private Map<String, ImageIcon> iconMap = new HashMap<>();
+  private String[] statuses={"Available","Away","Do not Disturb","Invisible"};
+  private ArrayList<ImageIcon> icons=new ArrayList<>();
+  
+ 
+  public ExampleRenderer() {
+     
+      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/available.png")));
+      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/away.png")));
+      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/donotdisturb.png")));
+      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/invisible.png")));
+
+
+  }
+
+  @Override
+  public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                boolean isSelected, boolean cellHasFocus) {
+      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+     if(index>=0){this.setText(statuses[index]);
+     this.setIcon(icons.get(index));
+     }
+      return this;
+  }
+}
+    //end of custom render 
     public Identity(String alias){
+
          initComponents();
          editCombo();
          initPfp(alias);
@@ -49,9 +99,8 @@ public class Identity extends javax.swing.JFrame {
     }
     private void editCombo(){
         
-        UIManager.put("ComboBox.background", new ColorUIResource(Color.yellow));
-        UIManager.put("ComboBox.selectionBackground", new ColorUIResource(Color.magenta));
-        UIManager.put("ComboBox.selectionForeground", new ColorUIResource(Color.blue));
+  jComboBox1.setRenderer(new ExampleRenderer());
+       
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -67,24 +116,26 @@ public class Identity extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(94, 87, 104));
-        setPreferredSize(new java.awt.Dimension(600, 600));
 
         jPanel1.setBackground(new java.awt.Color(94, 87, 104));
         jPanel1.setMinimumSize(new java.awt.Dimension(600, 600));
         jPanel1.setPreferredSize(new java.awt.Dimension(600, 600));
 
-        jComboBox1.setBackground(new java.awt.Color(49, 46, 54));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Available", "Do not Disturb", "Idle", "Invisible", " " }));
+        jComboBox1.setBackground(new java.awt.Color(45, 48, 56));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Available", "Away", "Do not Disturb", "Invisible" }));
         jComboBox1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jPanel2.setBackground(new java.awt.Color(49, 46, 54));
         jPanel2.setMaximumSize(new java.awt.Dimension(600, 600));
         jPanel2.setMinimumSize(new java.awt.Dimension(600, 600));
 
+        pfpLabel.setBackground(new java.awt.Color(49, 46, 54));
         pfpLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         pfpLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
+        jLabel4.setBackground(new java.awt.Color(49, 46, 54));
         jLabel4.setFont(new java.awt.Font("Monospaced", 3, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(232, 232, 232));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -94,11 +145,11 @@ public class Identity extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(181, 181, 181)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(161, 161, 161)
-                        .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(181, 181, 181)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(170, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -111,13 +162,20 @@ public class Identity extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel1.setBackground(new java.awt.Color(94, 87, 104));
         jLabel1.setFont(new java.awt.Font("Monospaced", 3, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(56, 217, 148));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/selectprofile.png"))); // NOI18N
         jLabel1.setText("Select another picture");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel1MouseEntered(evt);
+            }
+        });
 
+        jLabel2.setBackground(new java.awt.Color(94, 87, 104));
         jLabel2.setFont(new java.awt.Font("Monospaced", 3, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(56, 217, 148));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -132,11 +190,10 @@ public class Identity extends javax.swing.JFrame {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(207, 207, 207)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -147,9 +204,9 @@ public class Identity extends javax.swing.JFrame {
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(51, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -165,6 +222,10 @@ public class Identity extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseEntered
+
+    }//GEN-LAST:event_jLabel1MouseEntered
 
     /**
      * @param args the command line arguments

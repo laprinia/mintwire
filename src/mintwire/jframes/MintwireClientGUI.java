@@ -38,8 +38,14 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import mdlaf.MaterialLookAndFeel;
+import mdlaf.themes.JMarsDarkTheme;
+import mdlaf.themes.MaterialLiteTheme;
+import mdlaf.themes.MaterialOceanicTheme;
+import mdlaf.themes.MaterialTheme;
 import mintwire.LangSelector;
 import mintwire.res.tablemodels.model1;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -64,12 +70,21 @@ public class MintwireClientGUI extends javax.swing.JFrame {
  
     //end of my vars
     public MintwireClientGUI() {
-        
+     
         initComponents();
     }
     public MintwireClientGUI(String alias, String passw)
     {  
-       
+        try {
+			UIManager.setLookAndFeel (new MaterialLookAndFeel ());
+                         if (UIManager.getLookAndFeel() instanceof MaterialLookAndFeel){
+                      MaterialLookAndFeel.changeTheme( new JMarsDarkTheme());
+ }
+
+		}
+		catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace ();
+		}
         this.alias=alias;
         this.password=password;
         setTabbedDesign();
@@ -507,11 +522,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
     public void setTabbedDesign()
     {
-        UIManager.put("TabbedPane.selected", new Color(198,89,89));
-        UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource( Color.GRAY ));
+//        UIManager.put("TabbedPane.selected", new Color(198,89,89));
+       UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource( Color.GRAY ));
         UIManager.put("TabbedPane.darkShadow", new ColorUIResource( Color.GRAY ));
-        UIManager.put("TabbedPane.contentAreaColor", Color.GRAY);
-        UIManager.put("TabbedPane.highlight",        Color.GRAY);
+    UIManager.put("TabbedPane.contentAreaColor", Color.GRAY);
+       UIManager.put("TabbedPane.highlight",        Color.GRAY);
+//        UIManager.put("TabbedPane.unselectedForeground", Color.RED);
+UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     }
     public void setStitchLabelOn()
     {
@@ -676,8 +693,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(49, 46, 54));
 
+        jLabel2.setBackground(new java.awt.Color(49, 46, 54));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/separator.png"))); // NOI18N
+        jLabel2.setToolTipText("");
+        jLabel2.setOpaque(true);
 
         CStitchLabel.setBackground(new java.awt.Color(49, 46, 54));
         CStitchLabel.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
@@ -798,8 +818,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(43, 43, 43));
 
+        jLabel1.setBackground(new java.awt.Color(43, 43, 43));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/logos/logo-mediumish.png"))); // NOI18N
+        jLabel1.setOpaque(true);
 
         MintRequestLabel.setBackground(new java.awt.Color(43, 43, 43));
         MintRequestLabel.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
@@ -933,10 +955,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         });
 
         RequestSPanel.setBackground(new java.awt.Color(51, 51, 51));
+        RequestSPanel.setForeground(new java.awt.Color(51, 255, 0));
         RequestSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Request a Stitching", RequestSPanel);
 
         SendSPanel.setBackground(new java.awt.Color(51, 51, 51));
+        SendSPanel.setForeground(new java.awt.Color(51, 255, 51));
         SendSPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 SendSPanelMouseClicked(evt);

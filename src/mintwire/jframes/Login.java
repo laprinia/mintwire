@@ -14,6 +14,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import mdlaf.MaterialLookAndFeel;
+import mdlaf.themes.MaterialLiteTheme;
+import mdlaf.themes.MaterialOceanicTheme;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -23,7 +28,8 @@ import org.mindrot.jbcrypt.BCrypt;
 public class Login extends javax.swing.JFrame {
 
     public Login() {
-
+      
+          
         initComponents();
 
     }
@@ -136,6 +142,8 @@ public class Login extends javax.swing.JFrame {
         jTextField1.setBackground(new java.awt.Color(87, 91, 94));
         jTextField1.setFont(new java.awt.Font("Loma", 1, 18)); // NOI18N
         jTextField1.setForeground(new java.awt.Color(167, 255, 153));
+        jTextField1.setBorder(null);
+        jTextField1.setCaretColor(new java.awt.Color(153, 255, 153));
 
         jLabel1.setFont(new java.awt.Font("Loma", 1, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(225, 253, 231));
@@ -152,6 +160,7 @@ public class Login extends javax.swing.JFrame {
         jButton1.setForeground(new java.awt.Color(225, 253, 231));
         jButton1.setText("get on the wire");
         jButton1.setToolTipText("");
+        jButton1.setBorder(null);
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton1MouseClicked(evt);
@@ -168,6 +177,7 @@ public class Login extends javax.swing.JFrame {
         jPasswordField1.setFont(new java.awt.Font("Loma", 0, 18)); // NOI18N
         jPasswordField1.setForeground(new java.awt.Color(167, 255, 153));
         jPasswordField1.setToolTipText("");
+        jPasswordField1.setBorder(null);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
