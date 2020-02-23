@@ -279,8 +279,10 @@ public class Login extends javax.swing.JFrame {
         String passw = new String(jPasswordField1.getPassword()).toLowerCase();
         String hashAlias = BCrypt.hashpw(alias, salt);
         String hashPassw = BCrypt.hashpw(passw, salt);
+        //DECOM PENTRU BD
         connToDB(alias, passw, hashAlias, hashPassw);
         startApp(alias, passw);
+        
 
     }//GEN-LAST:event_jButton1MouseClicked
 

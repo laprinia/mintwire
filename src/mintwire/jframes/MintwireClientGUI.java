@@ -4,6 +4,10 @@ package mintwire.jframes;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,10 +22,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
+
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URI;
+
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -37,17 +41,17 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import mdlaf.MaterialLookAndFeel;
 import mdlaf.themes.JMarsDarkTheme;
-import mdlaf.themes.MaterialLiteTheme;
-import mdlaf.themes.MaterialOceanicTheme;
-import mdlaf.themes.MaterialTheme;
+
 import mintwire.LangSelector;
 import mintwire.res.tablemodels.model1;
+import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -59,6 +63,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 public class MintwireClientGUI extends javax.swing.JFrame {
 
     //my vars
+    private Utils utils=new Utils();
     private String alias;
     private String password;
     private RSyntaxTextArea textArea ;
@@ -76,17 +81,17 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     public MintwireClientGUI(String alias, String passw)
     {  
         try {
-			UIManager.setLookAndFeel (new MaterialLookAndFeel ());
-                         if (UIManager.getLookAndFeel() instanceof MaterialLookAndFeel){
-                      MaterialLookAndFeel.changeTheme( new JMarsDarkTheme());
- }
+            UIManager.setLookAndFeel(new MaterialLookAndFeel());
+            if (UIManager.getLookAndFeel() instanceof MaterialLookAndFeel) {
+                MaterialLookAndFeel.changeTheme(new JMarsDarkTheme());
+            }
 
-		}
-		catch (UnsupportedLookAndFeelException e) {
-			e.printStackTrace ();
-		}
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         this.alias=alias;
         this.password=password;
+       
         setTabbedDesign();
         initComponents();
         setStitchLabelOn();
@@ -94,10 +99,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         connToServer(alias);
         
         initFileSpore();
+         setPfp();
+       
         
          
     }
     //P2P MODELS
+
+  
     
     public class MintMainClient implements Runnable {
         
@@ -423,11 +432,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             //am citit acum o salvez ca pfp pentru prima logare
             File outputF=new File( "C:\\MINTWIRE\\"+alias+"\\pfp\\pfp.png");
             ImageIO.write(bi,"PNG",outputF);
+           
             
             
             }catch(Exception ex)
             {
-                System.out.println(ex.getMessage());
+                System.out.println("err in creare fold:"+ex.getMessage());
             }
             
          }
@@ -442,6 +452,25 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         
         
        
+    }
+    public void setPfp(){
+         File pfp = new File("C:\\MINTWIRE\\" + alias + "\\pfp\\pfp.png");
+        try {
+            BufferedImage bi = ImageIO.read(pfp);
+            
+            BufferedImage biR=utils.makeRound(bi);
+            Image resultScaled=biR.getScaledInstance(pfpLabel.getWidth(), pfpLabel.getHeight(), Image.SCALE_SMOOTH);
+              
+            ImageIcon ico = new ImageIcon(resultScaled);
+           
+            pfpLabel.setIcon(ico);
+        } catch (Exception ex) {
+            System.out.print("excc in load: "+ex.getMessage());
+            
+
+        }
+
+
     }
     public void configSbars(RTextScrollPane sp,JPanel panel)
     {
@@ -658,6 +687,23 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         PreferencesLabel = new javax.swing.JLabel();
         IdentityLabel = new javax.swing.JLabel();
         pfpLabel = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Dimension arcs = new Dimension(15,15);
+                int width = getWidth();
+                int height = getHeight();
+                Graphics2D graphics = (Graphics2D) g;
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                graphics.setColor(getBackground());
+                graphics.fillOval(0, 0, width-1, height-1);
+                graphics.setColor(getForeground());
+                graphics.drawOval(0, 0, width-1, height-1);
+            }
+        };
+        jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         MainLayeredPane = new javax.swing.JLayeredPane();
         CodeStitchPanel = new javax.swing.JPanel();
@@ -903,7 +949,32 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
             }
         });
 
+        pfpLabel.setBackground(new java.awt.Color(43, 43, 43));
         pfpLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        jPanel7.setBackground(new java.awt.Color(43, 43, 43));
+        jPanel7.setForeground(new java.awt.Color(67, 207, 137));
+        jPanel7.setPreferredSize(new java.awt.Dimension(60, 60));
+
+        jLabel6.setBackground(new java.awt.Color(43, 43, 43));
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(43, Short.MAX_VALUE)
+                .addComponent(jLabel6)
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -911,13 +982,21 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(MintRequestLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(FileHaulLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(pfpLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(PreferencesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(IdentityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(PreferencesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(IdentityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(21, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(69, 69, 69))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -932,9 +1011,11 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
                 .addComponent(PreferencesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(IdentityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 28, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 800));
@@ -1326,10 +1407,30 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private void IdentityLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabelMouseClicked
        IdentityLabel.setBackground(new Color(53,53,53));
        //START IDENTITY
-         Identity identity=new Identity(alias);
+         Identity identity=Identity.startIdentity(alias);
 	  identity.pack();
           identity.setLocationRelativeTo(null);
           identity.setVisible(true);
+          SwingWorker sw=new SwingWorker() {
+           @Override
+           protected Object doInBackground() throws Exception {
+              while(identity.getInstance()!=null){
+                  Thread.sleep(3000);
+                  
+              }
+              setPfp();
+            return null;
+           }
+        
+           };
+                  
+             sw.execute();
+          
+          
+          
+        
+  
+         
     }//GEN-LAST:event_IdentityLabelMouseClicked
 
     private void CStitchPartyLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchPartyLabelMouseClicked
@@ -1438,6 +1539,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
@@ -1446,6 +1548,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
