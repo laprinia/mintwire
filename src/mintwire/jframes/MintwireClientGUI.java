@@ -41,16 +41,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import mdlaf.MaterialLookAndFeel;
-import mdlaf.themes.JMarsDarkTheme;
 
 import mintwire.LangSelector;
 import mintwire.res.tablemodels.model1;
+
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -68,7 +68,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private String password;
     private RSyntaxTextArea textArea ;
     private String filePath;
-    private String langPre="SyntaxConstants.SYNTAX_STYLE_";
+    private final String langPre="SyntaxConstants.SYNTAX_STYLE_";
     private JMenu languageToggle;
     private ArrayList<String> array = new ArrayList<String>();
     private ServerSocket miniServerSock;
@@ -80,15 +80,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
     public MintwireClientGUI(String alias, String passw)
     {  
-        try {
-            UIManager.setLookAndFeel(new MaterialLookAndFeel());
-            if (UIManager.getLookAndFeel() instanceof MaterialLookAndFeel) {
-                MaterialLookAndFeel.changeTheme(new JMarsDarkTheme());
-            }
-
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+       
         this.alias=alias;
         this.password=password;
        
@@ -364,7 +356,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                               }
                               fis.close();
                               System.out.println("File sent?");
-                              //TODO SE GOLESTE TABELA LINIA 142
+                              //TODO SE GOLESTE TABELA 
                               break;
                               
                           }
@@ -658,9 +650,11 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
    class MenuActionListener implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
+      System.out.println(e.getActionCommand());
       LangSelector lang=new LangSelector();
       String context=lang.select(e.getActionCommand());
       textArea.setSyntaxEditingStyle(context);
+      
       
   }
 }
@@ -710,13 +704,14 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         TabbedPane = new javax.swing.JTabbedPane();
         RequestSPanel = new javax.swing.JPanel();
         SendSPanel = new javax.swing.JPanel();
+        saveButton = new javax.swing.JButton();
+        sendButton = new javax.swing.JButton();
         CodeStitchPartyPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         MintLynxPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         chatTextArea = new javax.swing.JTextArea();
-        chatScrollPane = new javax.swing.JScrollPane();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
@@ -1050,6 +1045,14 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         SendSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Send a Stitching", SendSPanel);
 
+        saveButton.setFont(new java.awt.Font("Monospaced", 1, 16)); // NOI18N
+        saveButton.setForeground(new java.awt.Color(255, 255, 255));
+        saveButton.setText("Save a stitch...");
+
+        sendButton.setFont(new java.awt.Font("Monospaced", 1, 16)); // NOI18N
+        sendButton.setForeground(new java.awt.Color(255, 255, 255));
+        sendButton.setText("Send a stitch...");
+
         javax.swing.GroupLayout CodeStitchPanelLayout = new javax.swing.GroupLayout(CodeStitchPanel);
         CodeStitchPanel.setLayout(CodeStitchPanelLayout);
         CodeStitchPanelLayout.setHorizontalGroup(
@@ -1057,14 +1060,24 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
             .addGroup(CodeStitchPanelLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(TabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1036, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(273, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         CodeStitchPanelLayout.setVerticalGroup(
             CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CodeStitchPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CodeStitchPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(TabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(CodeStitchPanelLayout.createSequentialGroup()
+                .addGap(77, 77, 77)
+                .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         TabbedPane.getAccessibleContext().setAccessibleName("Send a Stitching");
@@ -1115,7 +1128,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(chatScrollPane)
+            .addComponent(chatScrollPanel)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -1133,7 +1146,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chatScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(chatScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1141,7 +1154,16 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
                 .addContainerGap())
         );
 
-        chatScrollPane.getAccessibleContext().setAccessibleName("");
+        chatScrollPanel.getAccessibleContext().setAccessibleName("");
+        final JTextArea textArea = new JTextArea(chatScrollPanel.getWidth(),chatScrollPanel.getHeight());
+        chatScrollPanel.add(textArea);
+        chatScrollPanel.setPreferredSize(new Dimension(380, 100));
+
+        textArea.setLineWrap(true);
+
+        textArea.setWrapStyleWord(true);
+
+        textArea.setEditable(false);
 
         jTextField1.setBackground(new java.awt.Color(45, 48, 55));
         jTextField1.setText("jTextField1");
@@ -1398,7 +1420,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private void PreferencesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseClicked
         PreferencesLabel.setBackground(new Color(53,53,53));
         //START PREFERENCES
-          Preferences pr=new Preferences();
+          Preferences pr=Preferences.startPreferences(alias);
 	  pr.pack();
           pr.setLocationRelativeTo(null);
           pr.setVisible(true);
@@ -1531,7 +1553,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private javax.swing.JPanel RequestSPanel;
     private javax.swing.JPanel SendSPanel;
     private javax.swing.JTabbedPane TabbedPane;
-    private javax.swing.JScrollPane chatScrollPane;
+    private final javax.swing.JScrollPane chatScrollPanel = new javax.swing.JScrollPane();
     private javax.swing.JTextArea chatTextArea;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -1553,6 +1575,8 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel pfpLabel;
+    private javax.swing.JButton saveButton;
+    private javax.swing.JButton sendButton;
     private javax.swing.JScrollPane sporeScroll;
     private javax.swing.JButton sporeSearch;
     private javax.swing.JTable sporeTable;
