@@ -3,10 +3,13 @@ package mintwire.jframes;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 
 import java.awt.event.ActionEvent;
@@ -32,10 +35,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -43,12 +50,16 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
+import javax.swing.Timer;
 import javax.swing.UIManager;
 
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import mintwire.LangSelector;
+
+import mintwire.chaticons.LeftBubble;
+import mintwire.chatpanels.Bubbler;
 import mintwire.res.tablemodels.model1;
 
 import mintwire.utils.Utils;
@@ -63,6 +74,11 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 public class MintwireClientGUI extends javax.swing.JFrame {
 
     //my vars
+    final Color SENT=new Color(244,101,101);
+    final Color RECEIVED=new Color(170,207,255);
+   
+    
+    final JPanel scrollablePanel = new JPanel(new GridLayout(0,1));
     private Utils utils=new Utils();
     private String alias;
     private String password;
@@ -92,12 +108,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         
         initFileSpore();
          setPfp();
-       
+        rcvMsg();
         
          
     }
     //P2P MODELS
 
+  
   
     
     public class MintMainClient implements Runnable {
@@ -399,10 +416,36 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     public void initMintLynx()
     {
         chatTextArea.append("Initializare reusita");
+        
+    
+     
+       
+        
+        
+        
+        
     }
     //END OF LAYERED PANE INITS
    
     //MY METHODS
+    
+    public void rcvMsg() {
+
+        Timer timer = new Timer(3000, new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                
+                 Bubbler b=new Bubbler("bunaaaaaaaaaaaaa",RECEIVED);
+     b.paintLeftBubble(scrollablePanel);
+        b=new Bubbler("hey",SENT);
+       b.paintRightBubble(scrollablePanel);
+        b=new Bubbler("hey",SENT);
+      b.paintRightBubble(scrollablePanel);
+
+            }
+        });
+        timer.start();
+        
+    }
     public void connToServer(String alias)
     {
         File f1=new File("C:\\MINTWIRE");
@@ -608,13 +651,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
          }
          
          syntaxMenu.add(languageToggle);
-         //change colors
-         //JMenu itm=(JMenu)syntaxMenu.getMenuComponent(vect.indexOf(0 ));
          
-          
-         //syntaxMenu.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-         
-        //popup custom end
     }
     public void initRSyntax(JPanel panel)
     {
@@ -714,6 +751,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         chatTextArea = new javax.swing.JTextArea();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
+        chatScrollPane = new javax.swing.JScrollPane(scrollablePanel);
         jPanel6 = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -1119,54 +1157,46 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 111, Short.MAX_VALUE)
+            .addGap(0, 126, Short.MAX_VALUE)
         );
 
-        jLabel4.setText("jLabel4");
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send-message.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(chatScrollPanel)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 372, Short.MAX_VALUE)))
+                        .addGap(0, 372, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(chatScrollPane))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chatScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 436, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(4, 4, 4)
+                .addComponent(chatScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane2))
                 .addContainerGap())
         );
 
-        chatScrollPanel.getAccessibleContext().setAccessibleName("");
-        final JTextArea textArea = new JTextArea(chatScrollPanel.getWidth(),chatScrollPanel.getHeight());
-        chatScrollPanel.add(textArea);
-        chatScrollPanel.setPreferredSize(new Dimension(380, 100));
-
-        textArea.setLineWrap(true);
-
-        textArea.setWrapStyleWord(true);
-
-        textArea.setEditable(false);
-
         jTextField1.setBackground(new java.awt.Color(45, 48, 55));
-        jTextField1.setText("jTextField1");
+        jTextField1.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
 
         jList1.setBackground(new java.awt.Color(45, 48, 55));
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
@@ -1176,7 +1206,8 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         });
         jScrollPane1.setViewportView(jList1);
 
-        jLabel5.setText("jLabel5");
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/search.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -1192,11 +1223,12 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                    .addComponent(jTextField1))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout MintLynxPanelLayout = new javax.swing.GroupLayout(MintLynxPanel);
@@ -1553,7 +1585,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private javax.swing.JPanel RequestSPanel;
     private javax.swing.JPanel SendSPanel;
     private javax.swing.JTabbedPane TabbedPane;
-    private final javax.swing.JScrollPane chatScrollPanel = new javax.swing.JScrollPane();
+    private javax.swing.JScrollPane chatScrollPane;
     private javax.swing.JTextArea chatTextArea;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;

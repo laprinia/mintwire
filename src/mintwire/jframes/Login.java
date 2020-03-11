@@ -306,7 +306,7 @@ public class Login extends javax.swing.JFrame {
         String hashAlias = BCrypt.hashpw(alias, salt);
         String hashPassw = BCrypt.hashpw(passw, salt);
         //DECOM PENTRU BD
-        connToDB(alias, passw, hashAlias, hashPassw);
+        //connToDB(alias, passw, hashAlias, hashPassw);
         startApp(alias, passw);
         
 
