@@ -32,12 +32,25 @@ public class Utils {
     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_IN));
     g2d.drawImage(mask, 0, 0, null);
     g2d.dispose();
-    return masked;
-     }
+        return masked;
+    }
 
-    
-    
+    public static String insertPeriodically( String text, String insert, int period) {
+        StringBuilder builder = new StringBuilder(
+                text.length() + insert.length() * (text.length() / period) + 1);
+
+        int index = 0;
+        String prefix = "";
+        while (index < text.length()) {
+         
+            builder.append(prefix);
+            prefix = insert;
+            builder.append(text.substring(index,
+                    Math.min(index + period, text.length())));
+            index += period;
+        }
+        return builder.toString();
+    }
+
 }
-
-
  

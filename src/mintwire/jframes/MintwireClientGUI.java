@@ -431,20 +431,25 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     
     public void rcvMsg() {
 
-        Timer timer = new Timer(3000, new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                
-                 Bubbler b=new Bubbler("bunaaaaaaaaaaaaa",RECEIVED);
+//        Timer timer = new Timer(3000, new ActionListener() {
+//            public void actionPerformed(ActionEvent evt) {
+//                
+//                 Bubbler b=new Bubbler("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",RECEIVED);
+//     b.paintLeftBubble(scrollablePanel);
+//        b=new Bubbler("hey",SENT);
+//       b.paintRightBubble(scrollablePanel);
+//        b=new Bubbler("eeeeeeeeeeeeeeeeeeeeeee    eeeeeeeeeeeeeee eeeeeeeeeeeeeeeeeeeeeeeeeeeee eeeeeeeeeeeeeeeeeeeeeeeeee",SENT);
+//      b.paintRightBubble(scrollablePanel);
+//
+//            }
+//        });
+//        timer.start();
+            Bubbler b=new Bubbler("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",RECEIVED);
      b.paintLeftBubble(scrollablePanel);
-        b=new Bubbler("hey",SENT);
-       b.paintRightBubble(scrollablePanel);
-        b=new Bubbler("hey",SENT);
-      b.paintRightBubble(scrollablePanel);
-
-            }
-        });
-        timer.start();
-        
+       b=new Bubbler("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeey",SENT);
+        b.paintRightBubble(scrollablePanel);
+       b=new Bubbler("buna da buna da buna da buna da buna daaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa okkkkkkkkkkkkkkkkkkkkkkkk buna da okkkk oook krkrefherjher eruhrhrerh rejrhherhj rejrhejh erjhrjehr rjher e",RECEIVED);
+        b.paintRightBubble(scrollablePanel);
     }
     public void connToServer(String alias)
     {
