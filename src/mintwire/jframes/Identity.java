@@ -264,7 +264,6 @@ public class Identity extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(56, 217, 148));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/updateprofile.png"))); // NOI18N
-        jLabel2.setText("Save & exit");
         jLabel2.setToolTipText("");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {

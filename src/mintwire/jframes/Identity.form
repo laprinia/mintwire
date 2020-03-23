@@ -266,7 +266,6 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/mintwire/res/pngs/updateprofile.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Save &amp; exit"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
           <Events>

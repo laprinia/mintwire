@@ -5,6 +5,9 @@
  */
 package mintwire.jframes;
 
+import java.util.Arrays;
+import javax.swing.JOptionPane;
+
 
 
 public class Preferences extends javax.swing.JFrame {
@@ -38,7 +41,7 @@ public class Preferences extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        serverPassword = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -67,8 +70,18 @@ public class Preferences extends javax.swing.JFrame {
         jLabel2.setText("Enter the secret passphrase to start the server console");
 
         jButton1.setText("Start");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
-        jPasswordField1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        serverPassword.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        serverPassword.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                serverPasswordMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -86,7 +99,7 @@ public class Preferences extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(108, 108, 108)
-                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(serverPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -95,7 +108,7 @@ public class Preferences extends javax.swing.JFrame {
                 .addGap(45, 45, 45)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(serverPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(69, Short.MAX_VALUE))
@@ -156,6 +169,26 @@ public class Preferences extends javax.swing.JFrame {
        
     }//GEN-LAST:event_jLabel1MouseClicked
 
+    private void serverPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_serverPasswordMouseClicked
+        
+     
+    }//GEN-LAST:event_serverPasswordMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+          if ("peerbase".equals(new String(serverPassword.getPassword()))) {
+               JOptionPane.showMessageDialog(null, "Have fun playing with the server console", "Authorization succeded", JOptionPane.INFORMATION_MESSAGE);
+            MintwireServerGUI msg = new MintwireServerGUI();
+            msg.pack();
+            msg.setLocationRelativeTo(null);
+            msg.setVisible(true);
+            msg.setVisible(true);
+              
+           
+        } else {
+             JOptionPane.showMessageDialog(null, "You are not authorized to do this right now...", "Authorization error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton1MouseClicked
+
     
     public static void main(String args[]) {
      
@@ -174,7 +207,7 @@ public class Preferences extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JTabbedPane preferencesTabbedPane;
+    private javax.swing.JPasswordField serverPassword;
     // End of variables declaration//GEN-END:variables
 }

@@ -62,7 +62,7 @@ public class Bubbler {
         label.setSize(aux.getPreferredSize());
         label.setFont(new Font("Calibri", Font.PLAIN, 18));
         label.setForeground(Color.BLACK);
-        label.setText("<html><body style='padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_LEFT+"</body></html>");
+        label.setText("<html><body style='text-align:center;padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_LEFT+"</body></html>");
         JPanel intermid = new JPanel();
         intermid.setLayout(new FlowLayout(FlowLayout.LEFT));
         intermid.setSize(aux.getWidth(), aux.getHeight());
@@ -77,7 +77,7 @@ public class Bubbler {
 
     public void paintRightBubble(JPanel scrollable) {
       
-        JLabel aux = new JLabel("<html><body style='padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_RIGHT+"</body></html>");
+        JLabel aux = new JLabel("<html><body style='text-align:right;padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_RIGHT+"</body></html>");
         aux.setMaximumSize(new Dimension(100,200));
         aux.setFont(new Font("Calibri", Font.PLAIN, 18));
         aux.setSize(aux.getPreferredSize());
@@ -90,7 +90,7 @@ public class Bubbler {
 
         label.setIcon(translateIcon());
         label.setMaximumSize(new Dimension(50,200));
-        label.setText("<html><body style='padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_RIGHT+"</body></html>");
+        label.setText("<html><body style='text-align:center;padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_RIGHT+"</body></html>");
         label.setFont(new Font("Calibri", Font.PLAIN, 18));
         label.setForeground(Color.BLACK);
         label.setHorizontalTextPosition(JLabel.CENTER);

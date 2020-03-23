@@ -3,17 +3,18 @@ package mintwire.jframes;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Rectangle;
+
 import java.awt.RenderingHints;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -36,30 +37,32 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
+
 import javax.swing.SwingWorker;
-import javax.swing.Timer;
+
 import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import mintwire.LangSelector;
-
-import mintwire.chaticons.LeftBubble;
+import mintwire.borders.ChatBorder;
 import mintwire.chatpanels.Bubbler;
+
+
 import mintwire.res.tablemodels.model1;
 
 import mintwire.utils.Utils;
@@ -74,6 +77,8 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 public class MintwireClientGUI extends javax.swing.JFrame {
 
     //my vars
+    private Bubbler bubbler;
+    private ChatBorder cB=new ChatBorder(45);
     final Color SENT=new Color(244,101,101);
     final Color RECEIVED=new Color(170,207,255);
    
@@ -108,7 +113,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         
         initFileSpore();
          setPfp();
-        rcvMsg();
+       
         
          
     }
@@ -415,7 +420,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
     public void initMintLynx()
     {
-        chatTextArea.append("Initializare reusita");
+        //chatTextArea.append("Initializare reusita");
         
     
      
@@ -429,28 +434,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
    
     //MY METHODS
     
-    public void rcvMsg() {
-
-//        Timer timer = new Timer(3000, new ActionListener() {
-//            public void actionPerformed(ActionEvent evt) {
-//                
-//                 Bubbler b=new Bubbler("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",RECEIVED);
-//     b.paintLeftBubble(scrollablePanel);
-//        b=new Bubbler("hey",SENT);
-//       b.paintRightBubble(scrollablePanel);
-//        b=new Bubbler("eeeeeeeeeeeeeeeeeeeeeee    eeeeeeeeeeeeeee eeeeeeeeeeeeeeeeeeeeeeeeeeeee eeeeeeeeeeeeeeeeeeeeeeeeee",SENT);
-//      b.paintRightBubble(scrollablePanel);
-//
-//            }
-//        });
-//        timer.start();
-            Bubbler b=new Bubbler("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",RECEIVED);
-     b.paintLeftBubble(scrollablePanel);
-       b=new Bubbler("heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeey",SENT);
-        b.paintRightBubble(scrollablePanel);
-       b=new Bubbler("buna da buna da buna da buna da buna daaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa okkkkkkkkkkkkkkkkkkkkkkkk buna da okkkk oook krkrefherjher eruhrhrerh rejrhherhj rejrhejh erjhrjehr rjher e",RECEIVED);
-        b.paintRightBubble(scrollablePanel);
-    }
+  
     public void connToServer(String alias)
     {
         File f1=new File("C:\\MINTWIRE");
@@ -752,13 +736,13 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         jLabel3 = new javax.swing.JLabel();
         MintLynxPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        chatTextArea = new javax.swing.JTextArea();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         chatScrollPane = new javax.swing.JScrollPane(scrollablePanel);
+        jScrollPane3 = new javax.swing.JScrollPane();
+        chatTextArea = new javax.swing.JTextArea();
         jPanel6 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        searchPeerTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
         jLabel5 = new javax.swing.JLabel();
@@ -1150,10 +1134,6 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
 
         jPanel3.setBackground(new java.awt.Color(45, 48, 55));
 
-        chatTextArea.setColumns(20);
-        chatTextArea.setRows(5);
-        jScrollPane2.setViewportView(chatTextArea);
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1162,11 +1142,33 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 126, Short.MAX_VALUE)
+            .addGap(0, 135, Short.MAX_VALUE)
         );
 
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send-message.png"))); // NOI18N
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
+        jLabel4.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jLabel4KeyPressed(evt);
+            }
+        });
+
+        jScrollPane3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        chatTextArea.setColumns(20);
+        chatTextArea.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        chatTextArea.setLineWrap(true);
+        chatTextArea.setRows(2);
+        Border roundedBorder = new LineBorder(Color.white, 2, true);
+        chatTextArea.setBorder(roundedBorder);
+        chatTextArea.setCaretColor(new java.awt.Color(255, 255, 255));
+        chatTextArea.setCaretPosition(0);
+        jScrollPane3.setViewportView(chatTextArea);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -1180,11 +1182,13 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(chatScrollPane)
                             .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jScrollPane2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(chatScrollPane))))
+                                .addGap(22, 22, 22)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 711, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1192,23 +1196,28 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(4, 4, 4)
-                .addComponent(chatScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
-                .addContainerGap())
+                .addComponent(chatScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 383, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31))
         );
 
-        jTextField1.setBackground(new java.awt.Color(45, 48, 55));
-        jTextField1.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        searchPeerTextField.setBackground(new java.awt.Color(45, 48, 55));
+        searchPeerTextField.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        searchPeerTextField.setForeground(new java.awt.Color(255, 204, 204));
+        searchPeerTextField.setCaretColor(new java.awt.Color(255, 204, 204));
+        searchPeerTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                searchPeerTextFieldFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                searchPeerTextFieldFocusLost(evt);
+            }
+        });
 
         jList1.setBackground(new java.awt.Color(45, 48, 55));
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(jList1);
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1220,7 +1229,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+                .addComponent(searchPeerTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addComponent(jScrollPane1)
@@ -1231,7 +1240,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
                 .addGap(19, 19, 19)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
-                    .addComponent(jTextField1))
+                    .addComponent(searchPeerTextField))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE))
         );
@@ -1537,6 +1546,27 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
                     }
 
     }//GEN-LAST:event_TabbedPaneStateChanged
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        //verif ca e trimis catre cineva
+        if (!(chatTextArea.getText().equals(""))) {
+            bubbler = new Bubbler(chatTextArea.getText(), SENT);
+            bubbler.paintRightBubble(scrollablePanel);
+            chatTextArea.setText("");
+        }
+    }//GEN-LAST:event_jLabel4MouseClicked
+
+    private void jLabel4KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jLabel4KeyPressed
+     
+    }//GEN-LAST:event_jLabel4KeyPressed
+
+    private void searchPeerTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchPeerTextFieldFocusGained
+       searchPeerTextField.setText("");
+    }//GEN-LAST:event_searchPeerTextFieldFocusGained
+
+    private void searchPeerTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchPeerTextFieldFocusLost
+        searchPeerTextField.setText("Find someone...");
+    }//GEN-LAST:event_searchPeerTextFieldFocusLost
     
     /**
      * @param args the command line arguments
@@ -1609,10 +1639,10 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel pfpLabel;
     private javax.swing.JButton saveButton;
+    private javax.swing.JTextField searchPeerTextField;
     private javax.swing.JButton sendButton;
     private javax.swing.JScrollPane sporeScroll;
     private javax.swing.JButton sporeSearch;
