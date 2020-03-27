@@ -29,6 +29,7 @@ public class MintwireServerGUI extends javax.swing.JFrame {
 
         jButton1.setText("Start P2P Server");
 
+        jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
