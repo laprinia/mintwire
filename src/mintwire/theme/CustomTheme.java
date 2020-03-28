@@ -124,9 +124,9 @@ public class CustomTheme extends AbstractMaterialTheme {
         this.focusColorLineTabbedPane = new ColorUIResource(129,221,108);
         this.disableColorTabTabbedPane = new ColorUIResource(170, 170, 170);
         this.backgroundTable = new ColorUIResource(45, 48, 56);
-        this.backgroundTableHeader = new ColorUIResource(66, 179, 176);
+        this.backgroundTableHeader = new ColorUIResource(57,222,152);
         this.foregroundTable = this.textColor;
-        this.foregroundTableHeader = this.textColor;
+        this.foregroundTableHeader = new ColorUIResource(45,48,58);
         this.selectionBackgroundTable = new ColorUIResource(126, 132, 153);
         this.selectionForegroundTable = this.textColor;
         this.gridColorTable = new ColorUIResource(151, 151, 151);

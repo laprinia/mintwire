@@ -28,6 +28,11 @@ public class MintwireServerGUI extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(49, 46, 54));
 
         jButton1.setText("Start P2P Server");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
@@ -89,6 +94,12 @@ public class MintwireServerGUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+
+        
+     
+    }//GEN-LAST:event_jButton1MouseClicked
 
     public static void main(String args[]) {
       
