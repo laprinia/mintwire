@@ -5,6 +5,7 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Optional;
 
 
 public class Utils {
@@ -47,6 +48,11 @@ public class Utils {
         }
         return builder.toString();
     }
+    public Optional<String> getExtension(String filename) {
+    return Optional.ofNullable(filename)
+      .filter(f -> f.contains("."))
+      .map(f -> f.substring(filename.lastIndexOf(".") + 1));
+}
 
 }
  

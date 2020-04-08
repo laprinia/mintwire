@@ -43,15 +43,16 @@ public class MintMainClient implements Runnable {
         try {
             while (true) {
                 res = sockbf.readLine();
-                if (res.startsWith("size")) {
+                if (res.startsWith("filenr")) {
                     array.clear();
                     StringTokenizer st = new StringTokenizer(res);
                     st.nextToken();
                     int n = Integer.parseInt(st.nextToken());
                     for (int i = 0; i < n; i++) {   //adauga la array cate chestii se trimit(tokenul dupa size)
                         array.add(sockbf.readLine());
-                        //fireTableDatachanged
-
+                        //TABELA ADRESE IP E IN ARRAY POTI IN JSON
+                        
+                        
                     }
 
                 }

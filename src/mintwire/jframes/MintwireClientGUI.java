@@ -2,6 +2,7 @@
 package mintwire.jframes;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 
 import java.awt.Font;
@@ -21,6 +22,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -43,12 +47,16 @@ import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 
 import javax.swing.SwingWorker;
 
@@ -58,31 +66,116 @@ import javax.swing.border.LineBorder;
 
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import mintwire.LangSelector;
 import mintwire.borders.ChatBorder;
 import mintwire.chatpanels.Bubbler;
-
-
-
-
+import mintwire.classes.MintFile;
+import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
+
+//TODO LEGATURI DE TABELA CU ALIAS STATUS CU RESTUL
+//IMPLEMENTARE MESAGERIE: CUM FAC SA STIU CE USER E SELECTAT, UNDE TRIMIT MESAJELE
+//IMPLEMENTARE TRIMITERE REQUEST STITCH, TRIMITERE STITCH PROPRIU ZISA
+// ACTIVARE IS-URI P2P CAND TREB
+//INCEPERE THREADURI
 //TODO FILEHISTORY + TABELE CARE TREBUIE IMPLEM + SERVER
+
 //TODO HANDLE PENTRU MESAJE SI CODESTITCH
 
 public class MintwireClientGUI extends javax.swing.JFrame {
+public class FileSporeTableModel extends AbstractTableModel{
+    
+        String columns[]={"File","Details","Owner's Alias","Checkbox"};
 
-    //my vars
+        @Override
+        public String getColumnName(int column) {
+            return columns[column];
+        }
+        
+        @Override
+        public int getRowCount() {
+            return mintFiles.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+           return columns.length;
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            switch(columnIndex){
+                case 0:
+                    return mintFiles.get(rowIndex).getFileName();
+                case 1:
+                    return mintFiles.get(rowIndex).getDetails();
+                case 2:
+                    return mintFiles.get(rowIndex).getAlias();
+                case 3:
+                    return "not yet";
+                default:
+                    return 0;
+            }
+        }
+    
+}
+   
+public class FileExtensionModel extends DefaultTableCellRenderer{
+    JLabel label=new JLabel();
+    ImageIcon ii;
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+             if(column==0){
+             
+              String ext=mintFiles.get(row).getFileName().substring(mintFiles.get(row).getFileName().indexOf("."));
+              
+               try{ii=new ImageIcon(getClass().getResource("/res/ext/"+ext+".png"));
+               }catch(Exception ex){
+                   ii=new ImageIcon(getClass().getResource("/res/ext/ai.png"));
+               }
+               label.setIcon(ii);
+               label.setText(mintFiles.get(row).getFileName());
+             }else if(column==1){
+                 label.setText(mintFiles.get(row).getDetails());
+                 
+             }else if(column==2){
+                  label.setText(mintFiles.get(row).getAlias());
+             }else if(column==3){
+                 label.setText("no check yet");
+             }
+          
+           return label;
+        }
+    
+}
+   //my vars
+    private String sharedPath = "C:\\MINTWIRE Shared";
+    private String selectedFile="";
+    private FileSporeTableModel sporeModel=new FileSporeTableModel();
+    private boolean isSendStitchRequest=false;
+    private boolean isSendStitch=false;
+    private boolean isMessageRequest=false;
+    private boolean isSearchRequest=false;
+    private boolean isDownloadRequest=false;
+    
+    private ArrayList<MintFile> mintFiles=new ArrayList();
     private Bubbler bubbler;
     private ChatBorder cB=new ChatBorder(45);
     final Color SENT=new Color(244,101,101);
     final Color RECEIVED=new Color(170,207,255);
-   
+     private JLabel infoLabel;
     
     final JPanel scrollablePanel = new JPanel(new GridLayout(0,1));
     private Utils utils=new Utils();
@@ -114,6 +207,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         
    
          setPfp();
+         
        
         
          
@@ -121,298 +215,453 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     //P2P MODELS
 
   
-  
-    
+    //MINTCLIENTP2P
     public class MintMainClient implements Runnable {
-        
-        Socket socket;
-        Thread mainThread;
-        String ipaddr;
-        String res;
-        BufferedReader sockbf;
-        BufferedReader defbf;
-        PrintWriter pw;
-        MintMainClient (String ipaddr)
-        {
-            
-            try{
-                socket=new Socket(ipaddr,6424);
-                sockbf=new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                defbf=new BufferedReader(new InputStreamReader(System.in));
-                pw=new PrintWriter(socket.getOutputStream());
-                mainThread=new Thread(this);
-                mainThread.start();
-                
-                
-               }catch(Exception ex)
-               {
-                   //cant conn to srvr
-                   ex.getMessage();
-                   System.out.println("Main client error: Failed to conn to server");
-               }
-            
-            
-        
-        }
-        
-        
-        
-        
-        @Override
-        public void run() {
-           
-                //SE CON LA MINISERVER REQ HANDLER
-            try{
-                while(true)
-                {
-                  res= sockbf.readLine();
-                  if(res.startsWith("size"))
-                  {
-                     array.clear();
-                     StringTokenizer st=new StringTokenizer(res);
-                     st.nextToken();
-                     int n=Integer.parseInt(st.nextToken());
-                     for(int i=0;i<n;i++)
-                     {   //adauga la array cate chestii se trimit(tokenul dupa size)
-                         array.add(sockbf.readLine());
-                         //fireTableDatachanged
-                         
-                     }
-                     
-                  }
-                  
-                }
-                    
-                }catch(Exception ex)
-                {
-                   ex.getMessage();
-                   System.out.println("Main client error: Failed to conn to server req handler");
-               
-                }
-            
-        }
-        
-    }
-    public class MintMiniClient implements Runnable
-    {   String ipaddr;
-        Socket sock,sock2;
-        DataInputStream in;
-        DataOutputStream out;
-        MintMiniClient(String ipaddr)
-        {  this.ipaddr=ipaddr;
-            try{
-                
-            }catch(Exception ex)
-            {
-                System.out.println(ex.getMessage());
-            }
-        }
-        
 
-        @Override
-        public void run() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
-    }
-    
-    public class MintMiniServer implements Runnable
-    { Thread mainThread;
-      Socket sock;
-        MintMiniServer()
-        {
-            mainThread=new Thread(this);
+    Socket socket;
+    Thread mainThread;
+    String ipaddr;
+    String res;
+    BufferedReader sockbf;
+    BufferedReader defbf;
+    PrintWriter pw;
+    ArrayList<String> array;
+
+    MintMainClient(String ipaddr, ArrayList<String> array) {
+
+        try {
+            socket = new Socket(ipaddr, 6424);
+            sockbf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            defbf = new BufferedReader(new InputStreamReader(System.in));
+            pw = new PrintWriter(socket.getOutputStream());
+            mainThread = new Thread(this);
             mainThread.start();
-            
-        }
-        
 
-        @Override
-        public void run() {
-           try{
-               miniServerSock=new ServerSocket(6424);
-               while(true)
-               {
-                   sock=miniServerSock.accept();
-                   //REQUESTHANDLER
-               }
-
-           }catch(Exception ex)
-           {
-               System.out.println("Mini Server Exc: ");
-               ex.getMessage();
-           }
+        } catch (Exception ex) {
+            //cant conn to srvr
+            ex.getMessage();
+            System.out.println("Main client error: Failed to conn to server");
         }
-        
+
     }
-    
-    public class MintReqHandle implements Runnable
-    {  
-       Thread mainThread;
-       Socket sock;
-       DataOutputStream out;
-       DataInputStream in;
-       String res;
-       BufferedReader bf;
-       MintReqHandle(Socket s)
-       {
-           this.sock=s;
-           try{
-               out=new DataOutputStream(this.sock.getOutputStream());
-               in=new DataInputStream(this.sock.getInputStream());
-               bf=new BufferedReader(new InputStreamReader(in));
-               mainThread=new Thread(this);
-               mainThread.start();
-           }catch(Exception ex)
-           {
-               ex.getMessage();
-               System.out.println("Request Handle Ex: ");
-               
-           }
-       }
+
+    @Override
+    public void run() {
+
+        //SE CON LA MINISERVER REQ HANDLER
+        try {
+                while (true) {
+                    res = sockbf.readLine();
+                    if (res.startsWith("filenr")) {
+                        array.clear();
+                        StringTokenizer st = new StringTokenizer(res);
+                        st.nextToken();
+                        int n = Integer.parseInt(st.nextToken());
+                        for (int i = 0; i < n; i++) {   //adauga la array cate chestii se trimit(tokenul dupa size)
+                            array.add(sockbf.readLine());
+                            //TABELA ADRESE IP E IN ARRAY POTI IN JSON
+
+                        }
+
+                    }
+
+                }
+
+            } catch (Exception ex) {
+                ex.getMessage();
+                System.out.println("Main client error: Failed to conn to server req handler");
+
+            }
+
+        }
+
+    }
+
+//MINICLIENTP2P
+    public class MintMiniClient implements Runnable {
+        //searchrequest se mai seteaza true cand se apasa butonul
+
+        private ArrayList<MintFile> mintFiles;
+      
+        private BufferedReader br;
+        private String ipaddr;
+        private Socket miniSocket, sock2;
+        private DataInputStream in;
+        private DataOutputStream out;
+        private Thread thread;
+        private String ip;
+        private long fileSize;
+        private FileWriter fw;
+        private String history;
        
 
+        MintMiniClient(String ipaddr) {
+            this.ipaddr = ipaddr;
+
+            try {
+                miniSocket = new Socket(this.ip, 6424);
+                in = new DataInputStream(miniSocket.getInputStream());
+                br=new BufferedReader(new InputStreamReader(in));
+                out = new DataOutputStream(miniSocket.getOutputStream());
+                out.writeBytes("minicheck\r\n");
+                out.flush();
+                thread = new Thread(this);
+                thread.start();
+
+            } catch (Exception ex) {
+                infoLabel= new JLabel("<html><center>" + ex.getMessage());
+                infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                JOptionPane.showMessageDialog(null, infoLabel, "Error in Mint Mini Client", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+
         @Override
         public void run() {
-            String str;
-            try{
-              //check
-              res=bf.readLine();
-              if(res.equals("minicheck"))
-              {
-                  out.writeBytes("\nrunning...");
-                  out.flush();
-              }
-              String str2=" ";
-              //line 36 miniserver_handlr
-              while (true)
-              {
-                  str2=bf.readLine();
-                  if(str2==null)
-                  {
-                      break;
-                  }
-                  if(str2.startsWith("search"))
-                  {
-                      StringTokenizer tok=new StringTokenizer(str2,",");
-                      tok.nextToken();
-                      String search=tok.nextToken();
-                      System.out.println("Searching for: "+search);
-                      //TODO filepath nu e schimbat niciunde
-                      File f=new File(filePath);
-                      String[] fileArray= f.list();
-                      System.out.println("Files found in filePath "+fileArray.length);
-                      int n=0;
-                      for(int i=0;i<fileArray.length;i++)
-                      {
-                          if (fileArray[i].indexOf(search)!=-1)
-                          {
-                              n++;
-                          }
-                          out.writeBytes("size "+n+"\r\n");
-                          out.flush();
-                          
-                          if(n>0)
-                          {
-                              for(int j=0;j<fileArray.length;j++)
-                              {
-                                  if(fileArray[j].indexOf(search)!=-1)
-                                  {
-                                      out.writeBytes(fileArray[j]+"\r\n");
-                                      out.flush();
-                                      File f2=new File(filePath+"\\"+fileArray[j]);
-                                      long fileSize=f2.length();
-                                      out.writeLong(fileSize);
-                                      out.flush();
-                                  }
-                              }
-                          }
-                          break;
-                          
-                      }
-                     
-                  }else if(str2.startsWith("download")){
-                      FileInputStream fis;
-                      System.out.println("Download req recognized");
-                      try{
-                          
-                          StringTokenizer st=new StringTokenizer(str2,",");
-                          st.nextToken();
-                          String download=st.nextToken();
-                          
-                          
-                          long size2;
-                          System.out.println("Download req for : " + download);
-                          //TODO in doc era si testare pentru fis anume linia 94
-                          File file=new File(filePath+"//"+download);
-                          fis=new FileInputStream(file);
-                          long size=file.length();
-                          out.writeLong(size);
-                          out.flush();
-                          String actualSize;
-                          if(size<1024)
-                          {
-                              actualSize=size+" bytes";
-                          }else if(size<1048576){
-                              actualSize=(float)(size/1024)+ " KB";
-                          }else if(size<1024*1024*1024){
-                              actualSize=(int)(size/1024*1024)+" MB";
-                          }else{
-                              actualSize=(float)(size/1024*1024*1024)+ " GB";
-                                      
-                          }
-                          //TODO SEARCHFILES PROB LEGAT DE TABLEMODEL1
-                          //TABELA : download, sc.getInetAddress().getHostAddress(),actualSize
-                          //TODO FIRETABLEDATACHANGED
-                          byte kb[]=new byte[1024*1024];
-                          long contor=0;
-                          while(true)
-                          {
-                              //TRIMIT KB CU KB PANA E EGAL CU SIZE
-                              int k=fis.read(kb,0,1024*1024);
-                              out.write(kb,0,k);
-                              out.flush();
-                              contor=contor+k;
-                              if(contor==size)
-                              {
-                                  break;
-                              }
-                              fis.close();
-                              System.out.println("File sent?");
-                              //TODO SE GOLESTE TABELA 
-                              break;
-                              
-                          }
-                         
-                      }catch(Exception ex)
-                      {
-                          ex.getMessage();
-                          System.out.println("Downlad Ex: Didnt send file");
-                          
-                      }
-                      break;
-                     
-                  }else if(str2.startsWith("message")){
-                      //TODO SEE IF U CAN REUSE THE SAMETOKENIZER 
-                      StringTokenizer tokk=new StringTokenizer(str2,",");
-                      tokk.nextToken();
-                      //TODO HANDLE MESSAGE REQUEST
-                  }
-                  
+
            
-              }
-              
-              
-              
-            }catch(Exception ex)
-            {
-                ex.getMessage();
+            if (isSearchRequest) {
+                mintFiles.clear();
+                if (sporeText.getText().trim().equals("")) {
+                      infoLabel= new JLabel("<html><center> Enter a valid filename" );
+                infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                JOptionPane.showMessageDialog(null, infoLabel, "Input Error", JOptionPane.INFORMATION_MESSAGE);
+
+                } else {
+                    try {
+                        out.writeBytes("search," + sporeText.getText().trim());
+                        out.flush();
+                        String response = br.readLine();
+                        StringTokenizer st = new StringTokenizer(response);
+                        st.nextToken();
+                        int size = Integer.parseInt(st.nextToken());
+                        if (size == 0) {
+                            infoLabel = new JLabel("<html><center> Your peers don't seem to have the file you are looking for");
+                            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                            JOptionPane.showMessageDialog(null, infoLabel, "No trace of the file", JOptionPane.INFORMATION_MESSAGE);
+
+                        }else{
+                            for(int i=0;i<size;i++){
+                                String fileName=br.readLine();
+                                fileSize=Long.parseLong(br.readLine());
+                                if(fileSize>=1024&&fileSize<1048576){
+                                    fileSize=(long) (fileSize/1024);
+                                    mintFiles.add(new MintFile(fileName,size+fileSize+" kB","no alias"));
+                                } else if(fileSize>=1048576&&fileSize<(1024*1024*1024)){
+                                    fileSize=(long) (fileSize/(1024*1024));
+                                    mintFiles.add(new MintFile(fileName,size+fileSize+" mB","no alias"));
+                                }else  if(fileSize>=(1024*1024*1024)&&fileSize<(1024*1024*1024*1024)){
+                                    fileSize=(long) (fileSize/(1024*1024*1024));
+                                    mintFiles.add(new MintFile(fileName,size+fileSize+" gB","no alias"));
+                                }else{
+                                    mintFiles.add(new MintFile(fileName,size+fileSize+" bytes","no alias"));
+                                }
+                                sporeModel.fireTableDataChanged();
+                               
+                            }
+                        }
+                        
+                        
+                       
+
+                    } catch (Exception ex) {
+                        infoLabel = new JLabel("<html><center> Error when sending search request");
+                        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                        JOptionPane.showMessageDialog(null, infoLabel, "Mint MiniClient Error", JOptionPane.INFORMATION_MESSAGE);
+
+                    }
+                     
+
+                }
+                isSearchRequest=false;
             }
-            
-            
+            if(isDownloadRequest){
+                try {
+                    //selected file e setat in click event la buttonul de obtain
+                    out.writeBytes("download,"+selectedFile+"\r\n");
+                    out.flush();
+                    long size=in.readLong();
+                    byte b[]=new byte[1024*1024];
+                    long count=0;
+                    int dwn;
+                    int poz=sporeTable.getSelectedRow();
+                    FileOutputStream fos;
+                    selectedFile=mintFiles.get(poz).getFileName();
+                    String extension = selectedFile.substring(selectedFile.lastIndexOf("."));
+                    boolean flag = false;
+                    File f = new File(sharedPath + "\\" + selectedFile);
+                    if (f.exists()) {
+                        //TODO POATE O METODA DE REDOWNLOAD
+                        infoLabel = new JLabel("<html><center>File already exists");
+                        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                        JOptionPane.showMessageDialog(null, infoLabel, "You already have "+selectedFile+"! Try another one?", JOptionPane.INFORMATION_MESSAGE);
+                    }else{
+                        fos=new FileOutputStream(sharedPath+"\\"+selectedFile);
+                        while(true){
+                            dwn=in.read(b,0,1024*1024);
+                            count=count+dwn;
+                            fos.write(b,0,dwn);
+                            if(count==size){
+                                break;
+                            }
+                               
+                        }
+                        out.close();
+                        sporeTable.clearSelection();
+                        
+                        //TODO SCRIE FILE HITORY AICI
+                    } 
+                } catch (Exception ex) {
+                    infoLabel = new JLabel("<html><center>" + ex.getMessage());
+                    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, infoLabel, "Error when sending download request", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+
+            }
+            isDownloadRequest=false;
+            if(isMessageRequest){
+                try {
+                    out.writeBytes("message from," + chatTextArea.getText() + "\r\n");
+                    out.flush();
+                } catch (Exception ex) {
+                    infoLabel = new JLabel("<html><center>" + ex.getMessage());
+                    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, infoLabel, "Error when sending messsage request", JOptionPane.INFORMATION_MESSAGE);
+
+                }
+
+                
+            }
+            isMessageRequest=false;
+            if(isSendStitch){
+                
+            }
+            isSendStitch=false;
+            if(isSendStitchRequest){
+                
+            }
+            isSendStitchRequest=false;
+
         }
-        
+
+}
+  //P2PMINTMINISERVER
+    
+public class MintMiniServer implements Runnable {
+    String alias;
+    Thread thread;
+    Socket socket;
+    ServerSocket miniServerSocket;
+    MintRequestHandler requestHandler;
+
+    MintMiniServer(String alias) {
+        this.alias=alias;
+        thread = new Thread(this);
+        thread.start();
+
     }
+
+    @Override
+    public void run() {
+        try {
+            miniServerSocket = new ServerSocket(6424);
+            while (true) {
+                socket = miniServerSocket.accept();
+                //TODO PRIMIRE ALIAS SI STARE
+                
+                requestHandler=new MintRequestHandler(socket,alias);
+                
+                
+            }
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error in MiniServer Thread", "Mini Server Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+}
+ //P2PREQUESTHANDLE
+  public class MintRequestHandler implements Runnable {
+    private String alias;
+    private Thread mainThread;
+    private Socket clientSocket;
+    private DataOutputStream out;
+    private DataInputStream in;
+    private String res;
+    private BufferedReader bf;
+    
+   
+
+    MintRequestHandler(Socket socket,String alias) {
+        this.clientSocket = socket;
+        this.alias=alias;
+
+        try {
+            out = new DataOutputStream(this.clientSocket.getOutputStream());
+            in = new DataInputStream(this.clientSocket.getInputStream());
+            bf = new BufferedReader(new InputStreamReader(in));
+            mainThread = new Thread(this);
+            mainThread.start();
+        } catch (Exception ex) {
+            ex.getMessage();
+            System.out.println("Request Handle Ex: ");
+
+        }
+    }
+
+    @Override
+    public void run() {
+
+        try {
+            //check
+            res = bf.readLine();
+            if (res.equals("minicheck")) {
+                out.writeBytes("\nrunning...");
+                out.flush();
+            }
+            String requestSignal = "";
+
+            while (true) {
+                requestSignal = bf.readLine();
+                if (requestSignal == null) {
+                    break;
+                }
+                if (requestSignal.startsWith("search")) {
+                    //CAUTAREA UNUI singur FISIER LA CEILALTI
+                    StringTokenizer tok = new StringTokenizer(requestSignal, ",");
+                    tok.nextToken();
+                    String search = tok.nextToken();
+                    System.out.println("Searching for: " + search);
+                    //TODO filepath nu e schimbat niciunde
+                    File f = new File(filePath);
+                    String[] fileArray = f.list();
+                    System.out.println("Files found in filePath " + fileArray.length);
+                    int n = 0;
+                    for (int i = 0; i < fileArray.length; i++) {
+                        if (fileArray[i].indexOf(search) != -1) {
+                            n++;
+                        }
+                        out.writeBytes("filenr " + n + "\r\n");
+                        out.flush();
+
+                        if (n > 0) {
+                            for (int j = 0; j < fileArray.length; j++) {
+                                if (fileArray[j].indexOf(search) != -1) {
+                                    out.writeBytes(fileArray[j] + "\r\n");
+                                    out.flush();
+                                    File f2 = new File(filePath + "\\" + fileArray[j]);
+                                    long fileSize = f2.length();
+                                    out.writeLong(fileSize);
+                                    out.flush();
+                                }
+                            }
+                        }
+                        break;
+
+                    }
+
+                } else if (requestSignal.startsWith("download")) {
+                    FileInputStream fis;
+                    System.out.println("Download req recognized");
+                    try {
+
+                        StringTokenizer downloadTarget = new StringTokenizer(requestSignal, ",");
+                        //st e chiar numarul fis
+                        downloadTarget.nextToken();
+                        String download = downloadTarget.nextToken();
+
+                        long size2;
+                        System.out.println("Download req for : " + download);
+                        //TODO in doc era si testare pentru fis anume linia 94
+                        File file = new File(filePath + "//" + download);
+                        fis = new FileInputStream(file);
+                        long size = file.length();
+                        out.writeLong(size);
+                        out.flush();
+                        String actualSize;
+                        if (size < 1024) {
+                            actualSize = size + " bytes";
+                        } else if (size < 1048576) {
+                            actualSize = (float) (size / 1024) + " KB";
+                        } else if (size < 1024 * 1024 * 1024) {
+                            actualSize = (int) (size / 1024 * 1024) + " MB";
+                        } else {
+                            actualSize = (float) (size / 1024 * 1024 * 1024) + " GB";
+
+                        }
+                        //TODO ADAUGARE IN FILE HISTORY O FAC PRBIL IN JSON 
+                       try(FileReader reader=new FileReader("C:\\MINTWIRE\\" + alias + "history.json")){
+                           JSONParser jsonParser = new JSONParser();
+                           Object obj=jsonParser.parse(reader);
+                           JSONObject jO=(JSONObject)obj;
+                           JSONArray downloadArray = (JSONArray) jO.get("downloadhistory");
+                           //creez nodul nou
+                           JSONObject newHistory=new JSONObject();
+                           newHistory.put("filename", downloadTarget);
+                           newHistory.put("address",clientSocket.getInetAddress().getHostAddress());
+                           newHistory.put("filesize", actualSize);
+                           downloadArray.add(newHistory);
+                           
+                       }catch(Exception ex){
+                           JLabel label = new JLabel("<html><center>"+ex.getMessage());
+                           label.setHorizontalAlignment(SwingConstants.CENTER);
+                           JOptionPane.showMessageDialog(null, label, "Exception occured", JOptionPane.ERROR_MESSAGE);
+                       }
+                        
+                        //TODO FIRETABLEDATACHANGED
+                        byte kb[] = new byte[1024 * 1024];
+                        long contor = 0;
+                        while (true) {
+                            //TRIMIT KB CU KB PANA E EGAL CU SIZE
+                            int k = fis.read(kb, 0, 1024 * 1024);
+                            out.write(kb, 0, k);
+                            out.flush();
+                            contor = contor + k;
+                            if (contor == size) {
+                                break;
+                            }
+                            fis.close();
+                            System.out.println("File sent?");
+                            //TODO SE GOLESTE TABELA why
+                            
+                            break;
+
+                        }
+
+                    } catch (Exception ex) {
+                        ex.getMessage();
+                        System.out.println("Downlad Ex: Didnt send file");
+
+                    }
+                    break;
+
+                } else if (requestSignal.startsWith("message from,")) {
+                    
+                    
+                    
+                    StringTokenizer st = new StringTokenizer(requestSignal, ",");
+                    st.nextToken();
+                    String message=st.nextToken();
+                    //cautare respectivul
+                    //adaugare bubble cu message
+                    
+                    //TODO HANDLE MESSAGE REQUEST
+                } else if (requestSignal.startsWith("stitch from,")) {
+                    //TODO HANDLE STITCH
+                }
+
+            }
+
+        } catch (Exception ex) {
+            ex.getMessage();
+        }
+
+    }
+
+}
+
+
+ 
     //LAYEREDPANE INITS
    
     public void initMintLynx()
@@ -446,15 +695,20 @@ public class MintwireClientGUI extends javax.swing.JFrame {
          {
              f2.mkdir();
              //CREATE PFP FOLDER
-             File f3=new File("C:\\MINTWIRE\\"+alias+"\\pfp");
+             File f3=new File("C:\\MINTWIRE\\"+alias+"\\pfp"); 
              f3.mkdir();
              File f4=new File( "src/mintwire/res/pngs/profilepic.png");
             try{ BufferedImage bi=ImageIO.read(f4);
             //am citit acum o salvez ca pfp pentru prima logare
-            File outputF=new File( "C:\\MINTWIRE\\"+alias+"\\pfp\\pfp.png");
-            ImageIO.write(bi,"PNG",outputF);
-           
-            
+                File outputF = new File("C:\\MINTWIRE\\" + alias + "\\pfp\\pfp.png");
+                ImageIO.write(bi, "PNG", outputF);
+                FileWriter fw = new FileWriter("C:\\MINTWIRE\\" + alias + "history.json");
+                JSONObject obj = new JSONObject();
+
+                JSONArray arr = new JSONArray();
+
+                obj.put(arr, "downloadhistory");
+                fw.write(obj.toJSONString());
             
             }catch(Exception ex)
             {
@@ -769,7 +1023,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         jLabel2.setOpaque(true);
 
         CStitchLabel.setBackground(new java.awt.Color(49, 46, 54));
-        CStitchLabel.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        CStitchLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         CStitchLabel.setForeground(new java.awt.Color(255, 204, 204));
         CStitchLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         CStitchLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/codestitch.png"))); // NOI18N
@@ -790,7 +1044,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         });
 
         CStitchPartyLabel.setBackground(new java.awt.Color(49, 46, 54));
-        CStitchPartyLabel.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        CStitchPartyLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         CStitchPartyLabel.setForeground(new java.awt.Color(255, 204, 204));
         CStitchPartyLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/codestitch-party.png"))); // NOI18N
         CStitchPartyLabel.setText("Code Stitch Party");
@@ -810,7 +1064,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         });
 
         MintLynxLabel.setBackground(new java.awt.Color(49, 46, 54));
-        MintLynxLabel.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        MintLynxLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         MintLynxLabel.setForeground(new java.awt.Color(255, 204, 204));
         MintLynxLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         MintLynxLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/mintlynx.png"))); // NOI18N
@@ -831,7 +1085,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         });
 
         FileSporeLabel.setBackground(new java.awt.Color(49, 46, 54));
-        FileSporeLabel.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        FileSporeLabel.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         FileSporeLabel.setForeground(new java.awt.Color(255, 204, 204));
         FileSporeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         FileSporeLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/filespore.png"))); // NOI18N
@@ -864,7 +1118,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
                 .addComponent(MintLynxLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(189, 189, 189)
                 .addComponent(FileSporeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(99, Short.MAX_VALUE))
             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
@@ -878,7 +1132,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
                     .addComponent(CStitchLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         CStitchLabel.getAccessibleContext().setAccessibleName("CStitchLabel");
@@ -893,7 +1147,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         jLabel1.setOpaque(true);
 
         MintRequestLabel.setBackground(new java.awt.Color(43, 43, 43));
-        MintRequestLabel.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
+        MintRequestLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         MintRequestLabel.setForeground(new java.awt.Color(167, 255, 185));
         MintRequestLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         MintRequestLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/questionwhite.png"))); // NOI18N
@@ -913,7 +1167,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         });
 
         FileHaulLabel.setBackground(new java.awt.Color(43, 43, 43));
-        FileHaulLabel.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
+        FileHaulLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         FileHaulLabel.setForeground(new java.awt.Color(167, 255, 185));
         FileHaulLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         FileHaulLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/folderwhite.png"))); // NOI18N
@@ -933,7 +1187,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         });
 
         PreferencesLabel.setBackground(new java.awt.Color(43, 43, 43));
-        PreferencesLabel.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
+        PreferencesLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         PreferencesLabel.setForeground(new java.awt.Color(167, 255, 185));
         PreferencesLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         PreferencesLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/settingswhite.png"))); // NOI18N
@@ -953,7 +1207,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         });
 
         IdentityLabel.setBackground(new java.awt.Color(43, 43, 43));
-        IdentityLabel.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
+        IdentityLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         IdentityLabel.setForeground(new java.awt.Color(167, 255, 185));
         IdentityLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         IdentityLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/userwhite.png"))); // NOI18N
@@ -1051,7 +1305,7 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
 
         TabbedPane.setBackground(new java.awt.Color(51, 51, 51));
         TabbedPane.setForeground(new java.awt.Color(204, 204, 255));
-        TabbedPane.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        TabbedPane.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         TabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 TabbedPaneStateChanged(evt);
@@ -1073,11 +1327,11 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         SendSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Send a Stitching", SendSPanel);
 
-        saveButton.setFont(new java.awt.Font("Monospaced", 1, 16)); // NOI18N
+        saveButton.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         saveButton.setForeground(new java.awt.Color(255, 255, 255));
         saveButton.setText("Save a stitch...");
 
-        sendButton.setFont(new java.awt.Font("Monospaced", 1, 16)); // NOI18N
+        sendButton.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         sendButton.setForeground(new java.awt.Color(255, 255, 255));
         sendButton.setText("Send a stitch...");
 
@@ -1290,177 +1544,187 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
         sporeTable.setBackground(new java.awt.Color(59, 62, 69));
         sporeTable.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         sporeTable.setForeground(new java.awt.Color(204, 204, 204));
-        sporeTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+        sporeTable.setModel(
+            //new javax.swing.table.DefaultTableModel(
+                //    new Object [][] {
+                    //
+                    //    },
+                //    new String [] {
+                    //        "File", "Details", "Owner's Alias", "Checkbox"
+                    //    }
+                //) {
+                //    Class[] types = new Class [] {
+                    //        java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class
+                    //    };
+                //    boolean[] canEdit = new boolean [] {
+                    //        false, false, false, true
+                    //    };
+                //
+                //    public Class getColumnClass(int columnIndex) {
+                    //        return types [columnIndex];
+                    //    }
+                //
+                //    public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    //        return canEdit [columnIndex];
+                    //    }
+                //}
 
-            },
-            new String [] {
-                "File Name", "Owner's Alias", "Details", "Checkbox"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true
-            };
+            sporeModel
+            //)
+    );
+    sporeScroll.setViewportView(sporeTable);
+    sporeTable.setRowHeight (50);
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
+    sporeSearch.setText("Search");
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        sporeScroll.setViewportView(sporeTable);
-        sporeTable.setRowHeight (50);
+    javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+    jPanel8.setLayout(jPanel8Layout);
+    jPanel8Layout.setHorizontalGroup(
+        jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+            .addContainerGap()
+            .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel8Layout.createSequentialGroup()
+                    .addComponent(sporeText)
+                    .addGap(35, 35, 35)
+                    .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(sporeScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE))
+            .addGap(32, 32, 32))
+    );
+    jPanel8Layout.setVerticalGroup(
+        jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel8Layout.createSequentialGroup()
+            .addContainerGap()
+            .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(sporeText, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(sporeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(25, 25, 25))
+    );
 
-        sporeSearch.setText("Search");
+    sporeScroll.getViewport().setBackground(new java.awt.Color(45, 48, 56));
+    sporeScroll.setBorder(createEmptyBorder());
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
+    jPanel9.setBackground(new java.awt.Color(45, 48, 56));
+
+    jButton2.setText("Obtain selected item");
+    jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            jButton2MouseClicked(evt);
+        }
+    });
+
+    jButton1.setText("Transform to CodeStitch...");
+    jButton1.setToolTipText("");
+    jButton1.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButton1ActionPerformed(evt);
+        }
+    });
+
+    javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+    jPanel9.setLayout(jPanel9Layout);
+    jPanel9Layout.setHorizontalGroup(
+        jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel9Layout.createSequentialGroup()
+            .addContainerGap()
+            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addContainerGap())
+    );
+    jPanel9Layout.setVerticalGroup(
+        jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(jPanel9Layout.createSequentialGroup()
+            .addGap(118, 118, 118)
+            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(18, 18, 18)
+            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+    );
+
+    javax.swing.GroupLayout FileSporePanelLayout = new javax.swing.GroupLayout(FileSporePanel);
+    FileSporePanel.setLayout(FileSporePanelLayout);
+    FileSporePanelLayout.setHorizontalGroup(
+        FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(FileSporePanelLayout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(18, 18, 18)
+            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(117, Short.MAX_VALUE))
+    );
+    FileSporePanelLayout.setVerticalGroup(
+        FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FileSporePanelLayout.createSequentialGroup()
+            .addContainerGap()
+            .addGroup(FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addContainerGap())
+    );
+
+    MainLayeredPane.setLayer(CodeStitchPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+    MainLayeredPane.setLayer(CodeStitchPartyPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+    MainLayeredPane.setLayer(MintLynxPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+    MainLayeredPane.setLayer(FileSporePanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+    javax.swing.GroupLayout MainLayeredPaneLayout = new javax.swing.GroupLayout(MainLayeredPane);
+    MainLayeredPane.setLayout(MainLayeredPaneLayout);
+    MainLayeredPaneLayout.setHorizontalGroup(
+        MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(sporeText)
-                        .addGap(35, 35, 35)
-                        .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(sporeScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE))
-                .addGap(32, 32, 32))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()))
+        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sporeText, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(sporeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
-        );
-
-        sporeScroll.getViewport().setBackground(new java.awt.Color(45, 48, 56));
-        sporeScroll.setBorder(createEmptyBorder());
-
-        jPanel9.setBackground(new java.awt.Color(45, 48, 56));
-
-        jButton2.setText("Obtain selected item");
-
-        jButton1.setText("Transform to CodeStitch...");
-        jButton1.setToolTipText("");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()))
+        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGap(118, 118, 118)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout FileSporePanelLayout = new javax.swing.GroupLayout(FileSporePanel);
-        FileSporePanel.setLayout(FileSporePanelLayout);
-        FileSporePanelLayout.setHorizontalGroup(
-            FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(FileSporePanelLayout.createSequentialGroup()
+                .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()))
+    );
+    MainLayeredPaneLayout.setVerticalGroup(
+        MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(117, Short.MAX_VALUE))
-        );
-        FileSporePanelLayout.setVerticalGroup(
-            FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FileSporePanelLayout.createSequentialGroup()
+                .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()))
+        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+                .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()))
+        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()))
+    );
 
-        MainLayeredPane.setLayer(CodeStitchPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainLayeredPane.setLayer(CodeStitchPartyPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainLayeredPane.setLayer(MintLynxPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        MainLayeredPane.setLayer(FileSporePanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+    jPanel1.add(MainLayeredPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 140, 1330, 660));
 
-        javax.swing.GroupLayout MainLayeredPaneLayout = new javax.swing.GroupLayout(MainLayeredPane);
-        MainLayeredPane.setLayout(MainLayeredPaneLayout);
-        MainLayeredPaneLayout.setHorizontalGroup(
-            MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-        MainLayeredPaneLayout.setVerticalGroup(
-            MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    );
+    layout.setVerticalGroup(
+        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+    );
 
-        jPanel1.add(MainLayeredPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 140, 1330, 660));
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        pack();
+    pack();
     }// </editor-fold>//GEN-END:initComponents
 
     
@@ -1662,6 +1926,11 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+       int poz=sporeTable.getSelectedRow();
+       selectedFile=mintFiles.get(poz).getFileName();
+    }//GEN-LAST:event_jButton2MouseClicked
     
     /**
      * @param args the command line arguments
