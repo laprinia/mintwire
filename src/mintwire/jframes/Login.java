@@ -5,33 +5,52 @@
  */
 package mintwire.jframes;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JLabel;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import jdk.jshell.execution.Util;
 import mdlaf.MaterialLookAndFeel;
-
+import mintwire.BCrypt;
+import mintwire.p2pmodels.MintNode;
 
 import mintwire.theme.CustomTheme;
-import org.mindrot.jbcrypt.BCrypt;
-
+import mintwire.utils.Status;
+import mintwire.utils.Utils;
+import rice.environment.Environment;
 
 
 public class Login extends javax.swing.JFrame {
-   private final int ACCOUNT_CAP=30;
-   private final int ACCOUNT_MIN_CHARS=5;
-//TODO verificari
-   
-   private JLabel label;
+    
+    private final Utils utils=new Utils();
+    private final boolean isLinux=utils.isLinux();
+    private final int ACCOUNT_CAP = 20;
+    private final int ACCOUNT_MIN_CHARS = 5;
+    private JLabel label;
+    private String fullPath = System.getenv("APPDATA") + "/MINTWIRE/init.txt";
+
+    
     public Login() {
-       try {
+        System.out.println(isLinux+" is linux");
+        if(isLinux) fullPath=System.getProperty("user.home")+"/MINTWIRE/init.txt";
+        setTitle("Mintwire Login");
+        try {
             UIManager.setLookAndFeel(new MaterialLookAndFeel());
             if (UIManager.getLookAndFeel() instanceof MaterialLookAndFeel) {
                 MaterialLookAndFeel.changeTheme(new CustomTheme());
@@ -40,7 +59,7 @@ public class Login extends javax.swing.JFrame {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-          
+
         initComponents();
 
     }
@@ -57,46 +76,62 @@ public class Login extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
 
             JOptionPane.showMessageDialog(null, "Problem with loading MS Access JDBC driver", "Login Error", JOptionPane.ERROR_MESSAGE);
-          
+
         }
 
         try {
             String path = "src/mintwire/jframes/dbs/loginDB.accdb";
             String dbURL = "jdbc:ucanaccess://"
                     + path;
-
             conn = DriverManager.getConnection(dbURL);
-            statement = conn.prepareStatement("select * from aliases");
-
+            //check if it reaches cap
+            String count = "SELECT COUNT(*) AS count from aliases";
+            statement = conn.prepareStatement(count);
             result = statement.executeQuery();
-            boolean isAlias = false;
-            boolean isPassw=false;
-            while (result.next()) {
-                String tableAlias = result.getString("alias");
-                String tablePassword = result.getString("password");
-                isAlias = BCrypt.checkpw(alias, tableAlias);
-                isPassw = BCrypt.checkpw(passw, tablePassword);
+            result.next();
+            int number = result.getInt("count");
+            result.close();
+            System.out.println("Number of DB entries: " + number);
+            if (number >= ACCOUNT_CAP) {
+                label = new JLabel("<html><center>Please use a registered existing account on this PC.");
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                JOptionPane.showMessageDialog(null, label, "PC accounts limit reached", JOptionPane.INFORMATION_MESSAGE);
 
-            }
+            } else {
 
-            if (!(isAlias&& isPassw)) {
-                statement = conn.prepareStatement("insert into aliases (alias, password) values (?,?)");
-                statement.setString(1, hAlias);
-                statement.setString(2, hPassw);
-                boolean error = statement.execute();
-                if (!error) {
-                    label=new JLabel("<html><center>First login");
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    JOptionPane.showMessageDialog(null, label, "First login", JOptionPane.INFORMATION_MESSAGE);
+                statement = conn.prepareStatement("select * from aliases");
+
+                result = statement.executeQuery();
+                boolean isAlias = false;
+                boolean isPassw = false;
+                while (result.next()) {
+                    String tableAlias = result.getString("alias");
+                    String tablePassword = result.getString("password");
+                    isAlias = BCrypt.checkpw(alias, tableAlias);
+                    isPassw = BCrypt.checkpw(passw, tablePassword);
+                    if(isAlias&&isPassw==true)
+                        break;
+
                 }
 
-            } else if(isAlias && isPassw) {
-                label=new JLabel("<html><center>It's you. Welcome back!");
-                label.setHorizontalAlignment(SwingConstants.CENTER);
-                JOptionPane.showMessageDialog(null, label, "Alias recognized", JOptionPane.INFORMATION_MESSAGE);
-               
-                
-             
+                if ((isAlias && isPassw) == false) {
+
+                    statement = conn.prepareStatement("insert into aliases (alias, password) values (?,?)");
+                    statement.setString(1, hAlias);
+                    statement.setString(2, hPassw);
+                    boolean error = statement.execute();
+                    if (!error) {
+                        label = new JLabel("<html><center>First login");
+                        label.setHorizontalAlignment(SwingConstants.CENTER);
+                        JOptionPane.showMessageDialog(null, label, "First login", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                } else if ((isAlias && isPassw)) {
+                    label = new JLabel("<html><center>It's you. Welcome back!");
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Alias recognized", JOptionPane.INFORMATION_MESSAGE);
+
+                }
             }
 
         } catch (SQLException ex) {
@@ -113,10 +148,12 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, new String(ex.getMessage()), "Closing DB Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+
     }
 
-    private void startApp(String alias, String passw) {
-        MintwireClientGUI mcg = new MintwireClientGUI(alias, passw);
+    private void startApp(String password, MintNode mintNode) {
+
+        MintwireClientGUI mcg = new MintwireClientGUI(password, mintNode);
         mcg.pack();
         mcg.setLocationRelativeTo(null);
         mcg.setVisible(true);
@@ -124,8 +161,37 @@ public class Login extends javax.swing.JFrame {
         setVisible(false);
 
     }
+    private MintNode createMintNode(String alias) throws InterruptedException{
+       byte[] encoded;
+       ArrayList<String> tokens=new ArrayList<>();
+        try {
+            encoded = Files.readAllBytes(Paths.get(fullPath));
+            String s= new String(encoded, StandardCharsets.US_ASCII);
+            StringTokenizer st=new StringTokenizer(s,",");
+            
+            while(st.hasMoreElements()){
+                tokens.add(st.nextToken());
+            }
+            if(tokens.size()<2) throw new Exception();
+        } catch (Exception ex) {
+            label=new JLabel("<html><center>Please configure your node first!"+ ex.getMessage());
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Node not configured yet", JOptionPane.INFORMATION_MESSAGE);
+            
+        }
+        Environment env; env = new Environment();
+        env.getParameters().setString("nat_search_policy", "never");
+        //MintNode mintNode=new MintNode(Integer.parseInt(tokens.get(0)), new InetSocketAddress(tokens.get(1),Integer.parseInt(tokens.get(2))),alias,Status.available.toString());
+         MintNode mintNode;      
+        try {
+            mintNode = new MintNode(8076,new InetSocketAddress("192.168.126.129",8076),alias,Status.available.toString(),env);
+             return mintNode;
+        } catch (IOException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       return null;
+    }
 
-   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -190,7 +256,12 @@ public class Login extends javax.swing.JFrame {
         jLabel4.setBackground(new java.awt.Color(94, 87, 104));
         jLabel4.setFont(new java.awt.Font("Loma", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel4.setText("Reconfigure server");
+        jLabel4.setText("Reconfigure node");
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
 
         jLabel6.setBackground(new java.awt.Color(94, 87, 104));
         jLabel6.setFont(new java.awt.Font("Loma", 1, 18)); // NOI18N
@@ -303,12 +374,26 @@ public class Login extends javax.swing.JFrame {
 
         String alias = new String(jTextField1.getText()).toLowerCase();
         String passw = new String(jPasswordField1.getPassword()).toLowerCase();
-        String hashAlias = BCrypt.hashpw(alias, salt);
-        String hashPassw = BCrypt.hashpw(passw, salt);
-        //DECOM PENTRU BD
-        //connToDB(alias, passw, hashAlias, hashPassw);
-        startApp(alias, passw);
-        
+        if (alias.length() <= 4 || alias == null || passw.length() <= 4 || passw == null) {
+              label = new JLabel("<html><center>Please have your password or alias of at least 5 characters!");
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Not valid credentials", JOptionPane.INFORMATION_MESSAGE);
+            
+
+        } else {
+            String hashAlias = BCrypt.hashpw(alias, salt);
+            String hashPassw = BCrypt.hashpw(passw, salt);
+            //DECOM PENTRU BD
+            connToDB(alias, passw, hashAlias, hashPassw);
+            MintNode mn;
+            try {
+                mn = createMintNode(alias);
+                startApp(alias, mn);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
 
     }//GEN-LAST:event_jButton1MouseClicked
 
@@ -317,13 +402,22 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
-        Register r=Register.startRegister();
+        Register r = Register.startRegister();
         r.pack();
         r.setLocationRelativeTo(null);
         r.setVisible(true);
         r.setVisible(true);
-        
+
     }//GEN-LAST:event_jLabel6MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+         Reconfigure reconfigure = Reconfigure.getInstance();
+        reconfigure.pack();
+        reconfigure.setLocationRelativeTo(null);
+        reconfigure.setVisible(true);
+        reconfigure.setVisible(true);
+        
+    }//GEN-LAST:event_jLabel4MouseClicked
 
     /**
      * @param args the command line arguments

@@ -1,4 +1,3 @@
-
 package mintwire.jframes;
 
 import java.awt.Color;
@@ -17,30 +16,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
 import java.lang.reflect.Field;
 
+
 import java.net.ServerSocket;
-import java.net.Socket;
 
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
-
 
 import javax.imageio.ImageIO;
 import static javax.swing.BorderFactory.createEmptyBorder;
@@ -51,12 +43,11 @@ import javax.swing.JLabel;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 
 import javax.swing.SwingWorker;
 
@@ -74,6 +65,7 @@ import mintwire.borders.ChatBorder;
 import mintwire.chatpanels.Bubbler;
 import mintwire.classes.MintFile;
 import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
+import mintwire.p2pmodels.MintNode;
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -81,28 +73,18 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-
-//TODO LEGATURI DE TABELA CU ALIAS STATUS CU RESTUL
-//IMPLEMENTARE MESAGERIE: CUM FAC SA STIU CE USER E SELECTAT, UNDE TRIMIT MESAJELE
-//IMPLEMENTARE TRIMITERE REQUEST STITCH, TRIMITERE STITCH PROPRIU ZISA
-// ACTIVARE IS-URI P2P CAND TREB
-//INCEPERE THREADURI
-//TODO FILEHISTORY + TABELE CARE TREBUIE IMPLEM + SERVER
-
-//TODO HANDLE PENTRU MESAJE SI CODESTITCH
 
 public class MintwireClientGUI extends javax.swing.JFrame {
-public class FileSporeTableModel extends AbstractTableModel{
-    
-        String columns[]={"File","Details","Owner's Alias","Checkbox"};
+
+    public class FileSporeTableModel extends AbstractTableModel {
+
+        String columns[] = {"File", "Details", "Owner's Alias", "Checkbox"};
 
         @Override
         public String getColumnName(int column) {
             return columns[column];
         }
-        
+
         @Override
         public int getRowCount() {
             return mintFiles.size();
@@ -110,12 +92,12 @@ public class FileSporeTableModel extends AbstractTableModel{
 
         @Override
         public int getColumnCount() {
-           return columns.length;
+            return columns.length;
         }
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            switch(columnIndex){
+            switch (columnIndex) {
                 case 0:
                     return mintFiles.get(rowIndex).getFileName();
                 case 1:
@@ -128,818 +110,341 @@ public class FileSporeTableModel extends AbstractTableModel{
                     return 0;
             }
         }
-    
-}
-   
-public class FileExtensionModel extends DefaultTableCellRenderer{
-    JLabel label=new JLabel();
-    ImageIcon ii;
+
+    }
+
+    public class FileExtensionModel extends DefaultTableCellRenderer {
+
+        JLabel label = new JLabel();
+        ImageIcon ii;
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-             if(column==0){
-             
-              String ext=mintFiles.get(row).getFileName().substring(mintFiles.get(row).getFileName().indexOf("."));
-              
-               try{ii=new ImageIcon(getClass().getResource("/res/ext/"+ext+".png"));
-               }catch(Exception ex){
-                   ii=new ImageIcon(getClass().getResource("/res/ext/ai.png"));
-               }
-               label.setIcon(ii);
-               label.setText(mintFiles.get(row).getFileName());
-             }else if(column==1){
-                 label.setText(mintFiles.get(row).getDetails());
-                 
-             }else if(column==2){
-                  label.setText(mintFiles.get(row).getAlias());
-             }else if(column==3){
-                 label.setText("no check yet");
-             }
-          
-           return label;
+            if (column == 0) {
+
+                String ext = mintFiles.get(row).getFileName().substring(mintFiles.get(row).getFileName().indexOf("."));
+
+                try {
+                    ii = new ImageIcon(getClass().getResource("/res/ext/" + ext + ".png"));
+                } catch (Exception ex) {
+                    ii = new ImageIcon(getClass().getResource("/res/ext/ai.png"));
+                }
+                label.setIcon(ii);
+                label.setText(mintFiles.get(row).getFileName());
+            } else if (column == 1) {
+                label.setText(mintFiles.get(row).getDetails());
+
+            } else if (column == 2) {
+                label.setText(mintFiles.get(row).getAlias());
+            } else if (column == 3) {
+                label.setText("no check yet");
+            }
+
+            return label;
         }
-    
-}
-   //my vars
+
+    }
+    //my vars
+    private MintNode mintNode;
+    private String aliasPath=System.getenv("APPDATA")+"/MINTWIRE/";
     private String sharedPath = "C:\\MINTWIRE Shared";
-    private String selectedFile="";
-    private FileSporeTableModel sporeModel=new FileSporeTableModel();
-    private boolean isSendStitchRequest=false;
-    private boolean isSendStitch=false;
-    private boolean isMessageRequest=false;
-    private boolean isSearchRequest=false;
-    private boolean isDownloadRequest=false;
     
-    private ArrayList<MintFile> mintFiles=new ArrayList();
+    private FileSporeTableModel sporeModel = new FileSporeTableModel();
+   
+
+    private ArrayList<MintFile> mintFiles = new ArrayList();
     private Bubbler bubbler;
-    private ChatBorder cB=new ChatBorder(45);
-    final Color SENT=new Color(244,101,101);
-    final Color RECEIVED=new Color(170,207,255);
-     private JLabel infoLabel;
-    
-    final JPanel scrollablePanel = new JPanel(new GridLayout(0,1));
-    private Utils utils=new Utils();
+    private ChatBorder cB = new ChatBorder(45);
+    final Color SENT = new Color(244, 101, 101);
+    final Color RECEIVED = new Color(170, 207, 255);
+    private JLabel infoLabel;
+
+    final JPanel scrollablePanel = new JPanel(new GridLayout(0, 1));
+    private Utils utils = new Utils();
+    private final boolean isLinux=utils.isLinux();
     private String alias;
     private String password;
-    private RSyntaxTextArea textArea ;
+    private RSyntaxTextArea textArea;
     private String filePath;
-    private final String langPre="SyntaxConstants.SYNTAX_STYLE_";
+    private final String langPre = "SyntaxConstants.SYNTAX_STYLE_";
     private JMenu languageToggle;
     private ArrayList<String> array = new ArrayList<String>();
     private ServerSocket miniServerSock;
- 
+
     //end of my vars
     public MintwireClientGUI() {
-     
+
         initComponents();
     }
-    public MintwireClientGUI(String alias, String passw)
-    {  
-       
-        this.alias=alias;
-        this.password=password;
-       
+
+    public MintwireClientGUI(String password, MintNode mintNode) {
+
+        this.alias=mintNode.getNode().alias;
+        this.mintNode=mintNode;
+        this.password = password;
+         System.out.println(mintNode.getNode().getId());
+
+        if(isLinux){
+            aliasPath=System.getProperty("user.home")+"/MINTWIRE/";
+        }
         setTabbedDesign();
         initComponents();
         setStitchLabelOn();
         initRSyntax(RequestSPanel);
         connToServer(alias);
-        
-   
-         setPfp();
-         
-       
-        
-         
+
+        setPfp();
+
     }
     //P2P MODELS
 
-  
-    //MINTCLIENTP2P
-    public class MintMainClient implements Runnable {
-
-    Socket socket;
-    Thread mainThread;
-    String ipaddr;
-    String res;
-    BufferedReader sockbf;
-    BufferedReader defbf;
-    PrintWriter pw;
-    ArrayList<String> array;
-
-    MintMainClient(String ipaddr, ArrayList<String> array) {
-
-        try {
-            socket = new Socket(ipaddr, 6424);
-            sockbf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            defbf = new BufferedReader(new InputStreamReader(System.in));
-            pw = new PrintWriter(socket.getOutputStream());
-            mainThread = new Thread(this);
-            mainThread.start();
-
-        } catch (Exception ex) {
-            //cant conn to srvr
-            ex.getMessage();
-            System.out.println("Main client error: Failed to conn to server");
-        }
-
-    }
-
-    @Override
-    public void run() {
-
-        //SE CON LA MINISERVER REQ HANDLER
-        try {
-                while (true) {
-                    res = sockbf.readLine();
-                    if (res.startsWith("filenr")) {
-                        array.clear();
-                        StringTokenizer st = new StringTokenizer(res);
-                        st.nextToken();
-                        int n = Integer.parseInt(st.nextToken());
-                        for (int i = 0; i < n; i++) {   //adauga la array cate chestii se trimit(tokenul dupa size)
-                            array.add(sockbf.readLine());
-                            //TABELA ADRESE IP E IN ARRAY POTI IN JSON
-
-                        }
-
-                    }
-
-                }
-
-            } catch (Exception ex) {
-                ex.getMessage();
-                System.out.println("Main client error: Failed to conn to server req handler");
-
-            }
-
-        }
-
-    }
-
-//MINICLIENTP2P
-    public class MintMiniClient implements Runnable {
-        //searchrequest se mai seteaza true cand se apasa butonul
-
-        private ArrayList<MintFile> mintFiles;
-      
-        private BufferedReader br;
-        private String ipaddr;
-        private Socket miniSocket, sock2;
-        private DataInputStream in;
-        private DataOutputStream out;
-        private Thread thread;
-        private String ip;
-        private long fileSize;
-        private FileWriter fw;
-        private String history;
-       
-
-        MintMiniClient(String ipaddr) {
-            this.ipaddr = ipaddr;
-
-            try {
-                miniSocket = new Socket(this.ip, 6424);
-                in = new DataInputStream(miniSocket.getInputStream());
-                br=new BufferedReader(new InputStreamReader(in));
-                out = new DataOutputStream(miniSocket.getOutputStream());
-                out.writeBytes("minicheck\r\n");
-                out.flush();
-                thread = new Thread(this);
-                thread.start();
-
-            } catch (Exception ex) {
-                infoLabel= new JLabel("<html><center>" + ex.getMessage());
-                infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                JOptionPane.showMessageDialog(null, infoLabel, "Error in Mint Mini Client", JOptionPane.INFORMATION_MESSAGE);
-            }
-        }
-
-        @Override
-        public void run() {
-
-           
-            if (isSearchRequest) {
-                mintFiles.clear();
-                if (sporeText.getText().trim().equals("")) {
-                      infoLabel= new JLabel("<html><center> Enter a valid filename" );
-                infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                JOptionPane.showMessageDialog(null, infoLabel, "Input Error", JOptionPane.INFORMATION_MESSAGE);
-
-                } else {
-                    try {
-                        out.writeBytes("search," + sporeText.getText().trim());
-                        out.flush();
-                        String response = br.readLine();
-                        StringTokenizer st = new StringTokenizer(response);
-                        st.nextToken();
-                        int size = Integer.parseInt(st.nextToken());
-                        if (size == 0) {
-                            infoLabel = new JLabel("<html><center> Your peers don't seem to have the file you are looking for");
-                            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                            JOptionPane.showMessageDialog(null, infoLabel, "No trace of the file", JOptionPane.INFORMATION_MESSAGE);
-
-                        }else{
-                            for(int i=0;i<size;i++){
-                                String fileName=br.readLine();
-                                fileSize=Long.parseLong(br.readLine());
-                                if(fileSize>=1024&&fileSize<1048576){
-                                    fileSize=(long) (fileSize/1024);
-                                    mintFiles.add(new MintFile(fileName,size+fileSize+" kB","no alias"));
-                                } else if(fileSize>=1048576&&fileSize<(1024*1024*1024)){
-                                    fileSize=(long) (fileSize/(1024*1024));
-                                    mintFiles.add(new MintFile(fileName,size+fileSize+" mB","no alias"));
-                                }else  if(fileSize>=(1024*1024*1024)&&fileSize<(1024*1024*1024*1024)){
-                                    fileSize=(long) (fileSize/(1024*1024*1024));
-                                    mintFiles.add(new MintFile(fileName,size+fileSize+" gB","no alias"));
-                                }else{
-                                    mintFiles.add(new MintFile(fileName,size+fileSize+" bytes","no alias"));
-                                }
-                                sporeModel.fireTableDataChanged();
-                               
-                            }
-                        }
-                        
-                        
-                       
-
-                    } catch (Exception ex) {
-                        infoLabel = new JLabel("<html><center> Error when sending search request");
-                        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                        JOptionPane.showMessageDialog(null, infoLabel, "Mint MiniClient Error", JOptionPane.INFORMATION_MESSAGE);
-
-                    }
-                     
-
-                }
-                isSearchRequest=false;
-            }
-            if(isDownloadRequest){
-                try {
-                    //selected file e setat in click event la buttonul de obtain
-                    out.writeBytes("download,"+selectedFile+"\r\n");
-                    out.flush();
-                    long size=in.readLong();
-                    byte b[]=new byte[1024*1024];
-                    long count=0;
-                    int dwn;
-                    int poz=sporeTable.getSelectedRow();
-                    FileOutputStream fos;
-                    selectedFile=mintFiles.get(poz).getFileName();
-                    String extension = selectedFile.substring(selectedFile.lastIndexOf("."));
-                    boolean flag = false;
-                    File f = new File(sharedPath + "\\" + selectedFile);
-                    if (f.exists()) {
-                        //TODO POATE O METODA DE REDOWNLOAD
-                        infoLabel = new JLabel("<html><center>File already exists");
-                        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                        JOptionPane.showMessageDialog(null, infoLabel, "You already have "+selectedFile+"! Try another one?", JOptionPane.INFORMATION_MESSAGE);
-                    }else{
-                        fos=new FileOutputStream(sharedPath+"\\"+selectedFile);
-                        while(true){
-                            dwn=in.read(b,0,1024*1024);
-                            count=count+dwn;
-                            fos.write(b,0,dwn);
-                            if(count==size){
-                                break;
-                            }
-                               
-                        }
-                        out.close();
-                        sporeTable.clearSelection();
-                        
-                        //TODO SCRIE FILE HITORY AICI
-                    } 
-                } catch (Exception ex) {
-                    infoLabel = new JLabel("<html><center>" + ex.getMessage());
-                    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                    JOptionPane.showMessageDialog(null, infoLabel, "Error when sending download request", JOptionPane.INFORMATION_MESSAGE);
-                }
-
-
-            }
-            isDownloadRequest=false;
-            if(isMessageRequest){
-                try {
-                    out.writeBytes("message from," + chatTextArea.getText() + "\r\n");
-                    out.flush();
-                } catch (Exception ex) {
-                    infoLabel = new JLabel("<html><center>" + ex.getMessage());
-                    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                    JOptionPane.showMessageDialog(null, infoLabel, "Error when sending messsage request", JOptionPane.INFORMATION_MESSAGE);
-
-                }
-
-                
-            }
-            isMessageRequest=false;
-            if(isSendStitch){
-                
-            }
-            isSendStitch=false;
-            if(isSendStitchRequest){
-                
-            }
-            isSendStitchRequest=false;
-
-        }
-
-}
-  //P2PMINTMINISERVER
-    
-public class MintMiniServer implements Runnable {
-    String alias;
-    Thread thread;
-    Socket socket;
-    ServerSocket miniServerSocket;
-    MintRequestHandler requestHandler;
-
-    MintMiniServer(String alias) {
-        this.alias=alias;
-        thread = new Thread(this);
-        thread.start();
-
-    }
-
-    @Override
-    public void run() {
-        try {
-            miniServerSocket = new ServerSocket(6424);
-            while (true) {
-                socket = miniServerSocket.accept();
-                //TODO PRIMIRE ALIAS SI STARE
-                
-                requestHandler=new MintRequestHandler(socket,alias);
-                
-                
-            }
-
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error in MiniServer Thread", "Mini Server Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-}
- //P2PREQUESTHANDLE
-  public class MintRequestHandler implements Runnable {
-    private String alias;
-    private Thread mainThread;
-    private Socket clientSocket;
-    private DataOutputStream out;
-    private DataInputStream in;
-    private String res;
-    private BufferedReader bf;
-    
-   
-
-    MintRequestHandler(Socket socket,String alias) {
-        this.clientSocket = socket;
-        this.alias=alias;
-
-        try {
-            out = new DataOutputStream(this.clientSocket.getOutputStream());
-            in = new DataInputStream(this.clientSocket.getInputStream());
-            bf = new BufferedReader(new InputStreamReader(in));
-            mainThread = new Thread(this);
-            mainThread.start();
-        } catch (Exception ex) {
-            ex.getMessage();
-            System.out.println("Request Handle Ex: ");
-
-        }
-    }
-
-    @Override
-    public void run() {
-
-        try {
-            //check
-            res = bf.readLine();
-            if (res.equals("minicheck")) {
-                out.writeBytes("\nrunning...");
-                out.flush();
-            }
-            String requestSignal = "";
-
-            while (true) {
-                requestSignal = bf.readLine();
-                if (requestSignal == null) {
-                    break;
-                }
-                if (requestSignal.startsWith("search")) {
-                    //CAUTAREA UNUI singur FISIER LA CEILALTI
-                    StringTokenizer tok = new StringTokenizer(requestSignal, ",");
-                    tok.nextToken();
-                    String search = tok.nextToken();
-                    System.out.println("Searching for: " + search);
-                    //TODO filepath nu e schimbat niciunde
-                    File f = new File(filePath);
-                    String[] fileArray = f.list();
-                    System.out.println("Files found in filePath " + fileArray.length);
-                    int n = 0;
-                    for (int i = 0; i < fileArray.length; i++) {
-                        if (fileArray[i].indexOf(search) != -1) {
-                            n++;
-                        }
-                        out.writeBytes("filenr " + n + "\r\n");
-                        out.flush();
-
-                        if (n > 0) {
-                            for (int j = 0; j < fileArray.length; j++) {
-                                if (fileArray[j].indexOf(search) != -1) {
-                                    out.writeBytes(fileArray[j] + "\r\n");
-                                    out.flush();
-                                    File f2 = new File(filePath + "\\" + fileArray[j]);
-                                    long fileSize = f2.length();
-                                    out.writeLong(fileSize);
-                                    out.flush();
-                                }
-                            }
-                        }
-                        break;
-
-                    }
-
-                } else if (requestSignal.startsWith("download")) {
-                    FileInputStream fis;
-                    System.out.println("Download req recognized");
-                    try {
-
-                        StringTokenizer downloadTarget = new StringTokenizer(requestSignal, ",");
-                        //st e chiar numarul fis
-                        downloadTarget.nextToken();
-                        String download = downloadTarget.nextToken();
-
-                        long size2;
-                        System.out.println("Download req for : " + download);
-                        //TODO in doc era si testare pentru fis anume linia 94
-                        File file = new File(filePath + "//" + download);
-                        fis = new FileInputStream(file);
-                        long size = file.length();
-                        out.writeLong(size);
-                        out.flush();
-                        String actualSize;
-                        if (size < 1024) {
-                            actualSize = size + " bytes";
-                        } else if (size < 1048576) {
-                            actualSize = (float) (size / 1024) + " KB";
-                        } else if (size < 1024 * 1024 * 1024) {
-                            actualSize = (int) (size / 1024 * 1024) + " MB";
-                        } else {
-                            actualSize = (float) (size / 1024 * 1024 * 1024) + " GB";
-
-                        }
-                        //TODO ADAUGARE IN FILE HISTORY O FAC PRBIL IN JSON 
-                       try(FileReader reader=new FileReader("C:\\MINTWIRE\\" + alias + "history.json")){
-                           JSONParser jsonParser = new JSONParser();
-                           Object obj=jsonParser.parse(reader);
-                           JSONObject jO=(JSONObject)obj;
-                           JSONArray downloadArray = (JSONArray) jO.get("downloadhistory");
-                           //creez nodul nou
-                           JSONObject newHistory=new JSONObject();
-                           newHistory.put("filename", downloadTarget);
-                           newHistory.put("address",clientSocket.getInetAddress().getHostAddress());
-                           newHistory.put("filesize", actualSize);
-                           downloadArray.add(newHistory);
-                           
-                       }catch(Exception ex){
-                           JLabel label = new JLabel("<html><center>"+ex.getMessage());
-                           label.setHorizontalAlignment(SwingConstants.CENTER);
-                           JOptionPane.showMessageDialog(null, label, "Exception occured", JOptionPane.ERROR_MESSAGE);
-                       }
-                        
-                        //TODO FIRETABLEDATACHANGED
-                        byte kb[] = new byte[1024 * 1024];
-                        long contor = 0;
-                        while (true) {
-                            //TRIMIT KB CU KB PANA E EGAL CU SIZE
-                            int k = fis.read(kb, 0, 1024 * 1024);
-                            out.write(kb, 0, k);
-                            out.flush();
-                            contor = contor + k;
-                            if (contor == size) {
-                                break;
-                            }
-                            fis.close();
-                            System.out.println("File sent?");
-                            //TODO SE GOLESTE TABELA why
-                            
-                            break;
-
-                        }
-
-                    } catch (Exception ex) {
-                        ex.getMessage();
-                        System.out.println("Downlad Ex: Didnt send file");
-
-                    }
-                    break;
-
-                } else if (requestSignal.startsWith("message from,")) {
-                    
-                    
-                    
-                    StringTokenizer st = new StringTokenizer(requestSignal, ",");
-                    st.nextToken();
-                    String message=st.nextToken();
-                    //cautare respectivul
-                    //adaugare bubble cu message
-                    
-                    //TODO HANDLE MESSAGE REQUEST
-                } else if (requestSignal.startsWith("stitch from,")) {
-                    //TODO HANDLE STITCH
-                }
-
-            }
-
-        } catch (Exception ex) {
-            ex.getMessage();
-        }
-
-    }
-
-}
-
-
- 
     //LAYEREDPANE INITS
-   
-    public void initMintLynx()
-    {
+    public void initMintLynx() {
         //chatTextArea.append("Initializare reusita");
-        
-    
-     
-       
-        
-        
-        
-        
+
     }
     //END OF LAYERED PANE INITS
-   
+
     //MY METHODS
-    
-  
-    public void connToServer(String alias)
-    {
-        File f1=new File("C:\\MINTWIRE");
-        if (!(f1.exists()))
-         {
-             f1.mkdir();
-         }
-        
+    public void connToServer(String alias) {
+        File f1 = new File(aliasPath);
+        if (!(f1.exists())) {
+            f1.mkdir();
+        }
        
-        File f2=new File("C:\\MINTWIRE\\"+alias);
-        if (!(f2.exists()))
-         {
-             f2.mkdir();
-             //CREATE PFP FOLDER
-             File f3=new File("C:\\MINTWIRE\\"+alias+"\\pfp"); 
-             f3.mkdir();
-             File f4=new File( "src/mintwire/res/pngs/profilepic.png");
-            try{ BufferedImage bi=ImageIO.read(f4);
-            //am citit acum o salvez ca pfp pentru prima logare
-                File outputF = new File("C:\\MINTWIRE\\" + alias + "\\pfp\\pfp.png");
+
+        File f2 = new File(aliasPath + alias);
+        if (!(f2.exists())) {
+            f2.mkdir();
+            //CREATE PFP FOLDER
+            File f3 = new File(aliasPath + alias + "/pfp");
+            f3.mkdir();
+            File f4 = new File("src/mintwire/res/pngs/profilepic.png");
+            try {
+                BufferedImage bi = ImageIO.read(f4);
+                //am citit acum o salvez ca pfp pentru prima logare
+                File outputF = new File(aliasPath + alias + "/pfp/pfp.png");
                 ImageIO.write(bi, "PNG", outputF);
-                FileWriter fw = new FileWriter("C:\\MINTWIRE\\" + alias + "history.json");
+                FileWriter fw = new FileWriter(aliasPath + alias + "/history.json");
                 JSONObject obj = new JSONObject();
 
                 JSONArray arr = new JSONArray();
 
                 obj.put(arr, "downloadhistory");
                 fw.write(obj.toJSONString());
-            
-            }catch(Exception ex)
-            {
-                System.out.println("err in creare fold:"+ex.getMessage());
+
+            } catch (Exception ex) {
+                System.out.println("err in creare fold:" + ex.getMessage());
             }
-            
-         }
-       
-        Path path = Paths.get("C:\\MINTWIRE\\"+alias);
-        try{
-            Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-        }catch(Exception ex)
-        {
-            ex.printStackTrace();
+
         }
-        
-        
-       
+
+        Path path = Paths.get(aliasPath+ alias);
+        try {
+            Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+
     }
-    public void setPfp(){
-         File pfp = new File("C:\\MINTWIRE\\" + alias + "\\pfp\\pfp.png");
+
+    public void setPfp() {
+        File pfp = new File(aliasPath + alias + "/pfp/pfp.png");
         try {
             BufferedImage bi = ImageIO.read(pfp);
-            
-            BufferedImage biR=utils.makeRound(bi);
-            Image resultScaled=biR.getScaledInstance(pfpLabel.getWidth(), pfpLabel.getHeight(), Image.SCALE_SMOOTH);
-              
+
+            BufferedImage biR = utils.makeRound(bi);
+            Image resultScaled = biR.getScaledInstance(pfpLabel.getWidth(), pfpLabel.getHeight(), Image.SCALE_SMOOTH);
+
             ImageIcon ico = new ImageIcon(resultScaled);
-           
+
             pfpLabel.setIcon(ico);
         } catch (Exception ex) {
-            System.out.print("excc in load: "+ex.getMessage());
-            
+            System.out.print("excc in load: " + ex.getMessage());
 
         }
 
-
     }
-    public void configSbars(RTextScrollPane sp,JPanel panel)
-    {
+
+    public void configSbars(RTextScrollPane sp, JPanel panel) {
         //config scrollbar color
         JPanel p = new JPanel();
-        JPanel r=new JPanel();
+        JPanel r = new JPanel();
         r.setBackground(Color.gray);
-        p.setBackground(new Color(43,43,43));
+        p.setBackground(new Color(43, 43, 43));
         sp.setCorner(RTextScrollPane.LOWER_LEFT_CORNER, p);
         sp.setCorner(RTextScrollPane.LOWER_RIGHT_CORNER, p);
         sp.setCorner(RTextScrollPane.LOWER_LEADING_CORNER, p);
 //        sp.setCorner(RTextScrollPane.UPPER_LEADING_CORNER, p);
         sp.getVerticalScrollBar().setBackground(Color.GRAY);
-        
+
         sp.getHorizontalScrollBar().setBackground(Color.GRAY);
         sp.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
-          @Override
-          
-    protected void configureScrollBarColors() {
-        this.thumbColor =new Color(167,150,146);
-        this.trackColor=new Color(43,43,43);
-        
-        
-    }
-     @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return createZeroButton();
-        }
+            @Override
 
-        @Override    
-        protected JButton createIncreaseButton(int orientation) {
-            return createZeroButton();
-        }
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(167, 150, 146);
+                this.trackColor = new Color(43, 43, 43);
 
-        private JButton createZeroButton() {
-            JButton jbutton = new JButton();
-            jbutton.setPreferredSize(new Dimension(0, 0));
-            jbutton.setMinimumSize(new Dimension(0, 0));
-            jbutton.setMaximumSize(new Dimension(0, 0));
-            return jbutton;
-        }
-    });
-        
-        
-       sp.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
-          @Override
-          
-    protected void configureScrollBarColors() {
-        this.thumbColor = new Color(167,150,146);
-        this.trackColor=new Color(43,43,43);
-        
-        
-    }
-     @Override
-        protected JButton createDecreaseButton(int orientation) {
-            return createZeroButton();
-        }
+            }
 
-        @Override    
-        protected JButton createIncreaseButton(int orientation) {
-            return createZeroButton();
-        }
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton();
+            }
 
-        private JButton createZeroButton() {
-            JButton jbutton = new JButton();
-            jbutton.setPreferredSize(new Dimension(0, 0));
-            jbutton.setMinimumSize(new Dimension(0, 0));
-            jbutton.setMaximumSize(new Dimension(0, 0));
-            return jbutton;
-        }
-   
-    });
-      
-        
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            private JButton createZeroButton() {
+                JButton jbutton = new JButton();
+                jbutton.setPreferredSize(new Dimension(0, 0));
+                jbutton.setMinimumSize(new Dimension(0, 0));
+                jbutton.setMaximumSize(new Dimension(0, 0));
+                return jbutton;
+            }
+        });
+
+        sp.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
+            @Override
+
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(167, 150, 146);
+                this.trackColor = new Color(43, 43, 43);
+
+            }
+
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton();
+            }
+
+            private JButton createZeroButton() {
+                JButton jbutton = new JButton();
+                jbutton.setPreferredSize(new Dimension(0, 0));
+                jbutton.setMinimumSize(new Dimension(0, 0));
+                jbutton.setMaximumSize(new Dimension(0, 0));
+                return jbutton;
+            }
+
+        });
+
         panel.add(sp);
         panel.revalidate();
         panel.repaint();
     }
-    public void setTabbedDesign()
-    {
-//        UIManager.put("TabbedPane.selected", new Color(198,89,89));
-       UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource( Color.GRAY ));
-        UIManager.put("TabbedPane.darkShadow", new ColorUIResource( Color.GRAY ));
-    UIManager.put("TabbedPane.contentAreaColor", Color.GRAY);
-       UIManager.put("TabbedPane.highlight",        Color.GRAY);
-//        UIManager.put("TabbedPane.unselectedForeground", Color.RED);
-UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
+
+    public void setTabbedDesign() {
+
+        UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource(Color.GRAY));
+        UIManager.put("TabbedPane.darkShadow", new ColorUIResource(Color.GRAY));
+        UIManager.put("TabbedPane.contentAreaColor", Color.GRAY);
+        UIManager.put("TabbedPane.highlight", Color.GRAY);
+
+        UIManager.put("TabbedPane.selectedForeground", new Color(52, 203, 139));
     }
-    public void setStitchLabelOn()
-    {
-        CStitchLabel.setForeground(new Color(223,102,105));
-        CStitchLabel.setBackground(new Color(88,99,91));
+
+    public void setStitchLabelOn() {
+//        CStitchLabel.setForeground(new Color(223, 102, 105));
+//        CStitchLabel.setBackground(new Color(88, 99, 91));
+          setTitle("Mintwire Code Stitch");
     }
-    public void configSyntaxMenu()
-    {
+
+    public void configSyntaxMenu() {
         JPopupMenu syntaxMenu = textArea.getPopupMenu();
-        
-         syntaxMenu.addSeparator();
-         languageToggle=new JMenu("Change Language...");
-        languageToggle.setBackground(new Color(43,43,43));
-        languageToggle.setForeground(new Color(238,205,127));
-         Field[] languages=SyntaxConstants.class.getFields();
-         String separ="public static final java.lang.String org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_";
-         ActionListener actionListener=new MenuActionListener();
-         
-         String vect="";
-         for(Field language:languages)
-         {
-             String name=language.toString();
-             name= (name.split(separ))[1];
-             String letter=name.substring(0,1);
-             
-             if((vect.indexOf(letter ))==-1)
-             {
-                 vect.concat(letter);
-                 JMenu itm=new JMenu(letter);
-                 languageToggle.add(itm);
-                 JMenuItem subitm=new JMenuItem(name);
-                 itm.setOpaque(true);
-                 //adding colors
-                 itm.setBackground(new Color(43,43,43));
-                 itm.setForeground(new Color(238,205,127));
-                 subitm.setBackground(new Color(43,43,43));
-                 subitm.setForeground(new Color(238,205,127));
-                 itm.add(subitm);
-                 subitm.addActionListener(actionListener);
-                 vect+=letter;
-                 
-                 
-             }else
-             {
-                 JMenuItem subitm=new JMenuItem(name);
-                 subitm.setOpaque(true);
-                 //adding colors
-                 subitm.setBackground(new Color(43,43,43));
-                 subitm.setForeground(new Color(238,205,12));
-                 JMenu itm=(JMenu)languageToggle.getMenuComponent(vect.indexOf(letter ));
-                 itm.add(subitm);
-                 subitm.addActionListener(actionListener);
-             }
-             
-            
-         }
-         
-         syntaxMenu.add(languageToggle);
-         
+
+        syntaxMenu.addSeparator();
+        languageToggle = new JMenu("Change Language...");
+        languageToggle.setBackground(new Color(43, 43, 43));
+        languageToggle.setForeground(new Color(238, 205, 127));
+        Field[] languages = SyntaxConstants.class.getFields();
+        String separ = "public static final java.lang.String org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_";
+        ActionListener actionListener = new MenuActionListener();
+
+        String vect = "";
+        for (Field language : languages) {
+            String name = language.toString();
+            name = (name.split(separ))[1];
+            String letter = name.substring(0, 1);
+
+            if ((vect.indexOf(letter)) == -1) {
+                vect.concat(letter);
+                JMenu itm = new JMenu(letter);
+                languageToggle.add(itm);
+                JMenuItem subitm = new JMenuItem(name);
+                itm.setOpaque(true);
+                //adding colors
+                itm.setBackground(new Color(43, 43, 43));
+                itm.setForeground(new Color(238, 205, 127));
+                subitm.setBackground(new Color(43, 43, 43));
+                subitm.setForeground(new Color(238, 205, 127));
+                itm.add(subitm);
+                subitm.addActionListener(actionListener);
+                vect += letter;
+
+            } else {
+                JMenuItem subitm = new JMenuItem(name);
+                subitm.setOpaque(true);
+                //adding colors
+                subitm.setBackground(new Color(43, 43, 43));
+                subitm.setForeground(new Color(238, 205, 12));
+                JMenu itm = (JMenu) languageToggle.getMenuComponent(vect.indexOf(letter));
+                itm.add(subitm);
+                subitm.addActionListener(actionListener);
+            }
+
+        }
+
+        syntaxMenu.add(languageToggle);
+
     }
-    public void initRSyntax(JPanel panel)
-    {
+
+    public void initRSyntax(JPanel panel) {
         textArea = new RSyntaxTextArea(20, 60);
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.setCodeFoldingEnabled(true);
-        
+
         RTextScrollPane sp = new RTextScrollPane(textArea);
         //configure scrollbars for rtextscrollpane
-        configSbars(sp,panel);
-        
+        configSbars(sp, panel);
+
         //popup custom
-         configSyntaxMenu();
+        configSyntaxMenu();
         //action listen
 
-        InputStream in=getClass().getResourceAsStream("/dark.xml");
-        try{
-            Theme theme=Theme.load(in);
+        InputStream in = getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml");
+        try {
+            Theme theme = Theme.load(in);
             theme.apply(textArea);
-            
-            
-        }catch (IOException ex)
-        {
+
+        } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-        textArea.setFont(new Font("Monospace",Font.BOLD,20));
-        
-        
+        textArea.setFont(new Font("Monospace", Font.BOLD, 20));
+
     }
     //menu function for RSYNTAX
-   
-    //ACTION LISTENER FOR LANG TOGGLE
-   class MenuActionListener implements ActionListener {
-  @Override
-  public void actionPerformed(ActionEvent e) {
-      System.out.println(e.getActionCommand());
-      LangSelector lang=new LangSelector();
-      String context=lang.select(e.getActionCommand());
-      textArea.setSyntaxEditingStyle(context);
-      
-      
-  }
-}
-      
-    
-    
 
-  
+    //ACTION LISTENER FOR LANG TOGGLE
+    class MenuActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println(e.getActionCommand());
+            LangSelector lang = new LangSelector();
+            String context = lang.select(e.getActionCommand());
+            textArea.setSyntaxEditingStyle(context);
+
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -1727,178 +1232,178 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
+
     private void CStitchPartyLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchPartyLabelMouseEntered
-       CStitchPartyLabel.setForeground(new Color(223,102,105));
-        CStitchPartyLabel.setBackground(new Color(81,75,88));
+        CStitchPartyLabel.setForeground(new Color(223, 102, 105));
+        CStitchPartyLabel.setBackground(new Color(81, 75, 88));
+         setTitle("Mintwire Code Stitch Party");
     }//GEN-LAST:event_CStitchPartyLabelMouseEntered
 
     private void CStitchPartyLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchPartyLabelMouseExited
-        CStitchPartyLabel.setForeground(new Color(242,194,195));
-        CStitchPartyLabel.setBackground(new Color(49,46,54));
+        CStitchPartyLabel.setForeground(new Color(242, 194, 195));
+        CStitchPartyLabel.setBackground(new Color(49, 46, 54));
+     
     }//GEN-LAST:event_CStitchPartyLabelMouseExited
 
     private void CStitchLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchLabelMouseEntered
-         CStitchLabel.setForeground(new Color(223,102,105));
-         CStitchLabel.setBackground(new Color(81,75,88));
+        CStitchLabel.setForeground(new Color(223, 102, 105));
+        CStitchLabel.setBackground(new Color(81, 75, 88));
+         setTitle("Mintwire Code Stitch");
     }//GEN-LAST:event_CStitchLabelMouseEntered
 
     private void CStitchLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchLabelMouseExited
-          CStitchLabel.setForeground(new Color(242,194,195));
-          CStitchLabel.setBackground(new Color(49,46,54));
+        CStitchLabel.setForeground(new Color(242, 194, 195));
+        CStitchLabel.setBackground(new Color(49, 46, 54));
     }//GEN-LAST:event_CStitchLabelMouseExited
 
     private void MintLynxLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintLynxLabelMouseEntered
-        MintLynxLabel.setForeground(new Color(223,102,105));
-        MintLynxLabel.setBackground(new Color(81,75,88));
+        MintLynxLabel.setForeground(new Color(223, 102, 105));
+        MintLynxLabel.setBackground(new Color(81, 75, 88));
+         setTitle("Mintwire Mint Lynx");
     }//GEN-LAST:event_MintLynxLabelMouseEntered
 
     private void MintLynxLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintLynxLabelMouseExited
-         MintLynxLabel.setForeground(new Color(242,194,195));
-         MintLynxLabel.setBackground(new Color(49,46,54));
+        MintLynxLabel.setForeground(new Color(242, 194, 195));
+        MintLynxLabel.setBackground(new Color(49, 46, 54));
     }//GEN-LAST:event_MintLynxLabelMouseExited
 
     private void FileSporeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileSporeLabelMouseEntered
-        FileSporeLabel.setForeground(new Color(223,102,105));
-        FileSporeLabel.setBackground(new Color(81,75,88));
+        FileSporeLabel.setForeground(new Color(223, 102, 105));
+        FileSporeLabel.setBackground(new Color(81, 75, 88));
+         setTitle("Mintwire File Spore");
     }//GEN-LAST:event_FileSporeLabelMouseEntered
 
     private void FileSporeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileSporeLabelMouseExited
-      FileSporeLabel.setForeground(new Color(242,194,195));
-        FileSporeLabel.setBackground(new Color(49,46,54));
+        FileSporeLabel.setForeground(new Color(242, 194, 195));
+        FileSporeLabel.setBackground(new Color(49, 46, 54));
     }//GEN-LAST:event_FileSporeLabelMouseExited
 
     private void MintRequestLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintRequestLabelMouseEntered
-       MintRequestLabel.setText("Mint Request");
-       
+        MintRequestLabel.setText("Mint Request");
+
     }//GEN-LAST:event_MintRequestLabelMouseEntered
 
     private void MintRequestLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintRequestLabelMouseExited
         MintRequestLabel.setText("");
-        MintRequestLabel.setBackground(new Color(43,43,43));
+        MintRequestLabel.setBackground(new Color(43, 43, 43));
     }//GEN-LAST:event_MintRequestLabelMouseExited
 
     private void FileHaulLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseEntered
-         FileHaulLabel.setText("File Haul");
+        FileHaulLabel.setText("File Haul");
     }//GEN-LAST:event_FileHaulLabelMouseEntered
 
     private void FileHaulLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseExited
         FileHaulLabel.setText("");
-        FileHaulLabel.setBackground(new Color(43,43,43));
+        FileHaulLabel.setBackground(new Color(43, 43, 43));
     }//GEN-LAST:event_FileHaulLabelMouseExited
 
     private void PreferencesLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseEntered
-       PreferencesLabel.setText("Preferences");
+        PreferencesLabel.setText("Preferences");
     }//GEN-LAST:event_PreferencesLabelMouseEntered
 
     private void PreferencesLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseExited
         PreferencesLabel.setText("");
-        PreferencesLabel.setBackground(new Color(43,43,43));
+        PreferencesLabel.setBackground(new Color(43, 43, 43));
     }//GEN-LAST:event_PreferencesLabelMouseExited
 
     private void IdentityLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabelMouseEntered
-       IdentityLabel.setText("Identity");
+        IdentityLabel.setText("Identity");
     }//GEN-LAST:event_IdentityLabelMouseEntered
 
     private void IdentityLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabelMouseExited
         IdentityLabel.setText("");
-        IdentityLabel.setBackground(new Color(43,43,43));
+        IdentityLabel.setBackground(new Color(43, 43, 43));
     }//GEN-LAST:event_IdentityLabelMouseExited
 
     private void MintRequestLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintRequestLabelMouseClicked
-       MintRequestLabel.setBackground(new Color(53,53,53));
-       //START MINTREQUESTS
-         MintRequests mr=new MintRequests();
-	  mr.pack();
-          mr.setLocationRelativeTo(null);
-          mr.setVisible(true);
+        MintRequestLabel.setBackground(new Color(53, 53, 53));
+        //START MINTREQUESTS
+        MintRequests mr = new MintRequests();
+        mr.pack();
+        mr.setLocationRelativeTo(null);
+        mr.setVisible(true);
     }//GEN-LAST:event_MintRequestLabelMouseClicked
 
     private void FileHaulLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseClicked
-        FileHaulLabel.setBackground(new Color(53,53,53));
+        FileHaulLabel.setBackground(new Color(53, 53, 53));
     }//GEN-LAST:event_FileHaulLabelMouseClicked
 
     private void PreferencesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseClicked
-        PreferencesLabel.setBackground(new Color(53,53,53));
+        PreferencesLabel.setBackground(new Color(53, 53, 53));
         //START PREFERENCES
-          Preferences pr=Preferences.startPreferences(alias);
-	  pr.pack();
-          pr.setLocationRelativeTo(null);
-          pr.setVisible(true);
+        Preferences pr = Preferences.startPreferences(alias);
+        pr.pack();
+        pr.setLocationRelativeTo(null);
+        pr.setVisible(true);
     }//GEN-LAST:event_PreferencesLabelMouseClicked
 
     private void IdentityLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabelMouseClicked
-       IdentityLabel.setBackground(new Color(53,53,53));
-       //START IDENTITY
-         Identity identity=Identity.startIdentity(alias);
-	  identity.pack();
-          identity.setLocationRelativeTo(null);
-          identity.setVisible(true);
-          SwingWorker sw=new SwingWorker() {
-           @Override
-           protected Object doInBackground() throws Exception {
-              while(identity.getInstance()!=null){
-                  Thread.sleep(3000);
-                  
-              }
-              setPfp();
-            return null;
-           }
-        
-           };
-                  
-             sw.execute();
-          
-          
-          
-        
-  
-         
+        IdentityLabel.setBackground(new Color(53, 53, 53));
+        //START IDENTITY
+        Identity identity = Identity.startIdentity(alias);
+        identity.pack();
+        identity.setLocationRelativeTo(null);
+        identity.setVisible(true);
+        SwingWorker sw = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                while (identity.getInstance() != null) {
+                    Thread.sleep(3000);
+
+                }
+                setPfp();
+                return null;
+            }
+
+        };
+
+        sw.execute();
+
+
     }//GEN-LAST:event_IdentityLabelMouseClicked
 
     private void CStitchPartyLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchPartyLabelMouseClicked
-       CodeStitchPanel.setVisible(false);
-       CodeStitchPartyPanel.setVisible(true);
-       MintLynxPanel.setVisible(false);
-       FileSporePanel.setVisible(false);
+        CodeStitchPanel.setVisible(false);
+        CodeStitchPartyPanel.setVisible(true);
+        MintLynxPanel.setVisible(false);
+        FileSporePanel.setVisible(false);
     }//GEN-LAST:event_CStitchPartyLabelMouseClicked
 
     private void CStitchLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchLabelMouseClicked
-       CodeStitchPanel.setVisible(true);
-       CodeStitchPartyPanel.setVisible(false);
-       MintLynxPanel.setVisible(false);
-       FileSporePanel.setVisible(false);
+        CodeStitchPanel.setVisible(true);
+        CodeStitchPartyPanel.setVisible(false);
+        MintLynxPanel.setVisible(false);
+        FileSporePanel.setVisible(false);
     }//GEN-LAST:event_CStitchLabelMouseClicked
 
     private void MintLynxLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintLynxLabelMouseClicked
-       CodeStitchPanel.setVisible(false);
-       CodeStitchPartyPanel.setVisible(false);
-       MintLynxPanel.setVisible(true);
-       FileSporePanel.setVisible(false);
-       initMintLynx();
+        CodeStitchPanel.setVisible(false);
+        CodeStitchPartyPanel.setVisible(false);
+        MintLynxPanel.setVisible(true);
+        FileSporePanel.setVisible(false);
+        initMintLynx();
     }//GEN-LAST:event_MintLynxLabelMouseClicked
 
     private void FileSporeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileSporeLabelMouseClicked
-      CodeStitchPanel.setVisible(false);
-       CodeStitchPartyPanel.setVisible(false);
-       MintLynxPanel.setVisible(false);
-       FileSporePanel.setVisible(true);
-       
+        CodeStitchPanel.setVisible(false);
+        CodeStitchPartyPanel.setVisible(false);
+        MintLynxPanel.setVisible(false);
+        FileSporePanel.setVisible(true);
+
     }//GEN-LAST:event_FileSporeLabelMouseClicked
 
     private void SendSPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SendSPanelMouseClicked
-      
+
     }//GEN-LAST:event_SendSPanelMouseClicked
 
     private void TabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_TabbedPaneStateChanged
-       
-		    JTabbedPane tabbedPane = (JTabbedPane)evt.getSource();
 
-		    int tab = tabbedPane.getSelectedIndex();
-                    if(tab==1)
-                    {
-                        initRSyntax(SendSPanel);
-                    }
+        JTabbedPane tabbedPane = (JTabbedPane) evt.getSource();
+
+        int tab = tabbedPane.getSelectedIndex();
+        if (tab == 1) {
+            initRSyntax(SendSPanel);
+        }
 
     }//GEN-LAST:event_TabbedPaneStateChanged
 
@@ -1912,11 +1417,11 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     }//GEN-LAST:event_jLabel4MouseClicked
 
     private void jLabel4KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jLabel4KeyPressed
-     
+
     }//GEN-LAST:event_jLabel4KeyPressed
 
     private void searchPeerTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchPeerTextFieldFocusGained
-       searchPeerTextField.setText("");
+        searchPeerTextField.setText("");
     }//GEN-LAST:event_searchPeerTextFieldFocusGained
 
     private void searchPeerTextFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchPeerTextFieldFocusLost
@@ -1928,10 +1433,10 @@ UIManager.put("TabbedPane.selectedForeground", new Color(52,203,139));
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-       int poz=sporeTable.getSelectedRow();
-       selectedFile=mintFiles.get(poz).getFileName();
+        int poz = sporeTable.getSelectedRow();
+       // selectedFile = mintFiles.get(poz).getFileName();
     }//GEN-LAST:event_jButton2MouseClicked
-    
+
     /**
      * @param args the command line arguments
      */

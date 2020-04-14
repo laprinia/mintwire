@@ -40,10 +40,13 @@ import mintwire.utils.Utils;
 public class Identity extends javax.swing.JFrame {
 
     private ImageIcon ii;
+    private String aliasPath=System.getenv("APPDATA")+"/MINTWIRE/";
+   
     private ImageIcon finalIcon;
     private Image resultScaled;
     private String alias="no alias";
     private Utils utils=new Utils();
+    private final boolean isLinux=utils.isLinux();
     private static Identity instance=null;
 
 
@@ -93,6 +96,9 @@ public class Identity extends javax.swing.JFrame {
 }
     //end of custom render 
     public Identity(String alias){
+        if(isLinux){
+           aliasPath=System.getProperty("user.home")+"/MINTWIRE/"; 
+        }
         this.alias=alias;
        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
      
@@ -107,7 +113,7 @@ public class Identity extends javax.swing.JFrame {
 
     //MY METHODS
     private void initPfp(String alias) {
-        File pfp = new File("C:\\MINTWIRE\\" + alias + "\\pfp\\pfp.png");
+        File pfp = new File(aliasPath+ alias + "/pfp/pfp.png");
         try {
             BufferedImage bi = ImageIO.read(pfp);
             
@@ -361,7 +367,7 @@ public class Identity extends javax.swing.JFrame {
                 Graphics2D g2 = bi.createGraphics();
                 g2.drawImage(img, 0, 0, null);
                 g2.dispose();
-                ImageIO.write(bi, "png", new File("C:\\MINTWIRE\\" + alias + "\\pfp\\pfp.png"));
+                ImageIO.write(bi, "png", new File(aliasPath + alias + "/pfp/pfp.png"));
                 //SERVER ACTION
 
                

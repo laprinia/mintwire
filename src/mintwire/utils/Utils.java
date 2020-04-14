@@ -54,5 +54,11 @@ public class Utils {
       .map(f -> f.substring(filename.lastIndexOf(".") + 1));
 }
 
+    public boolean isLinux(){
+      String OS = (System.getProperty("os.name")).toUpperCase();
+    
+      if(!OS.contains("WIN")) return true;
+      else return false;
+    }
 }
  
