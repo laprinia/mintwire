@@ -247,7 +247,7 @@
                               <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jPanel7" min="-2" pref="49" max="-2" attributes="0"/>
+                              <Component id="statusPanel" min="-2" pref="49" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -270,7 +270,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="pfpLabel" min="-2" pref="110" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jPanel7" min="-2" pref="49" max="-2" attributes="0"/>
+                      <Component id="statusPanel" min="-2" pref="49" max="-2" attributes="0"/>
                       <EmptySpace pref="45" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -397,7 +397,7 @@
                 <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JPanel" name="jPanel7">
+            <Container class="javax.swing.JPanel" name="statusPanel">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="2b" green="2b" red="2b" type="rgb"/>
@@ -410,14 +410,14 @@
                 </Property>
               </Properties>
               <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPanel(){&#xa;    @Override&#xa;    protected void paintComponent(Graphics g) {&#xa;        super.paintComponent(g);&#xa;        Dimension arcs = new Dimension(15,15);&#xa;        int width = getWidth();&#xa;        int height = getHeight();&#xa;        Graphics2D graphics = (Graphics2D) g;&#xa;        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);&#xa;&#xa;        graphics.setColor(getBackground());&#xa;        graphics.fillOval(0, 0, width-1, height-1);&#xa;        graphics.setColor(getForeground());&#xa;        graphics.drawOval(0, 0, width-1, height-1);&#xa;    }&#xa;}"/>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPanel(){&#xa;    @Override&#xa;    protected void paintComponent(Graphics g) {&#xa;        super.paintComponent(g);&#xa;        Dimension arcs = new Dimension(15,15);&#xa;        int width = getWidth();&#xa;        int height = getHeight();&#xa;        Graphics2D graphics = (Graphics2D) g;&#xa;        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);&#xa;        //graphics.setStroke(new BasicStroke(1));&#xa;        switch(mintNode.getNode().status){&#xa;            case &quot;available&quot;:setForeground(availableColor); break;&#xa;            case &quot;away&quot;:setForeground(awayColor);break;&#xa;            case &quot;donotdisturb&quot;:setForeground(doNotDisturbColor);break;&#xa;            case &quot;invisible&quot;:setForeground(invisibleColor);break;&#xa;            default:setForeground(availableColor);break;&#xa;        }&#xa;        graphics.setColor(getBackground());&#xa;        graphics.fillOval(0, 0, width-1, height-1);&#xa;        graphics.setColor(getForeground());&#xa;        graphics.drawOval(0, 0, width-1, height-1);&#xa;    }&#xa;}"/>
               </AuxValues>
 
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="37" max="32767" attributes="0"/>
+                          <EmptySpace pref="43" max="32767" attributes="0"/>
                           <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -427,7 +427,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel6" pref="25" max="32767" attributes="0"/>
+                          <Component id="jLabel6" pref="37" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>

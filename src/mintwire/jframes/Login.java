@@ -150,6 +150,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     private void startApp(String password, MintNode mintNode) {
+        if(mintNode!=null){
 
         MintwireClientGUI mcg = new MintwireClientGUI(password, mintNode);
         mcg.pack();
@@ -157,7 +158,8 @@ public class Login extends javax.swing.JFrame {
         mcg.setVisible(true);
         mcg.setVisible(true);
         setVisible(false);
-
+        }
+        
     }
     private MintNode createMintNode(String alias) throws InterruptedException{
        byte[] encoded;

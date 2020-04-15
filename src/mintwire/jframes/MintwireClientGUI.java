@@ -1,5 +1,6 @@
 package mintwire.jframes;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -66,6 +67,7 @@ import mintwire.chatpanels.Bubbler;
 import mintwire.classes.MintFile;
 import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
 import mintwire.p2pmodels.MintNode;
+import mintwire.utils.Status;
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -145,7 +147,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }
     //my vars
+    private Color availableColor=new Color(168, 255, 104);
+    private Color awayColor=new Color(255, 190, 104);
+    private Color doNotDisturbColor=new Color(255, 104, 168);
+    private Color invisibleColor=new Color(104, 168, 255);
     private MintNode mintNode;
+    
     private String aliasPath=System.getenv("APPDATA")+"/MINTWIRE/";
     private String sharedPath = "C:\\MINTWIRE Shared";
     
@@ -181,6 +188,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         this.alias=mintNode.getNode().alias;
         this.mintNode=mintNode;
+        
         this.password = password;
          System.out.println(mintNode.getNode().getId());
 
@@ -200,12 +208,41 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     //LAYEREDPANE INITS
     public void initMintLynx() {
-        //chatTextArea.append("Initializare reusita");
+     
 
     }
     //END OF LAYERED PANE INITS
 
     //MY METHODS
+    public void redrawStatus(){
+    statusPanel = new javax.swing.JPanel(){
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Dimension arcs = new Dimension(15,15);
+        int width = getWidth();
+        int height = getHeight();
+        Graphics2D graphics = (Graphics2D) g;
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        switch(mintNode.getNode().status){
+            case "available":setForeground(availableColor); break;
+            case "away":setForeground(awayColor);break;
+            case "donotdisturb":setForeground(doNotDisturbColor);break;
+            case "invisible":setForeground(invisibleColor);break;
+            default:setForeground(availableColor);break;
+        }
+        graphics.setColor(getBackground());
+        graphics.fillOval(0, 0, width-1, height-1);
+        graphics.setColor(getForeground());
+        graphics.drawOval(0, 0, width-1, height-1);
+        repaint();
+    }
+};
+       
+    }
+    
+    
     public void connToServer(String alias) {
         File f1 = new File(aliasPath);
         if (!(f1.exists())) {
@@ -463,7 +500,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         PreferencesLabel = new javax.swing.JLabel();
         IdentityLabel = new javax.swing.JLabel();
         pfpLabel = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel(){
+        statusPanel = new javax.swing.JPanel(){
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -472,7 +509,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 int height = getHeight();
                 Graphics2D graphics = (Graphics2D) g;
                 graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+                //graphics.setStroke(new BasicStroke(1));
+                switch(mintNode.getNode().status){
+                    case "available":setForeground(availableColor); break;
+                    case "away":setForeground(awayColor);break;
+                    case "donotdisturb":setForeground(doNotDisturbColor);break;
+                    case "invisible":setForeground(invisibleColor);break;
+                    default:setForeground(availableColor);break;
+                }
                 graphics.setColor(getBackground());
                 graphics.fillOval(0, 0, width-1, height-1);
                 graphics.setColor(getForeground());
@@ -637,7 +681,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                     .addComponent(CStitchLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(10, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         CStitchLabel.getAccessibleContext().setAccessibleName("CStitchLabel");
@@ -734,25 +778,25 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         pfpLabel.setBackground(new java.awt.Color(43, 43, 43));
         pfpLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-        jPanel7.setBackground(new java.awt.Color(43, 43, 43));
-        jPanel7.setForeground(new java.awt.Color(67, 207, 137));
-        jPanel7.setPreferredSize(new java.awt.Dimension(60, 60));
+        statusPanel.setBackground(new java.awt.Color(43, 43, 43));
+        statusPanel.setForeground(new java.awt.Color(67, 207, 137));
+        statusPanel.setPreferredSize(new java.awt.Dimension(60, 60));
 
         jLabel6.setBackground(new java.awt.Color(43, 43, 43));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
+        statusPanel.setLayout(statusPanelLayout);
+        statusPanelLayout.setHorizontalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, statusPanelLayout.createSequentialGroup()
                 .addContainerGap(43, Short.MAX_VALUE)
                 .addComponent(jLabel6)
                 .addContainerGap())
         );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
+        statusPanelLayout.setVerticalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
                 .addContainerGap())
@@ -777,7 +821,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                         .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(40, 40, 40))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(69, 69, 69))))
         );
         jPanel2Layout.setVerticalGroup(
@@ -796,7 +840,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(45, Short.MAX_VALUE))
         );
 
@@ -1340,7 +1384,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void IdentityLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabelMouseClicked
         IdentityLabel.setBackground(new Color(53, 53, 53));
         //START IDENTITY
-        Identity identity = Identity.startIdentity(alias);
+        Identity identity = Identity.startIdentity(mintNode);
         identity.pack();
         identity.setLocationRelativeTo(null);
         identity.setVisible(true);
@@ -1352,6 +1396,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
                 }
                 setPfp();
+                redrawStatus();
                 return null;
             }
 
@@ -1508,7 +1553,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1521,5 +1565,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton sporeSearch;
     private javax.swing.JTable sporeTable;
     private javax.swing.JTextField sporeText;
+    private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
 }

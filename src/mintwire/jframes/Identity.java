@@ -1,11 +1,8 @@
-
 package mintwire.jframes;
-
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 
 import java.awt.Graphics2D;
@@ -33,107 +30,111 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 
 import javax.swing.SwingWorker;
+import mintwire.p2pmodels.MintNode;
+import mintwire.utils.Status;
 
 import mintwire.utils.Utils;
 
-
 public class Identity extends javax.swing.JFrame {
 
+    private MintNode mintNode;
     private ImageIcon ii;
-    private String aliasPath=System.getenv("APPDATA")+"/MINTWIRE/";
-   
+    private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
+
     private ImageIcon finalIcon;
     private Image resultScaled;
-    private String alias="no alias";
-    private Utils utils=new Utils();
-    private final boolean isLinux=utils.isLinux();
-    private static Identity instance=null;
+    private String alias = "no alias";
+    private Utils utils = new Utils();
+    private final boolean isLinux = utils.isLinux();
+    private static Identity instance = null;
 
-
-    
     public Identity() {
-        
+
         initComponents();
-       
+
     }
-    //SINGLETON
-    public static Identity startIdentity(String alias){
-        if(instance==null){
-            instance=new Identity(alias);
+
+
+    public static Identity startIdentity(MintNode mn) {
+        if (instance == null) {
+            instance = new Identity(mn);
         }
         return instance;
     }
-    public Identity getInstance(){
+
+    public Identity getInstance() {
         return this.instance;
     }
-    //custom render
+
+
     public class ExampleRenderer extends DefaultListCellRenderer {
-  private Map<String, ImageIcon> iconMap = new HashMap<>();
-  private String[] statuses={"Available","Away","Do not Disturb","Invisible"};
-  private ArrayList<ImageIcon> icons=new ArrayList<>();
-  
- 
-  public ExampleRenderer() {
-     
-      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/available.png")));
-      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/away.png")));
-      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/donotdisturb.png")));
-      icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/invisible.png")));
 
+        private Map<String, ImageIcon> iconMap = new HashMap<>();
+        private String[] statuses = {"Available", "Away", "Do not Disturb", "Invisible"};
+        private ArrayList<ImageIcon> icons = new ArrayList<>();
 
-  }
+        public ExampleRenderer() {
 
-  @Override
-  public Component getListCellRendererComponent(JList<?> list, Object value, int index,
-                                                boolean isSelected, boolean cellHasFocus) {
-      super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/available.png")));
+            icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/away.png")));
+            icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/donotdisturb.png")));
+            icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/invisible.png")));
 
-     if(index>=0){this.setText(statuses[index]);
-     this.setIcon(icons.get(index));
-     }
-      return this;
-  }
-}
-    //end of custom render 
-    public Identity(String alias){
-        if(isLinux){
-           aliasPath=System.getProperty("user.home")+"/MINTWIRE/"; 
         }
-        this.alias=alias;
-       this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-     
-         initComponents();
-         editCombo();
-         
-         jPanel3.add(new JLabel(alias));
-         initPfp(alias);
-         
-         
+
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            if (index >= 0) {
+                this.setText(statuses[index]);
+                this.setIcon(icons.get(index));
+            }
+            return this;
+        }
+    }
+
+    //end of custom render 
+    public Identity(MintNode mn) {
+        if (isLinux) {
+            aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
+        }
+        this.mintNode = mn;
+        this.alias = mn.getNode().alias;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        initComponents();
+        editCombo();
+
+        jPanel3.add(new JLabel(alias));
+        initPfp(alias);
+
     }
 
     //MY METHODS
     private void initPfp(String alias) {
-        File pfp = new File(aliasPath+ alias + "/pfp/pfp.png");
+        File pfp = new File(aliasPath + alias + "/pfp/pfp.png");
         try {
             BufferedImage bi = ImageIO.read(pfp);
-            
-            BufferedImage biR=utils.makeRound(bi);
+
+            BufferedImage biR = utils.makeRound(bi);
             ImageIcon ico = new ImageIcon(biR);
-           
+
             pfpLabel.setIcon(ico);
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
-            
 
         }
 
     }
-    private void editCombo(){
-        
-  jComboBox1.setRenderer(new ExampleRenderer());
-       
+
+    private void editCombo() {
+
+        jComboBox1.setRenderer(new ExampleRenderer());
+
     }
-   
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -322,38 +323,37 @@ public class Identity extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1MouseEntered
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-       //CHOOSE PFP
-       JFileChooser jfc=new JFileChooser();
-       jfc.showOpenDialog(null);
-       final File f=jfc.getSelectedFile();
-      //DO A CHECK FOR OTHER EXTENSIONS
-       if(f==null){
-           return;
-       }
-       SwingWorker sw=new SwingWorker() {
-           @Override
-           protected Object doInBackground() throws Exception {
-              Thread.sleep(500);
-              ii = new ImageIcon(ImageIO.read(new File(f.getAbsolutePath())));
-              Image img=ii.getImage();
-              BufferedImage buffImg=(BufferedImage) img;
-              
-              BufferedImage result=utils.makeRound(buffImg);
-             
-              resultScaled=result.getScaledInstance(pfpLabel.getWidth(), pfpLabel.getHeight(), Image.SCALE_SMOOTH);
-              
-              
-              return null;
-           }
-           
-        @Override
-        protected void done() { 
-            super.done();
-            finalIcon=new ImageIcon(resultScaled);
-            pfpLabel.setIcon(finalIcon);
-            
+        //CHOOSE PFP
+        JFileChooser jfc = new JFileChooser();
+        jfc.showOpenDialog(null);
+        final File f = jfc.getSelectedFile();
+        //DO A CHECK FOR OTHER EXTENSIONS
+        if (f == null) {
+            return;
         }
-       };
+        SwingWorker sw = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                Thread.sleep(500);
+                ii = new ImageIcon(ImageIO.read(new File(f.getAbsolutePath())));
+                Image img = ii.getImage();
+                BufferedImage buffImg = (BufferedImage) img;
+
+                BufferedImage result = utils.makeRound(buffImg);
+
+                resultScaled = result.getScaledInstance(pfpLabel.getWidth(), pfpLabel.getHeight(), Image.SCALE_SMOOTH);
+
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                super.done();
+                finalIcon = new ImageIcon(resultScaled);
+                pfpLabel.setIcon(finalIcon);
+
+            }
+        };
         sw.execute();
     }//GEN-LAST:event_jLabel1MouseClicked
 
@@ -368,9 +368,7 @@ public class Identity extends javax.swing.JFrame {
                 g2.drawImage(img, 0, 0, null);
                 g2.dispose();
                 ImageIO.write(bi, "png", new File(aliasPath + alias + "/pfp/pfp.png"));
-                //SERVER ACTION
 
-               
             } catch (IOException e) {
                 //err
                 e.printStackTrace();
@@ -380,17 +378,32 @@ public class Identity extends javax.swing.JFrame {
             System.out.println("neschimb");
 
         }
-         dispose();
-         instance=null;
+        //SERVER ACTION
+        //schimbare 
+        switch (jComboBox1.getSelectedIndex()) {
+            case 0:
+                mintNode.getNode().status = Status.available.toString();
+                break;
+            case 1:
+                mintNode.getNode().status = Status.away.toString();
+                break;
+            case 2:
+                mintNode.getNode().status = Status.donotdisturb.toString();
+                break;
+            case 3:
+                mintNode.getNode().status = Status.available.toString();
+                break;
+            default:
+                mintNode.getNode().status = Status.available.toString();
+                break;
+        }
+
+        dispose();
+        instance = null;
     }//GEN-LAST:event_jLabel2MouseClicked
- 
 
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+       
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

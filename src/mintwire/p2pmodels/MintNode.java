@@ -45,12 +45,11 @@ public class MintNode {
             synchronized (node) {
                 while (!node.isReady() && !node.joinFailed()) {
 
-                        node.wait(200);
+                        node.wait(100);
                    
                     if (node.joinFailed()) {
-                        label = new JLabel("<html><center>Failed to join Mint Ring because: " + node.joinFailedReason());
-                        label.setHorizontalAlignment(SwingConstants.CENTER);
-                        JOptionPane.showMessageDialog(null, label, "Error when creating Pastry Node", JOptionPane.INFORMATION_MESSAGE);
+                        throw new InterruptedException(node.joinFailedReason().getMessage());
+                        
                     }
                 }
             }
