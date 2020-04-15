@@ -1,11 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package mintwire.jframes;
 
-import java.io.IOException;
+
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,21 +21,22 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import jdk.jshell.execution.Util;
+
 import mdlaf.MaterialLookAndFeel;
 import mintwire.BCrypt;
 import mintwire.p2pmodels.MintNode;
 
 import mintwire.theme.CustomTheme;
 import mintwire.utils.Status;
-import mintwire.utils.Utils;
+
+import org.jdesktop.swingx.util.OS;
 import rice.environment.Environment;
 
 
 public class Login extends javax.swing.JFrame {
     
-    private final Utils utils=new Utils();
-    private final boolean isLinux=utils.isLinux();
+  
+    private final boolean isLinux=OS.isLinux();
     private final int ACCOUNT_CAP = 20;
     private final int ACCOUNT_MIN_CHARS = 5;
     private JLabel label;
@@ -47,6 +44,7 @@ public class Login extends javax.swing.JFrame {
 
     
     public Login() {
+        
         System.out.println(isLinux+" is linux");
         if(isLinux) fullPath=System.getProperty("user.home")+"/MINTWIRE/init.txt";
         setTitle("Mintwire Login");
@@ -181,13 +179,14 @@ public class Login extends javax.swing.JFrame {
         }
         Environment env; env = new Environment();
         env.getParameters().setString("nat_search_policy", "never");
-        //MintNode mintNode=new MintNode(Integer.parseInt(tokens.get(0)), new InetSocketAddress(tokens.get(1),Integer.parseInt(tokens.get(2))),alias,Status.available.toString());
-         MintNode mintNode;      
+        MintNode mintNode;      
         try {
-            mintNode = new MintNode(8076,new InetSocketAddress("192.168.126.129",8076),alias,Status.available.toString(),env);
+           mintNode=new MintNode(Integer.parseInt(tokens.get(0)), new InetSocketAddress(tokens.get(1),Integer.parseInt(tokens.get(2))),alias,Status.available.toString(),env);
              return mintNode;
-        } catch (IOException ex) {
-            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            label=new JLabel("<html><center>Node not configured corectly!"+ ex.getMessage());
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Pastry Node Error", JOptionPane.INFORMATION_MESSAGE);
         }
        return null;
     }
