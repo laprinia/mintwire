@@ -177,11 +177,11 @@ public class Preferences extends javax.swing.JFrame {
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
           if ("peerbase".equals(new String(serverPassword.getPassword()))) {
                JOptionPane.showMessageDialog(null, "Have fun playing with the server console", "Authorization succeded", JOptionPane.INFORMATION_MESSAGE);
-            MintwireServerGUI msg = new MintwireServerGUI();
-            msg.pack();
-            msg.setLocationRelativeTo(null);
-            msg.setVisible(true);
-            msg.setVisible(true);
+//            MintwireServerGUI msg = new MintwireServerGUI();
+//            msg.pack();
+//            msg.setLocationRelativeTo(null);
+//            msg.setVisible(true);
+//            msg.setVisible(true);
               
            
         } else {

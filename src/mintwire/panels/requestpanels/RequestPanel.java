@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mintwire.requestpanels;
+package mintwire.panels.requestpanels;
 
 /**
  *
@@ -109,7 +109,7 @@ public class RequestPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
-           System.out.println("je ne sais blah");
+          
     }//GEN-LAST:event_jLabel3MouseClicked
 
 

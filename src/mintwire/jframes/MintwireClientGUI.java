@@ -1,6 +1,5 @@
 package mintwire.jframes;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -26,7 +25,6 @@ import java.io.InputStream;
 
 import java.lang.reflect.Field;
 
-
 import java.net.ServerSocket;
 
 import java.nio.file.Files;
@@ -44,11 +42,13 @@ import javax.swing.JLabel;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 
 import javax.swing.SwingWorker;
 
@@ -147,17 +147,16 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }
     //my vars
-    private Color availableColor=new Color(168, 255, 104);
-    private Color awayColor=new Color(255, 190, 104);
-    private Color doNotDisturbColor=new Color(255, 104, 168);
-    private Color invisibleColor=new Color(104, 168, 255);
+    private Color availableColor = new Color(168, 255, 104);
+    private Color awayColor = new Color(255, 190, 104);
+    private Color doNotDisturbColor = new Color(255, 104, 168);
+    private Color invisibleColor = new Color(104, 168, 255);
     private MintNode mintNode;
-    
-    private String aliasPath=System.getenv("APPDATA")+"/MINTWIRE/";
+
+    private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
     private String sharedPath = "C:\\MINTWIRE Shared";
-    
+
     private FileSporeTableModel sporeModel = new FileSporeTableModel();
-   
 
     private ArrayList<MintFile> mintFiles = new ArrayList();
     private Bubbler bubbler;
@@ -168,7 +167,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     final JPanel scrollablePanel = new JPanel(new GridLayout(0, 1));
     private Utils utils = new Utils();
-    private final boolean isLinux=utils.isLinux();
+    private final boolean isLinux = utils.isLinux();
     private String alias;
     private String password;
     private RSyntaxTextArea textArea;
@@ -186,14 +185,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     public MintwireClientGUI(String password, MintNode mintNode) {
 
-        this.alias=mintNode.getNode().alias;
-        this.mintNode=mintNode;
-        
-        this.password = password;
-         System.out.println(mintNode.getNode().getId());
+        this.alias = mintNode.getNode().alias;
+        this.mintNode = mintNode;
 
-        if(isLinux){
-            aliasPath=System.getProperty("user.home")+"/MINTWIRE/";
+        this.password = password;
+        System.out.println(mintNode.getNode().getId());
+
+        if (isLinux) {
+            aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
         }
         setTabbedDesign();
         initComponents();
@@ -208,47 +207,55 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     //LAYEREDPANE INITS
     public void initMintLynx() {
-     
 
     }
     //END OF LAYERED PANE INITS
 
     //MY METHODS
-    public void redrawStatus(){
-    statusPanel = new javax.swing.JPanel(){
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Dimension arcs = new Dimension(15,15);
-        int width = getWidth();
-        int height = getHeight();
-        Graphics2D graphics = (Graphics2D) g;
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        switch(mintNode.getNode().status){
-            case "available":setForeground(availableColor); break;
-            case "away":setForeground(awayColor);break;
-            case "donotdisturb":setForeground(doNotDisturbColor);break;
-            case "invisible":setForeground(invisibleColor);break;
-            default:setForeground(availableColor);break;
-        }
-        graphics.setColor(getBackground());
-        graphics.fillOval(0, 0, width-1, height-1);
-        graphics.setColor(getForeground());
-        graphics.drawOval(0, 0, width-1, height-1);
+    public void redrawStatus() {
+        statusPanel = new javax.swing.JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Dimension arcs = new Dimension(15, 15);
+                int width = getWidth();
+                int height = getHeight();
+                Graphics2D graphics = (Graphics2D) g;
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                switch (mintNode.getNode().status) {
+                    case "available":
+                        setForeground(availableColor);
+                        break;
+                    case "away":
+                        setForeground(awayColor);
+                        break;
+                    case "donotdisturb":
+                        setForeground(doNotDisturbColor);
+                        break;
+                    case "invisible":
+                        setForeground(invisibleColor);
+                        break;
+                    default:
+                        setForeground(availableColor);
+                        break;
+                }
+                graphics.setColor(getBackground());
+                graphics.fillOval(0, 0, width - 1, height - 1);
+                graphics.setColor(getForeground());
+                graphics.drawOval(0, 0, width - 1, height - 1);
+                repaint();
+            }
+
+        };
         repaint();
     }
-};
-       
-    }
-    
-    
+
     public void connToServer(String alias) {
         File f1 = new File(aliasPath);
         if (!(f1.exists())) {
             f1.mkdir();
         }
-       
 
         File f2 = new File(aliasPath + alias);
         if (!(f2.exists())) {
@@ -276,7 +283,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         }
 
-        Path path = Paths.get(aliasPath+ alias);
+        Path path = Paths.get(aliasPath + alias);
         try {
             Files.setAttribute(path, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
         } catch (Exception ex) {
@@ -297,7 +304,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
             pfpLabel.setIcon(ico);
         } catch (Exception ex) {
-            System.out.print("excc in load: " + ex.getMessage());
+            infoLabel = new JLabel("<html><center>" + ex.getMessage());
+            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, infoLabel, "Cannot load profile picture", JOptionPane.INFORMATION_MESSAGE);
 
         }
 
@@ -391,7 +400,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     public void setStitchLabelOn() {
 //        CStitchLabel.setForeground(new Color(223, 102, 105));
 //        CStitchLabel.setBackground(new Color(88, 99, 91));
-          setTitle("Mintwire Code Stitch");
+        setTitle("Mintwire Code Stitch");
     }
 
     public void configSyntaxMenu() {
@@ -883,6 +892,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         sendButton.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         sendButton.setForeground(new java.awt.Color(255, 255, 255));
         sendButton.setText("Send a stitch...");
+        sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sendButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout CodeStitchPanelLayout = new javax.swing.GroupLayout(CodeStitchPanel);
         CodeStitchPanel.setLayout(CodeStitchPanelLayout);
@@ -1280,19 +1294,19 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void CStitchPartyLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchPartyLabelMouseEntered
         CStitchPartyLabel.setForeground(new Color(223, 102, 105));
         CStitchPartyLabel.setBackground(new Color(81, 75, 88));
-         setTitle("Mintwire Code Stitch Party");
+        setTitle("Mintwire Code Stitch Party");
     }//GEN-LAST:event_CStitchPartyLabelMouseEntered
 
     private void CStitchPartyLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchPartyLabelMouseExited
         CStitchPartyLabel.setForeground(new Color(242, 194, 195));
         CStitchPartyLabel.setBackground(new Color(49, 46, 54));
-     
+
     }//GEN-LAST:event_CStitchPartyLabelMouseExited
 
     private void CStitchLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchLabelMouseEntered
         CStitchLabel.setForeground(new Color(223, 102, 105));
         CStitchLabel.setBackground(new Color(81, 75, 88));
-         setTitle("Mintwire Code Stitch");
+        setTitle("Mintwire Code Stitch");
     }//GEN-LAST:event_CStitchLabelMouseEntered
 
     private void CStitchLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchLabelMouseExited
@@ -1303,7 +1317,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void MintLynxLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintLynxLabelMouseEntered
         MintLynxLabel.setForeground(new Color(223, 102, 105));
         MintLynxLabel.setBackground(new Color(81, 75, 88));
-         setTitle("Mintwire Mint Lynx");
+        setTitle("Mintwire Mint Lynx");
     }//GEN-LAST:event_MintLynxLabelMouseEntered
 
     private void MintLynxLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintLynxLabelMouseExited
@@ -1314,7 +1328,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void FileSporeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileSporeLabelMouseEntered
         FileSporeLabel.setForeground(new Color(223, 102, 105));
         FileSporeLabel.setBackground(new Color(81, 75, 88));
-         setTitle("Mintwire File Spore");
+        setTitle("Mintwire File Spore");
     }//GEN-LAST:event_FileSporeLabelMouseEntered
 
     private void FileSporeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileSporeLabelMouseExited
@@ -1479,8 +1493,17 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
         int poz = sporeTable.getSelectedRow();
-       // selectedFile = mintFiles.get(poz).getFileName();
+        // selectedFile = mintFiles.get(poz).getFileName();
     }//GEN-LAST:event_jButton2MouseClicked
+
+    private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
+        SendCodeStitch scs =SendCodeStitch.getInstance(aliasPath, mintNode);
+        scs.pack();
+        scs.setLocationRelativeTo(null);
+        scs.setVisible(true);
+        scs.setVisible(true);
+        
+    }//GEN-LAST:event_sendButtonMouseClicked
 
     /**
      * @param args the command line arguments

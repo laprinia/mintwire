@@ -8,34 +8,32 @@ package mintwire.jframes;
 import java.awt.Panel;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import mintwire.requestpanels.BlancPanel;
-import mintwire.requestpanels.RequestPanel;
-
+import mintwire.panels.requestpanels.BlancPanel;
+import mintwire.panels.requestpanels.RequestPanel;
 
 public class MintRequests extends javax.swing.JFrame {
-   private static int requestCount=0;
-   private Box box = new Box(BoxLayout.Y_AXIS);
+
+    private static int requestCount = 0;
+    private Box box = new Box(BoxLayout.Y_AXIS);
+
     public MintRequests() {
         initComponents();
-         for(int i=0;i<10;i++){
-             paintRequest();
-         }
-          
-       
-        
-        
+        for (int i = 0; i < 10; i++) {
+            paintRequest();
+        }
+
     }
 
-   
-    public void paintRequest(){
-        requestCount=requestCount+1;
-         RequestPanel panel=new RequestPanel();
-       
-        panel.setSize(requestScroll.getWidth()-4,100);
+    public void paintRequest() {
+        requestCount = requestCount + 1;
+        RequestPanel panel = new RequestPanel();
+
+        panel.setSize(requestScroll.getWidth() - 4, 100);
         box.add(panel);
         box.revalidate();
-       
+
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
