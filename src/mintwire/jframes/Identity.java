@@ -97,6 +97,7 @@ public class Identity extends javax.swing.JFrame {
 
     //end of custom render 
     public Identity(MintNode mn) {
+        setTitle("Identity");
         if (isLinux) {
             aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
         }
