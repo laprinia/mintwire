@@ -25,8 +25,6 @@ import java.io.InputStream;
 
 import java.lang.reflect.Field;
 
-import java.net.ServerSocket;
-
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
@@ -170,12 +168,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private final boolean isLinux = utils.isLinux();
     private String alias;
     private String password;
-    private RSyntaxTextArea textArea;
+    private RSyntaxTextArea requestTextArea;
+    private RSyntaxTextArea sendTextArea;
     private String filePath;
     private final String langPre = "SyntaxConstants.SYNTAX_STYLE_";
-    private JMenu languageToggle;
+    private JMenu requestLanguageToggle;
+    private JMenu sendLanguageToggle;
     private ArrayList<String> array = new ArrayList<String>();
-    private ServerSocket miniServerSock;
+   
 
     //end of my vars
     public MintwireClientGUI() {
@@ -194,10 +194,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         if (isLinux) {
             aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
         }
-        setTabbedDesign();
+        
+        
         initComponents();
+        setTabbedDesign();
         setStitchLabelOn();
-        initRSyntax(RequestSPanel);
+        
+        
         connToServer(alias);
 
         setPfp();
@@ -403,16 +406,26 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         setTitle("Mintwire Code Stitch");
     }
 
-    public void configSyntaxMenu() {
-        JPopupMenu syntaxMenu = textArea.getPopupMenu();
+
+    public void initSendRSyntax() {
+        sendTextArea = new RSyntaxTextArea(20, 60);
+        sendTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        sendTextArea.setCodeFoldingEnabled(true);
+
+        RTextScrollPane sp = new RTextScrollPane(sendTextArea);
+        //configure scrollbars for rtextscrollpane
+        configSbars(sp, SendSPanel);
+
+        //popup custom
+          JPopupMenu syntaxMenu = sendTextArea.getPopupMenu();
 
         syntaxMenu.addSeparator();
-        languageToggle = new JMenu("Change Language...");
-        languageToggle.setBackground(new Color(43, 43, 43));
-        languageToggle.setForeground(new Color(238, 205, 127));
+        sendLanguageToggle = new JMenu("Change Language...");
+        sendLanguageToggle.setBackground(new Color(43, 43, 43));
+        sendLanguageToggle.setForeground(new Color(238, 205, 127));
         Field[] languages = SyntaxConstants.class.getFields();
         String separ = "public static final java.lang.String org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_";
-        ActionListener actionListener = new MenuActionListener();
+        ActionListener actionListener = new SendMenuActionListener();
 
         String vect = "";
         for (Field language : languages) {
@@ -423,7 +436,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             if ((vect.indexOf(letter)) == -1) {
                 vect.concat(letter);
                 JMenu itm = new JMenu(letter);
-                languageToggle.add(itm);
+                sendLanguageToggle.add(itm);
                 JMenuItem subitm = new JMenuItem(name);
                 itm.setOpaque(true);
                 //adding colors
@@ -441,56 +454,121 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 //adding colors
                 subitm.setBackground(new Color(43, 43, 43));
                 subitm.setForeground(new Color(238, 205, 12));
-                JMenu itm = (JMenu) languageToggle.getMenuComponent(vect.indexOf(letter));
+                JMenu itm = (JMenu) sendLanguageToggle.getMenuComponent(vect.indexOf(letter));
                 itm.add(subitm);
                 subitm.addActionListener(actionListener);
             }
 
         }
 
-        syntaxMenu.add(languageToggle);
-
-    }
-
-    public void initRSyntax(JPanel panel) {
-        textArea = new RSyntaxTextArea(20, 60);
-        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-        textArea.setCodeFoldingEnabled(true);
-
-        RTextScrollPane sp = new RTextScrollPane(textArea);
-        //configure scrollbars for rtextscrollpane
-        configSbars(sp, panel);
-
-        //popup custom
-        configSyntaxMenu();
+        syntaxMenu.add(sendLanguageToggle);
         //action listen
 
         InputStream in = getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml");
         try {
             Theme theme = Theme.load(in);
-            theme.apply(textArea);
+            theme.apply(sendTextArea);
 
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-        textArea.setFont(new Font("Monospace", Font.BOLD, 20));
+        sendTextArea.setFont(new Font("Monospace", Font.BOLD, 20));
 
     }
-    //menu function for RSYNTAX
+     public void initRequestRSyntax() {
+        requestTextArea = new RSyntaxTextArea(20, 60);
+        requestTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+       requestTextArea.setCodeFoldingEnabled(true);
 
+        RTextScrollPane sp = new RTextScrollPane(requestTextArea);
+        //configure scrollbars for rtextscrollpane
+        configSbars(sp, RequestSPanel);
+
+        //popup custom
+          JPopupMenu syntaxMenu = requestTextArea.getPopupMenu();
+
+        syntaxMenu.addSeparator();
+        requestLanguageToggle = new JMenu("Change Language...");
+        requestLanguageToggle.setBackground(new Color(43, 43, 43));
+        requestLanguageToggle.setForeground(new Color(238, 205, 127));
+        Field[] languages = SyntaxConstants.class.getFields();
+        String separ = "public static final java.lang.String org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_";
+        ActionListener actionListener = new RequestMenuActionListener();
+
+        String vect = "";
+        for (Field language : languages) {
+            String name = language.toString();
+            name = (name.split(separ))[1];
+            String letter = name.substring(0, 1);
+
+            if ((vect.indexOf(letter)) == -1) {
+                vect.concat(letter);
+                JMenu itm = new JMenu(letter);
+                requestLanguageToggle.add(itm);
+                JMenuItem subitm = new JMenuItem(name);
+                itm.setOpaque(true);
+                //adding colors
+                itm.setBackground(new Color(43, 43, 43));
+                itm.setForeground(new Color(238, 205, 127));
+                subitm.setBackground(new Color(43, 43, 43));
+                subitm.setForeground(new Color(238, 205, 127));
+                itm.add(subitm);
+                subitm.addActionListener(actionListener);
+                vect += letter;
+
+            } else {
+                JMenuItem subitm = new JMenuItem(name);
+                subitm.setOpaque(true);
+                //adding colors
+                subitm.setBackground(new Color(43, 43, 43));
+                subitm.setForeground(new Color(238, 205, 12));
+                JMenu itm = (JMenu) requestLanguageToggle.getMenuComponent(vect.indexOf(letter));
+                itm.add(subitm);
+                subitm.addActionListener(actionListener);
+            }
+
+        }
+
+        syntaxMenu.add(requestLanguageToggle);
+        //action listen
+
+        InputStream in = getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml");
+        try {
+            Theme theme = Theme.load(in);
+            theme.apply(requestTextArea);
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        requestTextArea.setFont(new Font("Monospace", Font.BOLD, 20));
+
+    }
+  
     //ACTION LISTENER FOR LANG TOGGLE
-    class MenuActionListener implements ActionListener {
+    class SendMenuActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println(e.getActionCommand());
+           
             LangSelector lang = new LangSelector();
             String context = lang.select(e.getActionCommand());
-            textArea.setSyntaxEditingStyle(context);
-
+            System.err.println(context);
+            sendTextArea.setSyntaxEditingStyle(context);
+       
         }
     }
+    class RequestMenuActionListener implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+           
+            LangSelector lang = new LangSelector();
+            String context = lang.select(e.getActionCommand());
+            System.err.println(context);
+           requestTextArea.setSyntaxEditingStyle(context);
+         
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -874,6 +952,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         RequestSPanel.setForeground(new java.awt.Color(51, 255, 0));
         RequestSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Request a Stitching", RequestSPanel);
+        initRequestRSyntax();
 
         SendSPanel.setBackground(new java.awt.Color(51, 51, 51));
         SendSPanel.setForeground(new java.awt.Color(51, 255, 51));
@@ -884,6 +963,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         });
         SendSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Send a Stitching", SendSPanel);
+        initSendRSyntax();
 
         saveButton.setForeground(new java.awt.Color(255, 255, 255));
         saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png"))); // NOI18N
@@ -891,6 +971,16 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         saveButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 102, 102)));
         saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        saveButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                saveButtonMouseClicked(evt);
+            }
+        });
+        saveButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                saveButtonKeyPressed(evt);
+            }
+        });
 
         sendButton.setForeground(new java.awt.Color(255, 255, 255));
         sendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send.png"))); // NOI18N
@@ -1415,6 +1505,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                     Thread.sleep(3000);
 
                 }
+                //reset pfp and status
                 setPfp();
                 redrawStatus();
                 return null;
@@ -1463,12 +1554,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void TabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_TabbedPaneStateChanged
 
-        JTabbedPane tabbedPane = (JTabbedPane) evt.getSource();
-
-        int tab = tabbedPane.getSelectedIndex();
-        if (tab == 1) {
-            initRSyntax(SendSPanel);
-        }
+//        JTabbedPane tabbedPane = (JTabbedPane) evt.getSource();
+//
+//        int tab = tabbedPane.getSelectedIndex();
+//        if (tab == 1) {
+//            initRSyntax(SendSPanel);
+//        }
 
     }//GEN-LAST:event_TabbedPaneStateChanged
 
@@ -1503,8 +1594,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
-       
-        SendCodeStitch scs =SendCodeStitch.getInstance(aliasPath, mintNode);
+       String message=sendTextArea.getText().toString()+","+sendTextArea.getSyntaxEditingStyle();
+       System.out.println(message);
+        SendCodeStitch scs =SendCodeStitch.getInstance(message, mintNode);
+        
         scs.pack();
         scs.setLocationRelativeTo(null);
         scs.setVisible(true);
@@ -1512,15 +1605,17 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_sendButtonMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
+    private void saveButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_saveButtonKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_saveButtonKeyPressed
+
+    private void saveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveButtonMouseClicked
+
+    }//GEN-LAST:event_saveButtonMouseClicked
+
+   
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+       
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -1537,9 +1632,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MintwireClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
+       
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MintwireClientGUI().setVisible(true);
