@@ -2,6 +2,7 @@
 package mintwire.jframes;
 
 
+import java.awt.Image;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import javax.swing.JOptionPane;
@@ -221,7 +223,7 @@ public class Login extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(94, 87, 104));
 
         jLabel2.setBackground(new java.awt.Color(94, 87, 104));
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/logos/resized-logo.png"))); // NOI18N
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/logos/resized-logo.png")));
 
         jPanel2.setBackground(new java.awt.Color(94, 87, 104));
 
@@ -274,10 +276,10 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        jTextField1.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        jTextField1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jTextField1.setForeground(new java.awt.Color(67, 207, 137));
 
-        jPasswordField1.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        jPasswordField1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jPasswordField1.setForeground(new java.awt.Color(67, 207, 137));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -313,7 +315,7 @@ public class Login extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
                     .addComponent(jPasswordField1))
@@ -355,6 +357,8 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        jLabel2.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/logos/logo-1-biggest.png")).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

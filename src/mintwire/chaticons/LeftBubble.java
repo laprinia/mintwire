@@ -11,7 +11,6 @@ import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 
 import java.awt.geom.RoundRectangle2D;
-import static jdk.vm.ci.sparc.SPARC.g2;
 
 public class LeftBubble extends Bubble {
 

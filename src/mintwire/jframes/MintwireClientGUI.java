@@ -203,7 +203,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         setPfp();
 
     }
-    //P2P MODELS
+    //FUNCTIONS THAT REQUIRE P2P
+    
 
     //LAYEREDPANE INITS
     public void initMintLynx() {
@@ -398,8 +399,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
 
     public void setStitchLabelOn() {
-//        CStitchLabel.setForeground(new Color(223, 102, 105));
-//        CStitchLabel.setBackground(new Color(88, 99, 91));
+
         setTitle("Mintwire Code Stitch");
     }
 
@@ -885,13 +885,19 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         SendSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Send a Stitching", SendSPanel);
 
-        saveButton.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         saveButton.setForeground(new java.awt.Color(255, 255, 255));
-        saveButton.setText("Save a stitch...");
+        saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png"))); // NOI18N
+        saveButton.setText("Save stitch");
+        saveButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 102, 102)));
+        saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 
-        sendButton.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         sendButton.setForeground(new java.awt.Color(255, 255, 255));
-        sendButton.setText("Send a stitch...");
+        sendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send.png"))); // NOI18N
+        sendButton.setText("Send stitch");
+        sendButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 102, 102)));
+        sendButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sendButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 sendButtonMouseClicked(evt);
@@ -906,10 +912,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(TabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1036, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addGroup(CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(sendButton, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                    .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
         CodeStitchPanelLayout.setVerticalGroup(
             CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -918,10 +924,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addComponent(TabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(CodeStitchPanelLayout.createSequentialGroup()
-                .addGap(77, 77, 77)
-                .addComponent(sendButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(76, 76, 76)
+                .addComponent(sendButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(saveButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1497,6 +1503,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
+       
         SendCodeStitch scs =SendCodeStitch.getInstance(aliasPath, mintNode);
         scs.pack();
         scs.setLocationRelativeTo(null);

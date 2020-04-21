@@ -40,7 +40,12 @@ public class PeerPanel extends javax.swing.JPanel {
     }
 
     public PeerPanel(PastryNode pastryNode) {
-        
+       setFocusable(true);
+    setRequestFocusEnabled(true);
+
+
+
+
         if (utils.isLinux()) {
             aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
         }
@@ -109,10 +114,14 @@ public class PeerPanel extends javax.swing.JPanel {
         ;
 
         setBackground(new java.awt.Color(45, 48, 56));
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
-        aliasLabel.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        aliasLabel.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
         aliasLabel.setForeground(new java.awt.Color(204, 204, 204));
-        aliasLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         aliasLabel.setPreferredSize(new java.awt.Dimension(195, 86));
 
         jPanel1.setPreferredSize(new java.awt.Dimension(80, 80));
@@ -127,7 +136,7 @@ public class PeerPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,6 +166,10 @@ public class PeerPanel extends javax.swing.JPanel {
 
         aliasLabel.setText(pastryNode.alias);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+       requestFocus();
+    }//GEN-LAST:event_formKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
