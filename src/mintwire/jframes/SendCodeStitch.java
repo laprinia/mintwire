@@ -2,21 +2,27 @@
 package mintwire.jframes;
 
 import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import mintwire.p2pmodels.MintNode;
 import mintwire.panels.peerlist.PeerPanel;
-import mintwire.panels.requestpanels.RequestPanel;
-import rice.pastry.PastryNode;
+import rice.pastry.NodeHandle;
 
-/**
- *
- * @author Lavinia
- */
+import rice.pastry.PastryNode;
+import rice.pastry.leafset.LeafSet;
+
+
 public class SendCodeStitch extends javax.swing.JFrame {
 private Box box = new Box(BoxLayout.Y_AXIS);
 private static SendCodeStitch instance=null;
-private MintNode mintNode;   
+private MintNode mintNode; 
+private List<NodeHandle> handles ;
+
 
     public static SendCodeStitch getInstance(String codeStitch, MintNode mainNode){
         if(instance==null){
@@ -31,16 +37,15 @@ private MintNode mintNode;
     private SendCodeStitch(String codeStitch, MintNode mainNode){
         setTitle("Send a stitch");
         this.mintNode=mainNode;
+        LeafSet set = mintNode.getNode().getLeafSet();
+        handles= set.asList();
         
         initComponents();
         peerScroll.setPreferredSize(new Dimension(299,276));
         peerScroll.revalidate();
-        paintRequest(mintNode.getNode());
-        paintRequest(mintNode.getNode());
-        paintRequest(mintNode.getNode());
-        paintRequest(mintNode.getNode());
-        paintRequest(mintNode.getNode());
-        paintRequest(mintNode.getNode());
+         for(NodeHandle h:handles){
+             paintRequest(h.getLocalNode());
+        }
         peerScroll.revalidate();
         
     }
@@ -51,6 +56,7 @@ private MintNode mintNode;
         panel.setPreferredSize(new Dimension(299,92));
         panel.revalidate();
         box.add(panel);
+       
         box.revalidate();
        
        

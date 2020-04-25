@@ -55,7 +55,7 @@ public class Identity extends javax.swing.JFrame {
     }
 
 
-    public static Identity startIdentity(MintNode mn) {
+    public static Identity getIndentityInstance(MintNode mn) {
         if (instance == null) {
             instance = new Identity(mn);
         }
@@ -67,13 +67,13 @@ public class Identity extends javax.swing.JFrame {
     }
 
 
-    public class ExampleRenderer extends DefaultListCellRenderer {
+    public class StatusRenderer extends DefaultListCellRenderer {
 
         private Map<String, ImageIcon> iconMap = new HashMap<>();
         private String[] statuses = {"Available", "Away", "Do not Disturb", "Invisible"};
         private ArrayList<ImageIcon> icons = new ArrayList<>();
 
-        public ExampleRenderer() {
+        public StatusRenderer() {
 
             icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/available.png")));
             icons.add(new ImageIcon(getClass().getResource("/mintwire/res/pngs/away.png")));
@@ -132,7 +132,7 @@ public class Identity extends javax.swing.JFrame {
 
     private void editCombo() {
 
-        jComboBox1.setRenderer(new ExampleRenderer());
+        jComboBox1.setRenderer(new StatusRenderer());
 
     }
 

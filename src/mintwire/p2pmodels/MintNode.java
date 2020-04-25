@@ -1,6 +1,7 @@
 package mintwire.p2pmodels;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import org.graalvm.compiler.nodes.BreakpointNode;
 import rice.environment.Environment;
 import rice.pastry.NodeHandle;
 import rice.pastry.NodeIdFactory;
@@ -28,17 +30,21 @@ public class MintNode {
     private PastryNode node;
     private JLabel label;
 
-    public MintNode(int bindport, InetSocketAddress bootaddr, String alias, String status,Environment env) throws InterruptedException, IOException {
+    public MintNode(int bindport, InetSocketAddress bootaddr, String alias, String status,Environment env) throws InterruptedException, IOException,BindException {
        
         environment = new Environment();
         environment.getParameters().setString("nat_search_policy", "never");
 
         NodeIdFactory nodeIdFactory = new RandomNodeIdFactory(env);
-        
+      
        PastryNodeFactory pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, bindport, environment);
+      
             node = pastryNodeFactory.newNode();
+            
+            
             node.boot(bootaddr);
             
+       
             node.alias = alias;
             node.status = status;
 
@@ -48,16 +54,18 @@ public class MintNode {
                         node.wait(100);
                    
                     if (node.joinFailed()) {
+                        System.err.println("node fail");
                         throw new InterruptedException(node.joinFailedReason().getMessage());
                         
                     }
                 }
+                  label = new JLabel("<html><center> You succesfully entered the ring" );
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, label, "You are in!", JOptionPane.INFORMATION_MESSAGE);
             }
 
         
-          label = new JLabel("<html><center> Yor Pastry Node was succesfully created" );
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            JOptionPane.showMessageDialog(null, label, "You are in!", JOptionPane.INFORMATION_MESSAGE);
+        
 
     }
 

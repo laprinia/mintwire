@@ -5,7 +5,7 @@ public class Register extends javax.swing.JFrame {
 
     private static Register instance = null;
 
-    public static Register startRegister() {
+    public static Register getRegisterInstance() {
         if (instance == null) {
             instance = new Register();
         }

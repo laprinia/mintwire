@@ -44,7 +44,7 @@ import javax.swing.JOptionPane;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTabbedPane;
+
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
@@ -65,7 +65,7 @@ import mintwire.chatpanels.Bubbler;
 import mintwire.classes.MintFile;
 import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
 import mintwire.p2pmodels.MintNode;
-import mintwire.utils.Status;
+
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -168,12 +168,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private final boolean isLinux = utils.isLinux();
     private String alias;
     private String password;
-    private RSyntaxTextArea requestTextArea;
-    private RSyntaxTextArea sendTextArea;
+    private  RSyntaxTextArea requestTextArea=new RSyntaxTextArea(20, 60);
+    private  RSyntaxTextArea sendTextArea= new RSyntaxTextArea(20, 60);
     private String filePath;
     private final String langPre = "SyntaxConstants.SYNTAX_STYLE_";
-    private JMenu requestLanguageToggle;
-    private JMenu sendLanguageToggle;
+    private static JMenu requestLanguageToggle;
+    private  static JMenu sendLanguageToggle;
     private ArrayList<String> array = new ArrayList<String>();
    
 
@@ -197,11 +197,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         
         
         initComponents();
+        initRSyntax(requestTextArea,RequestSPanel,requestLanguageToggle, true);
+        initRSyntax(sendTextArea, SendSPanel, sendLanguageToggle,false);
+
         setTabbedDesign();
         setStitchLabelOn();
         
         
-        connToServer(alias);
+        initFileStructure(alias);
 
         setPfp();
 
@@ -216,7 +219,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     //END OF LAYERED PANE INITS
 
     //MY METHODS
-    public void redrawStatus() {
+    private void redrawStatus() {
         statusPanel = new javax.swing.JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -255,7 +258,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         repaint();
     }
 
-    public void connToServer(String alias) {
+    private void initFileStructure(String alias) {
         File f1 = new File(aliasPath);
         if (!(f1.exists())) {
             f1.mkdir();
@@ -270,7 +273,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             File f4 = new File("src/mintwire/res/pngs/profilepic.png");
             try {
                 BufferedImage bi = ImageIO.read(f4);
-                //am citit acum o salvez ca pfp pentru prima logare
+                
                 File outputF = new File(aliasPath + alias + "/pfp/pfp.png");
                 ImageIO.write(bi, "PNG", outputF);
                 FileWriter fw = new FileWriter(aliasPath + alias + "/history.json");
@@ -296,7 +299,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }
 
-    public void setPfp() {
+    private void setPfp() {
         File pfp = new File(aliasPath + alias + "/pfp/pfp.png");
         try {
             BufferedImage bi = ImageIO.read(pfp);
@@ -316,7 +319,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }
 
-    public void configSbars(RTextScrollPane sp, JPanel panel) {
+    private void configSbars(RTextScrollPane sp, JPanel panel) {
         //config scrollbar color
         JPanel p = new JPanel();
         JPanel r = new JPanel();
@@ -407,26 +410,29 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
 
 
-    public void initSendRSyntax() {
-        sendTextArea = new RSyntaxTextArea(20, 60);
-        sendTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-        sendTextArea.setCodeFoldingEnabled(true);
-
-        RTextScrollPane sp = new RTextScrollPane(sendTextArea);
+    public void initRSyntax(RSyntaxTextArea textArea,JPanel panel,JMenu languageToggle, boolean isRequest) {
+        
+        textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        textArea.setCodeFoldingEnabled(true);
+        ActionListener actionListener;
+        textArea.repaint();
+        RTextScrollPane sp = new RTextScrollPane(textArea);
         //configure scrollbars for rtextscrollpane
-        configSbars(sp, SendSPanel);
-
+        configSbars(sp, panel);
+        
         //popup custom
-          JPopupMenu syntaxMenu = sendTextArea.getPopupMenu();
-
+        JPopupMenu syntaxMenu = textArea.getPopupMenu();
+        
         syntaxMenu.addSeparator();
-        sendLanguageToggle = new JMenu("Change Language...");
-        sendLanguageToggle.setBackground(new Color(43, 43, 43));
-        sendLanguageToggle.setForeground(new Color(238, 205, 127));
+        languageToggle = new JMenu("Change Language...");
+       languageToggle.setBackground(new Color(43, 43, 43));
+        languageToggle.setForeground(new Color(238, 205, 127));
         Field[] languages = SyntaxConstants.class.getFields();
         String separ = "public static final java.lang.String org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_";
-        ActionListener actionListener = new SendMenuActionListener();
-
+       //action listener
+        if(isRequest){
+           actionListener=new RequestMenuActionListener();
+        }else actionListener=new SendMenuActionListener();
         String vect = "";
         for (Field language : languages) {
             String name = language.toString();
@@ -436,7 +442,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             if ((vect.indexOf(letter)) == -1) {
                 vect.concat(letter);
                 JMenu itm = new JMenu(letter);
-                sendLanguageToggle.add(itm);
+                languageToggle.add(itm);
                 JMenuItem subitm = new JMenuItem(name);
                 itm.setOpaque(true);
                 //adding colors
@@ -454,97 +460,30 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 //adding colors
                 subitm.setBackground(new Color(43, 43, 43));
                 subitm.setForeground(new Color(238, 205, 12));
-                JMenu itm = (JMenu) sendLanguageToggle.getMenuComponent(vect.indexOf(letter));
+                JMenu itm = (JMenu) languageToggle.getMenuComponent(vect.indexOf(letter));
                 itm.add(subitm);
                 subitm.addActionListener(actionListener);
             }
 
         }
 
-        syntaxMenu.add(sendLanguageToggle);
+        syntaxMenu.add(languageToggle);
         //action listen
 
         InputStream in = getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml");
         try {
             Theme theme = Theme.load(in);
-            theme.apply(sendTextArea);
+            theme.apply(textArea);
 
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-        sendTextArea.setFont(new Font("Monospace", Font.BOLD, 20));
+        textArea.setFont(new Font("Monospace", Font.BOLD, 20));
 
     }
-     public void initRequestRSyntax() {
-        requestTextArea = new RSyntaxTextArea(20, 60);
-        requestTextArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
-       requestTextArea.setCodeFoldingEnabled(true);
-
-        RTextScrollPane sp = new RTextScrollPane(requestTextArea);
-        //configure scrollbars for rtextscrollpane
-        configSbars(sp, RequestSPanel);
-
-        //popup custom
-          JPopupMenu syntaxMenu = requestTextArea.getPopupMenu();
-
-        syntaxMenu.addSeparator();
-        requestLanguageToggle = new JMenu("Change Language...");
-        requestLanguageToggle.setBackground(new Color(43, 43, 43));
-        requestLanguageToggle.setForeground(new Color(238, 205, 127));
-        Field[] languages = SyntaxConstants.class.getFields();
-        String separ = "public static final java.lang.String org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_";
-        ActionListener actionListener = new RequestMenuActionListener();
-
-        String vect = "";
-        for (Field language : languages) {
-            String name = language.toString();
-            name = (name.split(separ))[1];
-            String letter = name.substring(0, 1);
-
-            if ((vect.indexOf(letter)) == -1) {
-                vect.concat(letter);
-                JMenu itm = new JMenu(letter);
-                requestLanguageToggle.add(itm);
-                JMenuItem subitm = new JMenuItem(name);
-                itm.setOpaque(true);
-                //adding colors
-                itm.setBackground(new Color(43, 43, 43));
-                itm.setForeground(new Color(238, 205, 127));
-                subitm.setBackground(new Color(43, 43, 43));
-                subitm.setForeground(new Color(238, 205, 127));
-                itm.add(subitm);
-                subitm.addActionListener(actionListener);
-                vect += letter;
-
-            } else {
-                JMenuItem subitm = new JMenuItem(name);
-                subitm.setOpaque(true);
-                //adding colors
-                subitm.setBackground(new Color(43, 43, 43));
-                subitm.setForeground(new Color(238, 205, 12));
-                JMenu itm = (JMenu) requestLanguageToggle.getMenuComponent(vect.indexOf(letter));
-                itm.add(subitm);
-                subitm.addActionListener(actionListener);
-            }
-
-        }
-
-        syntaxMenu.add(requestLanguageToggle);
-        //action listen
-
-        InputStream in = getClass().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/dark.xml");
-        try {
-            Theme theme = Theme.load(in);
-            theme.apply(requestTextArea);
-
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-        requestTextArea.setFont(new Font("Monospace", Font.BOLD, 20));
-
-    }
+ 
   
-    //ACTION LISTENER FOR LANG TOGGLE
+    //ACTION LISTENERS FOR MENUS
     class SendMenuActionListener implements ActionListener {
 
         @Override
@@ -952,7 +891,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         RequestSPanel.setForeground(new java.awt.Color(51, 255, 0));
         RequestSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Request a Stitching", RequestSPanel);
-        initRequestRSyntax();
 
         SendSPanel.setBackground(new java.awt.Color(51, 51, 51));
         SendSPanel.setForeground(new java.awt.Color(51, 255, 51));
@@ -963,7 +901,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         });
         SendSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Send a Stitching", SendSPanel);
-        initSendRSyntax();
 
         saveButton.setForeground(new java.awt.Color(255, 255, 255));
         saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png"))); // NOI18N
@@ -1494,7 +1431,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void IdentityLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabelMouseClicked
         IdentityLabel.setBackground(new Color(53, 53, 53));
         //START IDENTITY
-        Identity identity = Identity.startIdentity(mintNode);
+        Identity identity = Identity.getIndentityInstance(mintNode);
         identity.pack();
         identity.setLocationRelativeTo(null);
         identity.setVisible(true);

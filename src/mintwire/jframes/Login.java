@@ -3,6 +3,9 @@ package mintwire.jframes;
 
 
 import java.awt.Image;
+
+import java.io.IOException;
+import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,8 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -42,13 +44,13 @@ public class Login extends javax.swing.JFrame {
     private final int ACCOUNT_CAP = 20;
     private final int ACCOUNT_MIN_CHARS = 5;
     private JLabel label;
-    private String fullPath = System.getenv("APPDATA") + "/MINTWIRE/init.txt";
+    private String initfullPath = System.getenv("APPDATA") + "/MINTWIRE/init.txt";
 
     
     public Login() {
         
-        System.out.println(isLinux+" is linux");
-        if(isLinux) fullPath=System.getProperty("user.home")+"/MINTWIRE/init.txt";
+       
+        if(isLinux) initfullPath=System.getProperty("user.home")+"/MINTWIRE/init.txt";
         setTitle("Mintwire Login");
         try {
             UIManager.setLookAndFeel(new MaterialLookAndFeel());
@@ -91,7 +93,7 @@ public class Login extends javax.swing.JFrame {
             result.next();
             int number = result.getInt("count");
             result.close();
-            System.out.println("Number of DB entries: " + number);
+            
             if (number >= ACCOUNT_CAP) {
                 label = new JLabel("<html><center>Please use a registered existing account on this PC.");
                 label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -163,11 +165,13 @@ public class Login extends javax.swing.JFrame {
         }
         
     }
-    private MintNode createMintNode(String alias) throws InterruptedException{
+    private MintNode createMintNode(String alias) throws InterruptedException, IOException,BindException{
        byte[] encoded;
        ArrayList<String> tokens=new ArrayList<>();
+      
+       
         try {
-            encoded = Files.readAllBytes(Paths.get(fullPath));
+            encoded = Files.readAllBytes(Paths.get(initfullPath));
             String s= new String(encoded, StandardCharsets.US_ASCII);
             StringTokenizer st=new StringTokenizer(s,",");
             
@@ -176,7 +180,7 @@ public class Login extends javax.swing.JFrame {
             }
             if(tokens.size()<2) throw new Exception();
         } catch (Exception ex) {
-            label=new JLabel("<html><center>Please configure your node first!"+ ex.getMessage());
+            label=new JLabel("<html><center>Please configure your node first!");
                     label.setHorizontalAlignment(SwingConstants.CENTER);
                     JOptionPane.showMessageDialog(null, label, "Node not configured yet", JOptionPane.INFORMATION_MESSAGE);
             
@@ -184,15 +188,10 @@ public class Login extends javax.swing.JFrame {
         Environment env; env = new Environment();
         env.getParameters().setString("nat_search_policy", "never");
         MintNode mintNode;      
-        try {
-           mintNode=new MintNode(Integer.parseInt(tokens.get(0)), new InetSocketAddress(tokens.get(1),Integer.parseInt(tokens.get(2))),alias,Status.available.toString(),env);
-             return mintNode;
-        } catch (Exception ex) {
-            label=new JLabel("<html><center>Node not configured corectly!"+ ex.getMessage());
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    JOptionPane.showMessageDialog(null, label, "Pastry Node Error", JOptionPane.INFORMATION_MESSAGE);
-        }
-       return null;
+        mintNode=new MintNode(Integer.parseInt(tokens.get(0)), new InetSocketAddress(tokens.get(1),Integer.parseInt(tokens.get(2))),alias,Status.available.toString(),env);
+      return mintNode;
+        
+      
     }
 
     @SuppressWarnings("unchecked")
@@ -395,7 +394,17 @@ public class Login extends javax.swing.JFrame {
                 mn = createMintNode(alias);
                 startApp(alias, mn);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+               label = new JLabel("<html><center>"+ex.getMessage());
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Pastry Node Exception", JOptionPane.INFORMATION_MESSAGE);
+            }catch(IOException ex){
+                 label = new JLabel("<html><center>"+ex.getMessage());
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Input Output Exception", JOptionPane.INFORMATION_MESSAGE);
+            }catch(Exception ex){
+                 label = new JLabel("<html><center>"+ex.getMessage());
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Input Output Exception", JOptionPane.INFORMATION_MESSAGE);
             }
             
         }
@@ -407,7 +416,7 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
-        Register r = Register.startRegister();
+        Register r = Register.getRegisterInstance();
         r.pack();
         r.setLocationRelativeTo(null);
         r.setVisible(true);

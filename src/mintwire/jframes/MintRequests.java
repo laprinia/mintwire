@@ -24,7 +24,7 @@ public class MintRequests extends javax.swing.JFrame {
 
     }
 
-    public void paintRequest() {
+    private void paintRequest() {
         requestCount = requestCount + 1;
         RequestPanel panel = new RequestPanel();
 
