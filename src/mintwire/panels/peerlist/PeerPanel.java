@@ -10,11 +10,14 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.utils.Utils;
 import rice.pastry.PastryNode;
 
@@ -32,7 +35,7 @@ public class PeerPanel extends javax.swing.JPanel {
     private Color awayColor = new Color(255, 190, 104);
     private Color doNotDisturbColor = new Color(255, 104, 168);
     private Color invisibleColor = new Color(104, 168, 255);
-    private PastryNode pastryNode;
+    private PeerInfo peerInfo;
 
     private PeerPanel() {
         
@@ -40,35 +43,39 @@ public class PeerPanel extends javax.swing.JPanel {
         
     }
 
-    public PeerPanel(PastryNode pastryNode) {
-       setFocusable(true);
-    setRequestFocusEnabled(true);
-
-
-
-
-        if (utils.isLinux()) {
-            aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
+    public PeerPanel(PeerInfo peerInfo) {
+        try {
+            setFocusable(true);
+            setRequestFocusEnabled(true);
+            
+            
+            
+            
+            if (utils.isLinux()) {
+                aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
+            }
+            this.peerInfo=peerInfo;
+            
+            initComponents();
+            setPreferredSize(new Dimension(299,92));
+            revalidate();
+            setPfp();
+        } catch (IOException ex) {
+            Logger.getLogger(PeerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.pastryNode = pastryNode;
-        
-        initComponents();
-        setPreferredSize(new Dimension(299,92));
-        revalidate();
-//        setPfp();
 
     }
       public void setPfp() throws IOException {
        BufferedImage bi;
         File pfp;
         try {
-            pfp = new File(aliasPath +pastryNode.alias + "/pfp/pfp.png");
+            pfp = new File(aliasPath +peerInfo.getAlias() + "/pfp/pfp.png");
             bi = ImageIO.read(pfp);
             
            
         } catch (Exception ex) {
            
-           pfp = new File(aliasPath +pastryNode.alias + "/pfp/pfp.png");
+           pfp = new File(aliasPath +peerInfo.getAlias()+ "/pfp/pfp.png");
             bi = ImageIO.read(pfp);
         }
            BufferedImage biR = utils.makeRound(bi);
@@ -97,7 +104,7 @@ public class PeerPanel extends javax.swing.JPanel {
                 Graphics2D graphics = (Graphics2D) g;
                 graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 //graphics.setStroke(new BasicStroke(1));
-                switch(pastryNode.status){
+                switch(peerInfo.getStatus()){
                     case "available":setForeground(availableColor); break;
                     case "away":setForeground(awayColor);break;
                     case "donotdisturb":setForeground(doNotDisturbColor);break;
@@ -136,9 +143,9 @@ public class PeerPanel extends javax.swing.JPanel {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,9 +159,10 @@ public class PeerPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(22, 22, 22)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(aliasLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(aliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -166,7 +174,7 @@ public class PeerPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        aliasLabel.setText(pastryNode.alias);
+        aliasLabel.setText(peerInfo.getAlias());
     }// </editor-fold>//GEN-END:initComponents
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed

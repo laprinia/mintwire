@@ -31,7 +31,7 @@ private PastryNode pastryNode;
 
     @Override
     public boolean forward(RouteMessage rm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       return true;
     }
 
     @Override
@@ -42,7 +42,7 @@ private PastryNode pastryNode;
 
     @Override
     public void update(NodeHandle nh, boolean bln) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       
     }
     
 }

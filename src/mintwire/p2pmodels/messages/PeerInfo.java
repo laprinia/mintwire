@@ -13,14 +13,19 @@ public class PeerInfo implements Message{
     private NodeHandle nodeHandle;
     private String alias;
     private String status;
-    
-    public PeerInfo(NodeHandle nh,String alias, String status){
-        
+    private boolean isResponse;
+    public PeerInfo(NodeHandle nh,String alias, String status,boolean isResponse){
+        this.isResponse=isResponse;
         this.nodeHandle=nh;
         this.alias=alias;
         this.status=status;
              
     }
+
+    public boolean isItResponse() {
+        return isResponse;
+    }
+    
 
     public NodeHandle getNodeHandle() {
         return nodeHandle;

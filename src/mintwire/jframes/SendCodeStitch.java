@@ -1,71 +1,98 @@
-
 package mintwire.jframes;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import mintwire.p2pmodels.MintNode;
+import mintwire.p2pmodels.apps.SendPeerInfoApp;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.PeerPanel;
+import rice.p2p.commonapi.Id;
 import rice.pastry.NodeHandle;
-
 
 import rice.pastry.PastryNode;
 
 import rice.pastry.leafset.LeafSet;
 
-
-
 public class SendCodeStitch extends javax.swing.JFrame {
-private Box box = new Box(BoxLayout.Y_AXIS);
-private static SendCodeStitch instance=null;
-private MintNode mintNode; 
-private List<NodeHandle> handles ;
 
+    private JLabel label;
+    private Box box = new Box(BoxLayout.Y_AXIS);
+    private static SendCodeStitch instance = null;
+    private MintNode mintNode;
+    
+    private SendPeerInfoApp peerInfoApp;
 
-    public static SendCodeStitch getInstance(String codeStitch, MintNode mainNode){
-        if(instance==null){
-            return new SendCodeStitch(codeStitch,mainNode);
-        }else
+    public static SendCodeStitch getInstance(String codeStitch, MintNode mainNode) {
+        if (instance == null) {
+            return new SendCodeStitch(codeStitch, mainNode);
+        } else {
             return instance;
+        }
     }
+
     private SendCodeStitch() {
         initComponents();
     }
-    
-    private SendCodeStitch(String codeStitch, MintNode mainNode){
+
+    private SendCodeStitch(String codeStitch, MintNode mainNode) {
         setTitle("Send a stitch");
-        this.mintNode=mainNode;
-        LeafSet set = mintNode.getNode().getLeafSet();
-        System.out.println("Leafset:\n"+set);
-        handles= set.asList();
-        
-        initComponents();
-        peerScroll.setPreferredSize(new Dimension(299,276));
-        peerScroll.revalidate();
-        System.out.println("Nodehandle leafset ids");
-         for(NodeHandle h:handles){
-            
-           mintNode.getPeerInfoApp().routePeerInfo(h.getId(), new PeerInfo(mintNode.getNode().getLocalHandle(),mintNode.getNode().alias, mintNode.getNode().status));
+        this.mintNode = mainNode;
+        peerInfoApp = mintNode.getPeerInfoApp();
+        List<NodeHandle> handles = mintNode.getNode().getLeafSet().asList();
+        HashSet<Id> uniqueHandles = new HashSet<>();
+        handles.removeIf(e -> !uniqueHandles.add(e.getId()));
+        for (NodeHandle h : handles) {
+            NodeHandle lh = mintNode.getNode().getLocalHandle();
+            peerInfoApp.requestPeerInfo(h.getId(), new PeerInfo(lh, mainNode.getNode().alias, mintNode.getNode().status, false));
+
         }
+
+        initComponents();
+        peerScroll.setPreferredSize(new Dimension(299, 276));
         peerScroll.revalidate();
-        
+        peerScroll.revalidate();
+        SwingWorker sw = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                Thread.sleep(200);
+                paintPeers();
+                return null;
+            }
+
+        };
+
+        sw.execute();
     }
 
-    public void paintRequest(PastryNode pastryNode){
-        
-        PeerPanel panel=new PeerPanel(pastryNode);
-        panel.setPreferredSize(new Dimension(299,92));
-        panel.revalidate();
-        box.add(panel);
-       
-        box.revalidate();
-       
-       
+    public void paintPeers() {
+        if (peerInfoApp.getPeerList() == null || peerInfoApp.getPeerList().size() < 1) {
+            label = new JLabel("<html><center>Your peers are not available ATM");
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, label, "Cannot find peers", JOptionPane.INFORMATION_MESSAGE);
+            setVisible(false);
+        } else {
+            for (PeerInfo peerInfo : peerInfoApp.getPeerList()) {
+                PeerPanel panel = new PeerPanel(peerInfo);
+                panel.setPreferredSize(new Dimension(299, 92));
+                panel.revalidate();
+                box.add(panel);
+
+                box.revalidate();
+            }
+        }
+
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -75,6 +102,8 @@ private List<NodeHandle> handles ;
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(45, 48, 56));
 
         peerScroll.setBackground(new java.awt.Color(45, 48, 56));
         peerScroll.setPreferredSize(new java.awt.Dimension(299, 276));
@@ -132,9 +161,8 @@ private List<NodeHandle> handles ;
         setVisible(false);
     }//GEN-LAST:event_jLabel1MouseClicked
 
-   
     public static void main(String args[]) {
-       
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new SendCodeStitch().setVisible(true);

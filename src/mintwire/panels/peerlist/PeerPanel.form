@@ -25,16 +25,17 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="aliasLabel" pref="207" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="aliasLabel" min="-2" pref="174" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                   <Component id="aliasLabel" alignment="0" pref="0" max="32767" attributes="0"/>
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
@@ -58,7 +59,7 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="aliasLabel.setText(pastryNode.alias);"/>
+        <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="aliasLabel.setText(peerInfo.getAlias());"/>
       </AuxValues>
     </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">
@@ -68,15 +69,15 @@
         </Property>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPanel()&#xa;{&#xa;    @Override&#xa;    protected void paintComponent(Graphics g) {&#xa;        super.paintComponent(g);&#xa;        Dimension arcs = new Dimension(15,15);&#xa;        int width = getWidth();&#xa;        int height = getHeight();&#xa;        Graphics2D graphics = (Graphics2D) g;&#xa;        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);&#xa;        //graphics.setStroke(new BasicStroke(1));&#xa;        switch(pastryNode.status){&#xa;            case &quot;available&quot;:setForeground(availableColor); break;&#xa;            case &quot;away&quot;:setForeground(awayColor);break;&#xa;            case &quot;donotdisturb&quot;:setForeground(doNotDisturbColor);break;&#xa;            case &quot;invisible&quot;:setForeground(invisibleColor);break;&#xa;            default:setForeground(availableColor);break;&#xa;        }&#xa;        graphics.setColor(getBackground());&#xa;        graphics.fillOval(0, 0, width-1, height-1);&#xa;        graphics.setColor(getForeground());&#xa;        graphics.drawOval(0, 0, width-1, height-1);&#xa;    }&#xa;}&#xa;"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPanel()&#xa;{&#xa;    @Override&#xa;    protected void paintComponent(Graphics g) {&#xa;        super.paintComponent(g);&#xa;        Dimension arcs = new Dimension(15,15);&#xa;        int width = getWidth();&#xa;        int height = getHeight();&#xa;        Graphics2D graphics = (Graphics2D) g;&#xa;        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);&#xa;        //graphics.setStroke(new BasicStroke(1));&#xa;        switch(peerInfo.getStatus()){&#xa;            case &quot;available&quot;:setForeground(availableColor); break;&#xa;            case &quot;away&quot;:setForeground(awayColor);break;&#xa;            case &quot;donotdisturb&quot;:setForeground(doNotDisturbColor);break;&#xa;            case &quot;invisible&quot;:setForeground(invisibleColor);break;&#xa;            default:setForeground(availableColor);break;&#xa;        }&#xa;        graphics.setColor(getBackground());&#xa;        graphics.fillOval(0, 0, width-1, height-1);&#xa;        graphics.setColor(getForeground());&#xa;        graphics.drawOval(0, 0, width-1, height-1);&#xa;    }&#xa;}&#xa;"/>
       </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="pfpLabel" min="-2" max="-2" attributes="0"/>
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="pfpLabel" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
