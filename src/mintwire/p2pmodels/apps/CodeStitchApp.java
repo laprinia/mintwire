@@ -9,21 +9,21 @@ import rice.p2p.commonapi.Id;
 import rice.p2p.commonapi.Message;
 import rice.p2p.commonapi.NodeHandle;
 import rice.p2p.commonapi.RouteMessage;
+import rice.pastry.PastryNode;
 
 
 public class CodeStitchApp implements Application{
 private Endpoint endpoint;
-private MintNode mintNode;
+private PastryNode pastryNode;
 
-    public CodeStitchApp(MintNode mintNode) {
-        this.mintNode = mintNode;
-        this.endpoint=mintNode.getNode().buildEndpoint(this, "stitchinstance");
+    public CodeStitchApp(PastryNode pastryNode) {
+        this.pastryNode = pastryNode;
+        this.endpoint=pastryNode.buildEndpoint(this, "stitchinstance");
         
         this.endpoint.register();
     }
-    public MintNode getMintNode()
-    {
-        return mintNode;
+    public PastryNode getPastryNode(){
+        return pastryNode;
     }
     public void routeCodeStitch(Id id,CodeStitch stitch){
         endpoint.route(id, stitch, null);

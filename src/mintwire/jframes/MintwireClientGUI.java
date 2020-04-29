@@ -65,6 +65,7 @@ import mintwire.chatpanels.Bubbler;
 import mintwire.classes.MintFile;
 import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
 import mintwire.p2pmodels.MintNode;
+import mintwire.p2pmodels.apps.CodeStitchApp;
 
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -145,6 +146,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }
     //my vars
+    
     private Color availableColor = new Color(168, 255, 104);
     private Color awayColor = new Color(255, 190, 104);
     private Color doNotDisturbColor = new Color(255, 104, 168);
@@ -187,7 +189,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         this.alias = mintNode.getNode().alias;
         this.mintNode = mintNode;
-
+        
         this.password = password;
         System.out.println(mintNode.getNode().getId());
 

@@ -14,9 +14,12 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import mintwire.p2pmodels.apps.CodeStitchApp;
+import mintwire.p2pmodels.apps.SendPeerInfoApp;
 import org.graalvm.compiler.nodes.BreakpointNode;
 import rice.environment.Environment;
-import rice.pastry.NodeHandle;
+import rice.p2p.commonapi.NodeHandle;
+
 import rice.pastry.NodeIdFactory;
 import rice.pastry.PastryNode;
 import rice.pastry.PastryNodeFactory;
@@ -26,46 +29,46 @@ import rice.pastry.standard.RandomNodeIdFactory;
 
 public class MintNode {
 
+    private SendPeerInfoApp peerInfoApp;
+    private CodeStitchApp codeStitchApp;
     private Environment environment;
     private PastryNode node;
     private JLabel label;
 
-    public MintNode(int bindport, InetSocketAddress bootaddr, String alias, String status,Environment env) throws InterruptedException, IOException,BindException {
-       
+    public MintNode(int bindport, InetSocketAddress bootaddr, String alias, String status, Environment env) throws InterruptedException, IOException, BindException {
+
         environment = new Environment();
         environment.getParameters().setString("nat_search_policy", "never");
 
         NodeIdFactory nodeIdFactory = new RandomNodeIdFactory(env);
-      
-       PastryNodeFactory pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, bindport, environment);
-      
-            node = pastryNodeFactory.newNode();
-            
-            
-            node.boot(bootaddr);
-            
-       
-            node.alias = alias;
-            node.status = status;
 
-            synchronized (node) {
-                while (!node.isReady() && !node.joinFailed()) {
+        PastryNodeFactory pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, bindport, environment);
 
-                        node.wait(100);
-                   
-                    if (node.joinFailed()) {
-                        System.err.println("node fail");
-                        throw new InterruptedException(node.joinFailedReason().getMessage());
-                        
-                    }
+        node = pastryNodeFactory.newNode();
+        //init apps
+        codeStitchApp = new CodeStitchApp(node);
+        peerInfoApp = new SendPeerInfoApp(node);
+
+        node.boot(bootaddr);
+
+        node.alias = alias;
+        node.status = status;
+
+        synchronized (node) {
+            while (!node.isReady() && !node.joinFailed()) {
+
+                node.wait(100);
+
+                if (node.joinFailed()) {
+                    System.err.println("node fail");
+                    throw new InterruptedException(node.joinFailedReason().getMessage());
+
                 }
-                  label = new JLabel("<html><center> You succesfully entered the ring" );
+            }
+            label = new JLabel("<html><center> You succesfully entered the ring");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             JOptionPane.showMessageDialog(null, label, "You are in!", JOptionPane.INFORMATION_MESSAGE);
-            }
-
-        
-        
+        }
 
     }
 
@@ -77,19 +80,28 @@ public class MintNode {
         return node;
     }
 
-    public Map<String, Entry<String, String>> getLeafSetData() {
-        Map<String, Entry<String, String>> leafSetData = new HashMap<String, Entry<String, String>>();
-
-        LeafSet set = node.getLeafSet();
-        List<NodeHandle> handles = set.asList();
-
-        for (NodeHandle nh : handles) {
-            if (!(leafSetData.containsKey(nh.getId().toString()))) {
-                leafSetData.put(nh.getId().toString(), new SimpleEntry(nh.getLocalNode().alias, nh.getLocalNode().status));
-            }
-        }
-        return leafSetData;
-
+    public SendPeerInfoApp getPeerInfoApp() {
+        return peerInfoApp;
     }
+
+    public CodeStitchApp getCodeStitchApp() {
+        return codeStitchApp;
+    }
+    
+
+//    public Map<String, Entry<String, String>> getLeafSetData() {
+//        Map<String, Entry<String, String>> leafSetData = new HashMap<String, Entry<String, String>>();
+//
+//        LeafSet set = node.getLeafSet();
+//        List<rice.pastry.NodeHandle> handles = set.asList();
+//
+//        for (NodeHandle nh : handles) {
+//            if (!(leafSetData.containsKey(nh.getId().toString()))) {
+//                leafSetData.put(nh.getId().toString(), new SimpleEntry(nh.alias, nh.getLocalNode().status));
+//            }
+//        }
+//        return leafSetData;
+//
+//    }
 
 }

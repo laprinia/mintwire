@@ -2,19 +2,21 @@
 package mintwire.jframes;
 
 import java.awt.Dimension;
-import java.util.HashMap;
-import java.util.Iterator;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import mintwire.p2pmodels.MintNode;
+import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.PeerPanel;
 import rice.pastry.NodeHandle;
 
+
 import rice.pastry.PastryNode;
+
 import rice.pastry.leafset.LeafSet;
+
 
 
 public class SendCodeStitch extends javax.swing.JFrame {
@@ -38,13 +40,16 @@ private List<NodeHandle> handles ;
         setTitle("Send a stitch");
         this.mintNode=mainNode;
         LeafSet set = mintNode.getNode().getLeafSet();
+        System.out.println("Leafset:\n"+set);
         handles= set.asList();
         
         initComponents();
         peerScroll.setPreferredSize(new Dimension(299,276));
         peerScroll.revalidate();
+        System.out.println("Nodehandle leafset ids");
          for(NodeHandle h:handles){
-             paintRequest(h.getLocalNode());
+            
+           mintNode.getPeerInfoApp().routePeerInfo(h.getId(), new PeerInfo(mintNode.getNode().getLocalHandle(),mintNode.getNode().alias, mintNode.getNode().status));
         }
         peerScroll.revalidate();
         

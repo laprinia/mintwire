@@ -9,6 +9,7 @@ import java.awt.Label;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -57,12 +58,20 @@ public class PeerPanel extends javax.swing.JPanel {
 //        setPfp();
 
     }
-      public void setPfp() {
-        File pfp = new File(aliasPath +pastryNode.alias + "/pfp/pfp.png");
+      public void setPfp() throws IOException {
+       BufferedImage bi;
+        File pfp;
         try {
-            BufferedImage bi = ImageIO.read(pfp);
+            pfp = new File(aliasPath +pastryNode.alias + "/pfp/pfp.png");
+            bi = ImageIO.read(pfp);
             
-            BufferedImage biR = utils.makeRound(bi);
+           
+        } catch (Exception ex) {
+           
+           pfp = new File(aliasPath +pastryNode.alias + "/pfp/pfp.png");
+            bi = ImageIO.read(pfp);
+        }
+           BufferedImage biR = utils.makeRound(bi);
            
             Dimension d=pfpLabel.getPreferredSize();
             
@@ -71,13 +80,6 @@ public class PeerPanel extends javax.swing.JPanel {
             ImageIcon ico = new ImageIcon(resultScaled);
 
             pfpLabel.setIcon(ico);
-        } catch (Exception ex) {
-            infoLabel = new JLabel("<html><center>" + ex.getMessage());
-            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            JOptionPane.showMessageDialog(null, infoLabel, "Cannot load profile picture", JOptionPane.INFORMATION_MESSAGE);
-
-        }
-
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -143,7 +145,7 @@ public class PeerPanel extends javax.swing.JPanel {
             .addComponent(pfpLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        setPfp();
+        try{setPfp();}catch(Exception ex){ex.getMessage();}
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
