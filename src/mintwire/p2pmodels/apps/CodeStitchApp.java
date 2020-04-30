@@ -37,7 +37,8 @@ private PastryNode pastryNode;
     @Override
     public void deliver(Id id, Message msg) {
        CodeStitch stitch=(CodeStitch) msg;
-        System.out.println(stitch.getSender()+" pentru "+stitch.getReceiver());
+        System.out.println(stitch.toString());
+        //TODO write temp file 
     }
 
     @Override

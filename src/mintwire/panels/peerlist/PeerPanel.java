@@ -26,7 +26,7 @@ import rice.pastry.PastryNode;
  * @author Lavinia
  */
 public class PeerPanel extends javax.swing.JPanel {
-    
+   
     private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
     private Utils utils=new Utils();
     private JLabel infoLabel;
@@ -43,6 +43,7 @@ public class PeerPanel extends javax.swing.JPanel {
         
     }
 
+    
     public PeerPanel(PeerInfo peerInfo) {
         try {
             setFocusable(true);
@@ -64,6 +65,12 @@ public class PeerPanel extends javax.swing.JPanel {
             Logger.getLogger(PeerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+    public boolean getCheckState(){
+        return checkBox.isSelected();
+    }
+    public PeerInfo getPeerInfo(){
+        return peerInfo;
     }
       public void setPfp() throws IOException {
        BufferedImage bi;
@@ -121,6 +128,7 @@ public class PeerPanel extends javax.swing.JPanel {
         pfpLabel = new javax.swing.JLabel()
 
         ;
+        checkBox = new javax.swing.JCheckBox();
 
         setBackground(new java.awt.Color(45, 48, 56));
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -138,6 +146,11 @@ public class PeerPanel extends javax.swing.JPanel {
         pfpLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         pfpLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         pfpLabel.setPreferredSize(new java.awt.Dimension(80, 80));
+        pfpLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pfpLabelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -161,16 +174,22 @@ public class PeerPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(aliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(aliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(checkBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(aliasLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(aliasLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addComponent(checkBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -181,9 +200,15 @@ public class PeerPanel extends javax.swing.JPanel {
        requestFocus();
     }//GEN-LAST:event_formKeyPressed
 
+    private void pfpLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pfpLabelMouseClicked
+        
+      
+    }//GEN-LAST:event_pfpLabelMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel aliasLabel;
+    private javax.swing.JCheckBox checkBox;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel pfpLabel;
     // End of variables declaration//GEN-END:variables

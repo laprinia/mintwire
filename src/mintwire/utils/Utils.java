@@ -4,8 +4,15 @@ package mintwire.utils;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 
 public class Utils {
@@ -60,5 +67,26 @@ public class Utils {
       if(!OS.contains("WIN")) return true;
       else return false;
     }
+    public void writeJSONfiles(String aliasPath, String alias){
+        FileWriter fw = null;
+        File codetemp;
+        try {
+            fw = new FileWriter(aliasPath + alias + "/history.json");
+            JSONObject obj = new JSONObject();
+            JSONArray arr = new JSONArray();
+            obj.put(arr, "downloadhistory");
+           
+            
+        } catch (IOException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fw.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+   
 }
  

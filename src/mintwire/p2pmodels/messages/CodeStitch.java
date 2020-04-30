@@ -35,7 +35,7 @@ public class CodeStitch implements Message{
 
     @Override
     public String toString() {
-        return "CodeStitch{" + "sender=" + sender + ", receiver=" + receiver + ", language=" + language+ '}';
+        return "CodeStitch{" +code+" "+"sender=" + sender + ", receiver=" + receiver + ", language=" + language+ '}';
     }
     
     

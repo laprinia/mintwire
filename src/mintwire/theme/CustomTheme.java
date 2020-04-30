@@ -1,14 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package mintwire.theme;
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
 
+package mintwire.theme;
 
 
 import java.awt.Color;
@@ -92,7 +83,7 @@ public class CustomTheme extends AbstractMaterialTheme {
         this.buttonBackgroundColor = new ColorUIResource(45, 48, 56);
         this.buttonBackgroundColorMouseHover = new ColorUIResource(81, 86, 101);
         this.buttonTextColor = MaterialColors.WHITE;
-        this.buttonDefaultBackgroundColorMouseHover = new ColorUIResource(23, 137, 134);
+        this.buttonDefaultBackgroundColorMouseHover = new ColorUIResource(219,80,74);
         this.buttonDefaultBackgroundColor = new ColorUIResource(255, 130, 124);
         this.buttonDefaultTextColor = MaterialColors.WHITE;
         this.buttonDisabledBackground = new ColorUIResource(66, 69, 76);

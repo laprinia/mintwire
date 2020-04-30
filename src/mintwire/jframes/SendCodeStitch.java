@@ -14,17 +14,18 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
+import mintwire.p2pmodels.messages.CodeStitch;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.PeerPanel;
 import rice.p2p.commonapi.Id;
 import rice.pastry.NodeHandle;
 
-import rice.pastry.PastryNode;
 
-import rice.pastry.leafset.LeafSet;
 
 public class SendCodeStitch extends javax.swing.JFrame {
-
+    
+    private CodeStitch codeStitch;
+    private ArrayList<PeerPanel> peerPanels=new ArrayList<>();
     private JLabel label;
     private Box box = new Box(BoxLayout.Y_AXIS);
     private static SendCodeStitch instance = null;
@@ -32,21 +33,22 @@ public class SendCodeStitch extends javax.swing.JFrame {
     
     private SendPeerInfoApp peerInfoApp;
 
-    public static SendCodeStitch getInstance(String codeStitch, MintNode mainNode) {
+    public static SendCodeStitch getInstance(CodeStitch codeStitch, MintNode mainNode) {
         if (instance == null) {
-            return new SendCodeStitch(codeStitch, mainNode);
-        } else {
-            return instance;
-        }
+            instance=new SendCodeStitch(codeStitch, mainNode);
+           
+        } 
+         return instance;
     }
 
     private SendCodeStitch() {
         initComponents();
     }
 
-    private SendCodeStitch(String codeStitch, MintNode mainNode) {
+    private SendCodeStitch(CodeStitch codeStitch, MintNode mainNode) {
         setTitle("Send a stitch");
         this.mintNode = mainNode;
+        this.codeStitch=codeStitch;
         peerInfoApp = mintNode.getPeerInfoApp();
         List<NodeHandle> handles = mintNode.getNode().getLeafSet().asList();
         HashSet<Id> uniqueHandles = new HashSet<>();
@@ -54,7 +56,7 @@ public class SendCodeStitch extends javax.swing.JFrame {
         for (NodeHandle h : handles) {
             NodeHandle lh = mintNode.getNode().getLocalHandle();
             peerInfoApp.requestPeerInfo(h.getId(), new PeerInfo(lh, mainNode.getNode().alias, mintNode.getNode().status, false));
-
+        
         }
 
         initComponents();
@@ -72,11 +74,17 @@ public class SendCodeStitch extends javax.swing.JFrame {
         };
 
         sw.execute();
+        
     }
+
+    public void setCodeStitch(CodeStitch codeStitch) {
+        this.codeStitch = codeStitch;
+    }
+    
 
     public void paintPeers() {
         if (peerInfoApp.getPeerList() == null || peerInfoApp.getPeerList().size() < 1) {
-            label = new JLabel("<html><center>Your peers are not available ATM");
+            label = new JLabel("<html><center>Your peers are not available at the moment");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             JOptionPane.showMessageDialog(null, label, "Cannot find peers", JOptionPane.INFORMATION_MESSAGE);
             setVisible(false);
@@ -86,12 +94,13 @@ public class SendCodeStitch extends javax.swing.JFrame {
                 panel.setPreferredSize(new Dimension(299, 92));
                 panel.revalidate();
                 box.add(panel);
-
                 box.revalidate();
+                peerPanels.add(panel);
             }
         }
 
     }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -158,6 +167,17 @@ public class SendCodeStitch extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
+        for(PeerPanel p:peerPanels){
+            if(p.getCheckState()){
+                PeerInfo peer=p.getPeerInfo();
+                if(peer.getNodeHandle().checkLiveness()){
+                mintNode.getCodeStitchApp().routeCodeStitch(peer.getNodeHandle().getId(), codeStitch);
+                }else{
+                    
+                }
+                
+            }
+        }
         setVisible(false);
     }//GEN-LAST:event_jLabel1MouseClicked
 

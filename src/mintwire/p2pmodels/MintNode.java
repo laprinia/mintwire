@@ -3,27 +3,21 @@ package mintwire.p2pmodels;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import mintwire.p2pmodels.apps.CodeStitchApp;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
-import org.graalvm.compiler.nodes.BreakpointNode;
+
 import rice.environment.Environment;
-import rice.p2p.commonapi.NodeHandle;
+
 
 import rice.pastry.NodeIdFactory;
 import rice.pastry.PastryNode;
 import rice.pastry.PastryNodeFactory;
-import rice.pastry.leafset.LeafSet;
+
 import rice.pastry.socket.SocketPastryNodeFactory;
 import rice.pastry.standard.RandomNodeIdFactory;
 
@@ -89,19 +83,5 @@ public class MintNode {
     }
     
 
-//    public Map<String, Entry<String, String>> getLeafSetData() {
-//        Map<String, Entry<String, String>> leafSetData = new HashMap<String, Entry<String, String>>();
-//
-//        LeafSet set = node.getLeafSet();
-//        List<rice.pastry.NodeHandle> handles = set.asList();
-//
-//        for (NodeHandle nh : handles) {
-//            if (!(leafSetData.containsKey(nh.getId().toString()))) {
-//                leafSetData.put(nh.getId().toString(), new SimpleEntry(nh.alias, nh.getLocalNode().status));
-//            }
-//        }
-//        return leafSetData;
-//
-//    }
 
 }

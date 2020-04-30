@@ -65,7 +65,8 @@ import mintwire.chatpanels.Bubbler;
 import mintwire.classes.MintFile;
 import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
 import mintwire.p2pmodels.MintNode;
-import mintwire.p2pmodels.apps.CodeStitchApp;
+
+import mintwire.p2pmodels.messages.CodeStitch;
 
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -1533,14 +1534,21 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
-       String message=sendTextArea.getText().toString()+","+sendTextArea.getSyntaxEditingStyle();
-       System.out.println(message);
-        SendCodeStitch scs =SendCodeStitch.getInstance(message, mintNode);
+       if(sendTextArea.getText().toString().equals("")){
+            infoLabel=new JLabel("<html><center>Make sure you entered your stitch in the Send Area.");
+                    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, infoLabel, "No stitch found!", JOptionPane.INFORMATION_MESSAGE);
+       }else
+       {CodeStitch codeStitch=new CodeStitch(mintNode.getNode().alias, "null", sendTextArea.getSyntaxEditingStyle(), sendTextArea.getText().toString());
+        System.out.println(sendTextArea.getSyntaxEditingStyle()+" cu codul: "+sendTextArea.getText().toString());
+        SendCodeStitch scs =SendCodeStitch.getInstance(codeStitch, mintNode);
+        scs.setCodeStitch(codeStitch);
         
         scs.pack();
         scs.setLocationRelativeTo(null);
         scs.setVisible(true);
         scs.setVisible(true);
+       }
         
     }//GEN-LAST:event_sendButtonMouseClicked
 
