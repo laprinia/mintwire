@@ -1412,10 +1412,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void MintRequestLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintRequestLabelMouseClicked
         MintRequestLabel.setBackground(new Color(53, 53, 53));
         //START MINTREQUESTS
-        MintRequests mr = new MintRequests();
+        
+        MintRequests mr = MintRequests.getInstance(requestTextArea,mintNode);
         mr.pack();
         mr.setLocationRelativeTo(null);
         mr.setVisible(true);
+        mr.checkForStitches();
     }//GEN-LAST:event_MintRequestLabelMouseClicked
 
     private void FileHaulLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseClicked
@@ -1443,7 +1445,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             protected Object doInBackground() throws Exception {
                 while (identity.getInstance() != null) {
                     Thread.sleep(3000);
-
                 }
                 //reset pfp and status
                 setPfp();
@@ -1494,12 +1495,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void TabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_TabbedPaneStateChanged
 
-//        JTabbedPane tabbedPane = (JTabbedPane) evt.getSource();
-//
-//        int tab = tabbedPane.getSelectedIndex();
-//        if (tab == 1) {
-//            initRSyntax(SendSPanel);
-//        }
+
 
     }//GEN-LAST:event_TabbedPaneStateChanged
 
@@ -1540,7 +1536,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, infoLabel, "No stitch found!", JOptionPane.INFORMATION_MESSAGE);
        }else
        {CodeStitch codeStitch=new CodeStitch(mintNode.getNode().alias, "null", sendTextArea.getSyntaxEditingStyle(), sendTextArea.getText().toString());
-        System.out.println(sendTextArea.getSyntaxEditingStyle()+" cu codul: "+sendTextArea.getText().toString());
+        
         SendCodeStitch scs =SendCodeStitch.getInstance(codeStitch, mintNode);
         scs.setCodeStitch(codeStitch);
         

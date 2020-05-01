@@ -10,17 +10,21 @@ import rice.p2p.commonapi.Message;
 import rice.p2p.commonapi.NodeHandle;
 import rice.p2p.commonapi.RouteMessage;
 import rice.pastry.PastryNode;
-
+import java.util.ArrayList;
 
 public class CodeStitchApp implements Application{
 private Endpoint endpoint;
 private PastryNode pastryNode;
+private ArrayList<CodeStitch> codeStitches=new ArrayList<>();
 
     public CodeStitchApp(PastryNode pastryNode) {
         this.pastryNode = pastryNode;
         this.endpoint=pastryNode.buildEndpoint(this, "stitchinstance");
         
         this.endpoint.register();
+    }
+    public ArrayList<CodeStitch> getCodeArrayList(){
+        return this.codeStitches;
     }
     public PastryNode getPastryNode(){
         return pastryNode;
@@ -37,8 +41,7 @@ private PastryNode pastryNode;
     @Override
     public void deliver(Id id, Message msg) {
        CodeStitch stitch=(CodeStitch) msg;
-        System.out.println(stitch.toString());
-        //TODO write temp file 
+       codeStitches.add(stitch); 
     }
 
     @Override
