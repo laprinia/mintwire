@@ -996,7 +996,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 127, Short.MAX_VALUE)
+            .addGap(0, 124, Short.MAX_VALUE)
         );
 
         jPanel11.setBackground(new java.awt.Color(75, 80, 92));
@@ -1111,7 +1111,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                     .addComponent(searchPeerTextField))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE))
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout MintLynxPanelLayout = new javax.swing.GroupLayout(MintLynxPanel);
@@ -1535,7 +1536,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                     infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
                     JOptionPane.showMessageDialog(null, infoLabel, "No stitch found!", JOptionPane.INFORMATION_MESSAGE);
        }else
-       {CodeStitch codeStitch=new CodeStitch(mintNode.getNode().alias, "null", sendTextArea.getSyntaxEditingStyle(), sendTextArea.getText().toString());
+       {CodeStitch codeStitch=new CodeStitch(alias, "null", sendTextArea.getSyntaxEditingStyle(), sendTextArea.getText().toString());
         
         SendCodeStitch scs =SendCodeStitch.getInstance(codeStitch, mintNode);
         scs.setCodeStitch(codeStitch);

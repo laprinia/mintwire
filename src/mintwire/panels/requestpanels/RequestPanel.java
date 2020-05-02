@@ -22,9 +22,10 @@ public class RequestPanel extends javax.swing.JPanel {
         initComponents();
     }
      public RequestPanel(CodeStitch codeStitch) {
-        initComponents();
         this.codeStitch=codeStitch;
         alias=codeStitch.getSender();
+        initComponents();
+        
     }
     
     public JLabel getAcceptLabel(){
@@ -35,6 +36,10 @@ public class RequestPanel extends javax.swing.JPanel {
     }
     public CodeStitch getStitch(){
         return this.codeStitch;
+    }
+
+    public CodeStitch getCodeStitch() {
+        return codeStitch;
     }
     
     @SuppressWarnings("unchecked")
@@ -50,7 +55,7 @@ public class RequestPanel extends javax.swing.JPanel {
         setBackground(new java.awt.Color(76, 69, 87));
 
         jLabel1.setBackground(new java.awt.Color(90, 68, 121));
-        jLabel1.setFont(new java.awt.Font("Calibri", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Calibri", 1, 16)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Upcoming CodeStitch request from:");
 
@@ -58,6 +63,7 @@ public class RequestPanel extends javax.swing.JPanel {
         aliasLabel.setFont(new java.awt.Font("Calibri", 1, 18)); // NOI18N
         aliasLabel.setForeground(new java.awt.Color(255, 102, 102));
         aliasLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        aliasLabel.setPreferredSize(new java.awt.Dimension(167, 29));
 
         acceptLabel.setBackground(new java.awt.Color(90, 68, 121));
         acceptLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/yes.png"))); // NOI18N
@@ -85,14 +91,14 @@ public class RequestPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(22, 22, 22)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(aliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(53, 53, 53)
+                        .addGap(67, 67, 67)
+                        .addComponent(aliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(acceptLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
                 .addComponent(ignoreLabel)
                 .addGap(56, 56, 56))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -106,11 +112,11 @@ public class RequestPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(aliasLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
+                        .addComponent(aliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(ignoreLabel)
                         .addComponent(acceptLabel)))
-                .addGap(17, 17, 17))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         aliasLabel.setText(alias);

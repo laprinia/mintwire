@@ -13,6 +13,7 @@ import rice.pastry.PastryNode;
 import java.util.ArrayList;
 
 public class CodeStitchApp implements Application{
+private final int STITCH_CAP=70;
 private Endpoint endpoint;
 private PastryNode pastryNode;
 private ArrayList<CodeStitch> codeStitches=new ArrayList<>();
@@ -41,7 +42,12 @@ private ArrayList<CodeStitch> codeStitches=new ArrayList<>();
     @Override
     public void deliver(Id id, Message msg) {
        CodeStitch stitch=(CodeStitch) msg;
-       codeStitches.add(stitch); 
+       if(codeStitches.size()<=STITCH_CAP){
+        codeStitches.add(stitch); 
+       }else{
+           System.err.println("Get rid of some stitches");
+       }
+       
     }
 
     @Override

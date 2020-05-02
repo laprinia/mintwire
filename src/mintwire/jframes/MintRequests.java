@@ -1,4 +1,3 @@
-
 package mintwire.jframes;
 
 import java.awt.Color;
@@ -21,103 +20,105 @@ import mintwire.panels.requestpanels.RequestPanel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 public class MintRequests extends javax.swing.JFrame {
+
     private RSyntaxTextArea textArea;
     private ArrayList<RequestPanel> requests = new ArrayList<>();
     private MintNode mintNode;
     private BlancPanel blancPanel;
     private Box box = new Box(BoxLayout.Y_AXIS);
-    
+
     private static MintRequests instance = null;
 
-    public static MintRequests getInstance(RSyntaxTextArea textArea,MintNode mintNode) {
+    public static MintRequests getInstance(RSyntaxTextArea textArea, MintNode mintNode) {
         if (instance == null) {
-            instance = new MintRequests(textArea,mintNode);
+            instance = new MintRequests(textArea, mintNode);
+            
         }
+        
         return instance;
     }
-    
-    private MintRequests(RSyntaxTextArea textArea,MintNode mintNode) {
+
+    private MintRequests(RSyntaxTextArea textArea, MintNode mintNode) {
         this.mintNode = mintNode;
-        this.textArea=textArea;
+        this.textArea = textArea;
         setTitle("Mint Requests");
         initComponents();
-        requestScroll.getViewport().setBackground(new Color(94,87,104));
-       
+        requestScroll.getViewport().setBackground(new Color(94, 87, 104));
+
     }
-      public void checkForStitches(){
-         if(mintNode.getCodeStitchApp().getCodeArrayList().size()==0){
-             //aici ar trb verificat daca deja sunt desenate
-             //si pentru blanc ca apare de maimulte ori
-            blancPanel =new BlancPanel();
-            blancPanel.setPreferredSize(new Dimension(593,111));
+
+    public void checkForStitches() {
+        if (mintNode.getCodeStitchApp().getCodeArrayList().size() == 0) {
+
+            blancPanel = new BlancPanel();
+            blancPanel.setPreferredSize(new Dimension(593, 111));
             box.add(blancPanel);
             box.revalidate();
-        }else{
-        
-        paintRequests();
-        addListeners();
+        } else {
+
+            paintRequests();
+            addListeners();
         }
     }
 
     private MintRequests() {
 
     }
-    private void addListeners(){
-        for(RequestPanel r:requests){
+
+    private void addListeners() {
+        for (RequestPanel r : requests) {
             r.getAcceptLabel().addMouseListener(new MouseAdapter() {
-                  @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("child click for accept");
-                JLabel label=(JLabel)e.getSource();
-                RequestPanel rP=(RequestPanel)label.getParent();
-                box.remove(rP);
-                requests.remove(rP);
-                box.revalidate();
-                requestScroll.repaint();
-                CodeStitch acceptedStitch=rP.getStitch();
-                textArea.setText(acceptedStitch.getCode());
-                textArea.setSyntaxEditingStyle(acceptedStitch.getLanguage());
-                setVisible(false);
-                          
-            }
+                @Override
+                public void mouseClicked(MouseEvent e) {
+
+                    JLabel label = (JLabel) e.getSource();
+                    RequestPanel rP = (RequestPanel) label.getParent();
+                    box.remove(rP);
+                    requests.remove(rP);
+                    mintNode.getCodeStitchApp().getCodeArrayList().remove(rP.getCodeStitch());
+                    box.revalidate();
+                    requestScroll.repaint();
+                    CodeStitch acceptedStitch = rP.getStitch();
+                    textArea.setText(acceptedStitch.getCode());
+                    textArea.setSyntaxEditingStyle(acceptedStitch.getLanguage());
+                    if (blancPanel != null) {
+                        box.remove(blancPanel);
+                        box.revalidate();
+                    }
+                    setVisible(false);
+
+                }
             });
-            
+
             r.getIgnoreLabel().addMouseListener(new MouseAdapter() {
-               public void mouseClicked(MouseEvent e) {
-                System.out.println("child click for ignore");
-                JLabel label=(JLabel)e.getSource();
-                RequestPanel rP=(RequestPanel)label.getParent();
-                box.remove(rP);
-                requests.remove(rP);
-                box.revalidate();
-                requestScroll.repaint();
-                        
-            } 
+                public void mouseClicked(MouseEvent e) {
+
+                    JLabel label = (JLabel) e.getSource();
+                    RequestPanel rP = (RequestPanel) label.getParent();
+                    box.remove(rP);
+                    requests.remove(rP);
+                    mintNode.getCodeStitchApp().getCodeArrayList().remove(rP.getCodeStitch());
+                    box.revalidate();
+                    requestScroll.repaint();
+
+                }
             });
         }
     }
+
     private void paintRequests() {
-        CodeStitchApp app=mintNode.getCodeStitchApp();
-        ArrayList<CodeStitch> codeStitchs=app.getCodeArrayList();
-        for(CodeStitch stitch:codeStitchs){
-            RequestPanel panel=new RequestPanel(stitch);
-            panel.setPreferredSize(new Dimension(593,111));
+        CodeStitchApp app = mintNode.getCodeStitchApp();
+        ArrayList<CodeStitch> codeStitchs = app.getCodeArrayList();
+        for (CodeStitch stitch : codeStitchs) {
+            RequestPanel panel = new RequestPanel(stitch);
+            panel.setPreferredSize(new Dimension(593, 108));
             box.add(panel);
+
             requests.add(panel);
             box.revalidate();
         }
-        
-        
-//        requestCount = requestCount + 1;
-//        RequestPanel panel = new RequestPanel();
-//
-//        panel.setSize(requestScroll.getWidth() - 4, 100);
-//        box.add(panel);
-//        requests.add(panel);
-//        box.revalidate();
 
     }
-   
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -177,10 +178,14 @@ public class MintRequests extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-        if(blancPanel!=null){
+        if (blancPanel != null) {
             box.remove(blancPanel);
             box.revalidate();
+          
         }
+          box.removeAll();
+          requests.clear();
+        
         setVisible(false);
     }//GEN-LAST:event_jLabel2MouseClicked
 
