@@ -108,7 +108,7 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="pfpLabelMouseClicked"/>
           </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="try{setPfp();}catch(Exception ex){ex.getMessage();}"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="try{&#xa;utils.setPfp(pfpLabel, aliasPath, peerInfo);&#xa;}catch(Exception ex){ex.printStackTrace();}"/>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel()&#xa;&#xa;"/>
           </AuxValues>
         </Component>

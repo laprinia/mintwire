@@ -14,6 +14,8 @@ import java.awt.RenderingHints;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import java.awt.image.BufferedImage;
 
@@ -30,9 +32,13 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import static javax.swing.BorderFactory.createEmptyBorder;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
@@ -67,6 +73,9 @@ import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
 import mintwire.p2pmodels.MintNode;
 
 import mintwire.p2pmodels.messages.CodeStitch;
+import mintwire.p2pmodels.messages.PeerInfo;
+import mintwire.panels.mintlynx.LynxPanel;
+
 
 import mintwire.utils.Utils;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -148,12 +157,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
     //my vars
     
+    private Box box = new Box(BoxLayout.Y_AXIS);
     private Color availableColor = new Color(168, 255, 104);
     private Color awayColor = new Color(255, 190, 104);
     private Color doNotDisturbColor = new Color(255, 104, 168);
     private Color invisibleColor = new Color(104, 168, 255);
     private MintNode mintNode;
-
+    private PeerInfo currentPeerChat;
     private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
     private String sharedPath = "C:\\MINTWIRE Shared";
 
@@ -217,49 +227,50 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     //LAYEREDPANE INITS
     public void initMintLynx() {
+           ArrayList<LynxPanel> lynxPanels=new ArrayList<>();
+           LynxPanel lynx=new LynxPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, mintNode.getNode().status, isLinux));
+           lynx.setPreferredSize(new Dimension(376,92));
+           box.add(lynx);
+           lynxPanels.add(lynx);
+           box.revalidate();
+           lynxScroll.repaint();
+           setMintLynxListeners(lynxPanels);
 
     }
     //END OF LAYERED PANE INITS
 
     //MY METHODS
-    private void redrawStatus() {
-        statusPanel = new javax.swing.JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Dimension arcs = new Dimension(15, 15);
-                int width = getWidth();
-                int height = getHeight();
-                Graphics2D graphics = (Graphics2D) g;
-                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                switch (mintNode.getNode().status) {
-                    case "available":
-                        setForeground(availableColor);
-                        break;
-                    case "away":
-                        setForeground(awayColor);
-                        break;
-                    case "donotdisturb":
-                        setForeground(doNotDisturbColor);
-                        break;
-                    case "invisible":
-                        setForeground(invisibleColor);
-                        break;
-                    default:
-                        setForeground(availableColor);
-                        break;
+ 
+    private void setMintLynxListeners(ArrayList<LynxPanel> lynxPanels){
+        
+        
+        if(lynxPanels==null||lynxPanels.size()<1) return;
+        for(LynxPanel l: lynxPanels){
+            l.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    
+                        l.setCurrentPanel();
+                        currentPeerChat=l.getPeerInfo();
+                        currentPfpPanel.repaint();
+                        currentPfpPanel.revalidate();
+                        //TODO MAKING OTHERS NOT CURRENT PANEL
+                        //TODO GET HANDLE TO SEND MSG
+                    try {
+                        //TODO HANDLE SHOWING PAST MSGS
+                        
+                        utils.setPfp(currentPfpLabel, aliasPath, l.getPeerInfo());
+                    } catch (IOException ex) {
+                        Logger.getLogger(MintwireClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                         
+   
+                    
                 }
-                graphics.setColor(getBackground());
-                graphics.fillOval(0, 0, width - 1, height - 1);
-                graphics.setColor(getForeground());
-                graphics.drawOval(0, 0, width - 1, height - 1);
-                repaint();
-            }
-
-        };
-        repaint();
+            });   
+        }
     }
+  
 
     private void initFileStructure(String alias) {
         File f1 = new File(aliasPath);
@@ -506,7 +517,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
            
             LangSelector lang = new LangSelector();
             String context = lang.select(e.getActionCommand());
-            System.err.println(context);
+            
            requestTextArea.setSyntaxEditingStyle(context);
          
         }
@@ -566,6 +577,39 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         MintLynxPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
+        currentPfpPanel = new javax.swing.JPanel()
+        {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Dimension arcs = new Dimension(15,15);
+                int width = getWidth();
+                int height = getHeight();
+                Graphics2D graphics = (Graphics2D) g;
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if(currentPeerChat==null){
+                    setForeground(new Color(45,48,55));
+                }else if("available".equals(currentPeerChat.getStatus()))
+                {
+                    setForeground(availableColor);
+                }else if("away".equals(currentPeerChat.getStatus()))
+                {
+                    setForeground(awayColor);
+                }else if("donotdisturb".equals(currentPeerChat.getStatus()))
+                {
+                    setForeground(doNotDisturbColor);
+                }else setForeground(Color.YELLOW);
+
+                graphics.setColor(getBackground());
+                graphics.fillOval(0, 0, width-1, height-1);
+                graphics.setColor(getForeground());
+                graphics.drawOval(0, 0, width-1, height-1);
+
+            }
+        }
+        ;
+        currentPfpLabel = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
         chatScrollPane = new javax.swing.JScrollPane(scrollablePanel);
         jPanel11 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -573,9 +617,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         searchPeerTextField = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
         jLabel5 = new javax.swing.JLabel();
+        lynxScroll = new javax.swing.JScrollPane(box);
         FileSporePanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         sporeText = new javax.swing.JTextField();
@@ -988,15 +1031,54 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(45, 48, 55));
 
+        currentPfpPanel.setBackground(new java.awt.Color(45, 48, 55));
+
+        currentPfpLabel.setPreferredSize(new java.awt.Dimension(99, 95));
+
+        javax.swing.GroupLayout currentPfpPanelLayout = new javax.swing.GroupLayout(currentPfpPanel);
+        currentPfpPanel.setLayout(currentPfpPanelLayout);
+        currentPfpPanelLayout.setHorizontalGroup(
+            currentPfpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(currentPfpPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+        currentPfpPanelLayout.setVerticalGroup(
+            currentPfpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(currentPfpPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+
+        jLabel9.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(0, 204, 102));
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel9.setText("laprinia");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 518, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(197, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 124, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         jPanel11.setBackground(new java.awt.Color(75, 80, 92));
@@ -1033,7 +1115,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(jScrollPane3)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
                 .addGap(41, 41, 41)
                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
@@ -1056,7 +1138,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 372, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(chatScrollPane)))
@@ -1086,11 +1168,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             }
         });
 
-        jList1.setBackground(new java.awt.Color(45, 48, 55));
-        jScrollPane1.setViewportView(jList1);
-
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/search.png"))); // NOI18N
+
+        lynxScroll.setBackground(new java.awt.Color(45, 48, 55));
+        lynxScroll.setBorder(null);
+        lynxScroll.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        lynxScroll.setPreferredSize(new java.awt.Dimension(389, 531));
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -1098,10 +1182,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchPeerTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addComponent(jScrollPane1)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(searchPeerTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(lynxScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1110,10 +1198,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                     .addComponent(searchPeerTextField))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lynxScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 531, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
         );
+
+        lynxScroll.getViewport().setBackground(new Color(45,48,55));
 
         javax.swing.GroupLayout MintLynxPanelLayout = new javax.swing.GroupLayout(MintLynxPanel);
         MintLynxPanel.setLayout(MintLynxPanelLayout);
@@ -1123,7 +1213,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 36, Short.MAX_VALUE))
+                .addGap(0, 38, Short.MAX_VALUE))
         );
         MintLynxPanelLayout.setVerticalGroup(
             MintLynxPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1449,7 +1539,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 }
                 //reset pfp and status
                 setPfp();
-                redrawStatus();
+                
+                statusPanel.repaint();
                 return null;
             }
 
@@ -1603,6 +1694,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JTabbedPane TabbedPane;
     private javax.swing.JScrollPane chatScrollPane;
     private javax.swing.JTextArea chatTextArea;
+    private javax.swing.JLabel currentPfpLabel;
+    private javax.swing.JPanel currentPfpPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -1612,7 +1705,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JList<String> jList1;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
@@ -1622,8 +1715,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane lynxScroll;
     private javax.swing.JLabel pfpLabel;
     private javax.swing.JButton saveButton;
     private javax.swing.JTextField searchPeerTextField;

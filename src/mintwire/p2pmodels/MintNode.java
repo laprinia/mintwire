@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import mintwire.p2pmodels.apps.CodeStitchApp;
+import mintwire.p2pmodels.apps.MintMessagingApp;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
 
 import rice.environment.Environment;
@@ -22,7 +23,7 @@ import rice.pastry.socket.SocketPastryNodeFactory;
 import rice.pastry.standard.RandomNodeIdFactory;
 
 public class MintNode {
-
+    private MintMessagingApp messagingApp;
     private SendPeerInfoApp peerInfoApp;
     private CodeStitchApp codeStitchApp;
     private Environment environment;
@@ -42,7 +43,7 @@ public class MintNode {
         //init apps
         codeStitchApp = new CodeStitchApp(node);
         peerInfoApp = new SendPeerInfoApp(node);
-
+        messagingApp=new MintMessagingApp(node);
         node.boot(bootaddr);
 
         node.alias = alias;

@@ -4,22 +4,18 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Label;
+
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.File;
+
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
+
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.utils.Utils;
-import rice.pastry.PastryNode;
+import org.jdesktop.swingx.util.OS;
 
 /**
  *
@@ -29,6 +25,7 @@ public class PeerPanel extends javax.swing.JPanel {
    
     private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
     private Utils utils=new Utils();
+    private boolean isLinux=OS.isLinux();
     private JLabel infoLabel;
     private String filePath="";
     private Color availableColor = new Color(168, 255, 104);
@@ -48,11 +45,8 @@ public class PeerPanel extends javax.swing.JPanel {
         try {
             setFocusable(true);
             setRequestFocusEnabled(true);
-            
-            
-            
-            
-            if (utils.isLinux()) {
+           
+            if (isLinux) {
                 aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
             }
             this.peerInfo=peerInfo;
@@ -60,7 +54,7 @@ public class PeerPanel extends javax.swing.JPanel {
             initComponents();
             setPreferredSize(new Dimension(299,92));
             revalidate();
-            setPfp();
+            utils.setPfp(pfpLabel,aliasPath,peerInfo);
         } catch (IOException ex) {
             Logger.getLogger(PeerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -72,29 +66,7 @@ public class PeerPanel extends javax.swing.JPanel {
     public PeerInfo getPeerInfo(){
         return peerInfo;
     }
-      public void setPfp() throws IOException {
-       BufferedImage bi;
-        File pfp;
-        try {
-            pfp = new File(aliasPath +peerInfo.getAlias() + "/pfp/pfp.png");
-            bi = ImageIO.read(pfp);
-            
-           
-        } catch (Exception ex) {
-           
-           pfp = new File(aliasPath +peerInfo.getAlias()+ "/pfp/pfp.png");
-            bi = ImageIO.read(pfp);
-        }
-           BufferedImage biR = utils.makeRound(bi);
-           
-            Dimension d=pfpLabel.getPreferredSize();
-            
-            Image resultScaled = biR.getScaledInstance(d.width-12,d.height-12, Image.SCALE_SMOOTH);
-
-            ImageIcon ico = new ImageIcon(resultScaled);
-
-            pfpLabel.setIcon(ico);
-    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -165,7 +137,9 @@ public class PeerPanel extends javax.swing.JPanel {
             .addComponent(pfpLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        try{setPfp();}catch(Exception ex){ex.getMessage();}
+        try{
+            utils.setPfp(pfpLabel, aliasPath, peerInfo);
+        }catch(Exception ex){ex.printStackTrace();}
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

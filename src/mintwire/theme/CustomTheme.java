@@ -77,7 +77,7 @@ public class CustomTheme extends AbstractMaterialTheme {
 
     protected void installColor() {
         this.backgroundPrimary = new ColorUIResource(45, 48, 56);
-        this.highlightBackgroundPrimary = new ColorUIResource(66, 179, 176);
+        this.highlightBackgroundPrimary = new ColorUIResource(219,80,74);
         this.textColor = new ColorUIResource(255, 255, 255);
         this.disableTextColor = new ColorUIResource(170, 170, 170);
         this.buttonBackgroundColor = new ColorUIResource(45, 48, 56);

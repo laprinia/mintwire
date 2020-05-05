@@ -2,7 +2,9 @@
 package mintwire.utils;
 
 import java.awt.AlphaComposite;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,6 +13,10 @@ import java.nio.file.Files;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import mintwire.p2pmodels.messages.PeerInfo;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -86,6 +92,29 @@ public class Utils {
                 Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+      public void setPfp(JLabel pfpLabel,String aliasPath, PeerInfo peerInfo) throws IOException {
+       BufferedImage bi;
+        File pfp;
+        try {
+            pfp = new File(aliasPath +peerInfo.getAlias() + "/pfp/pfp.png");
+            bi = ImageIO.read(pfp);
+            
+           
+        } catch (Exception ex) {
+           
+           pfp = new File(aliasPath +peerInfo.getAlias()+ "/pfp/pfp.png");
+            bi = ImageIO.read(pfp);
+        }
+           BufferedImage biR =makeRound(bi);
+           
+            Dimension d=pfpLabel.getPreferredSize();
+            
+            Image resultScaled = biR.getScaledInstance(d.width-12,d.height-12, Image.SCALE_SMOOTH);
+
+            ImageIcon ico = new ImageIcon(resultScaled);
+
+            pfpLabel.setIcon(ico);
     }
    
 }
