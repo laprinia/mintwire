@@ -34,6 +34,7 @@ import mintwire.p2pmodels.MintNode;
 import mintwire.utils.Status;
 
 import mintwire.utils.Utils;
+import org.jdesktop.swingx.util.OS;
 
 public class Identity extends javax.swing.JFrame {
 
@@ -45,7 +46,7 @@ public class Identity extends javax.swing.JFrame {
     private Image resultScaled;
     private String alias = "no alias";
     private Utils utils = new Utils();
-    private final boolean isLinux = utils.isLinux();
+    private final boolean isLinux = OS.isLinux();
     private static Identity instance = null;
 
     public Identity() {
@@ -306,6 +307,8 @@ public class Identity extends javax.swing.JFrame {
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(45, Short.MAX_VALUE))
         );
+
+        jComboBox1.setAlignmentY(CENTER_ALIGNMENT);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

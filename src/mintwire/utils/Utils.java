@@ -10,15 +10,20 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.messages.PeerInfo;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import rice.p2p.commonapi.Id;
+import rice.pastry.NodeHandle;
 
 
 public class Utils {
@@ -67,12 +72,7 @@ public class Utils {
       .map(f -> f.substring(filename.lastIndexOf(".") + 1));
 }
 
-    public boolean isLinux(){
-      String OS = (System.getProperty("os.name")).toUpperCase();
-    
-      if(!OS.contains("WIN")) return true;
-      else return false;
-    }
+   
     public void writeJSONfiles(String aliasPath, String alias){
         FileWriter fw = null;
         File codetemp;
@@ -115,6 +115,20 @@ public class Utils {
             ImageIcon ico = new ImageIcon(resultScaled);
 
             pfpLabel.setIcon(ico);
+    }
+    public void updatePeerInfo(MintNode mintNode){
+       
+         List<NodeHandle> handles = mintNode.getNode().getLeafSet().asList();
+        HashSet<Id> uniqueHandles = new HashSet<>();
+        handles.removeIf(e -> !uniqueHandles.add(e.getId()));
+        mintNode.getPeerInfoApp().getPeerList().clear();
+        for (NodeHandle h : handles) {
+            NodeHandle lh = mintNode.getNode().getLocalHandle();
+            
+            mintNode.getPeerInfoApp().requestPeerInfo(h.getId(), new PeerInfo(lh, mintNode.getNode().alias, mintNode.getNode().status, false));
+        
+        }
+
     }
    
 }

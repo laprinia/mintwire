@@ -26,8 +26,8 @@ import mintwire.utils.Utils;
 import org.jdesktop.swingx.util.OS;
 
 public class Reconfigure extends javax.swing.JFrame {
-    private final Utils utils=new Utils();
-    private final boolean isLinux=utils.isLinux();
+    
+    private final boolean isLinux=OS.isLinux();
     private static Reconfigure instance=null;
     private JLabel label;
     private boolean isAuthorized = false;

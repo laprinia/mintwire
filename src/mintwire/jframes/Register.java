@@ -1,9 +1,24 @@
 
 package mintwire.jframes;
 
-public class Register extends javax.swing.JFrame {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import mintwire.BCrypt;
+import mintwire.CredentialChecker;
 
-    private static Register instance = null;
+public class Register extends javax.swing.JFrame {
+private JLabel label;
+ private final int ACCOUNT_CAP=20;
+ private Connection conn=null;
+ private PreparedStatement statement=null;
+ private ResultSet result=null;
+ private static Register instance = null;
 
     public static Register getRegisterInstance() {
         if (instance == null) {
@@ -12,8 +27,61 @@ public class Register extends javax.swing.JFrame {
         return instance;
     }
 
-    public Register() {
+    private Register() {
         initComponents();
+        try{
+            Class.forName("org.sqlite.JDBC");
+        }catch(ClassNotFoundException ex){
+            JOptionPane.showMessageDialog(null, "Problem with loading SQLite JDBC driver", "Login Error", JOptionPane.ERROR_MESSAGE);
+        }
+       
+    }
+       private void insertToSQLite(String alias, String passw, String hAlias, String hPassw) throws SQLException {
+
+            String path = "src/mintwire/jframes/dbs/login.sqlite";
+            String dbURL = "jdbc:sqlite:"
+                    + path;
+            conn = DriverManager.getConnection(dbURL);
+            
+            String count = "SELECT COUNT(*) AS count from aliases";
+            statement = conn.prepareStatement(count);
+            result = statement.executeQuery();
+            result.next();
+            int number = result.getInt("count");
+            result.close();
+
+            if (number >= ACCOUNT_CAP) {
+                label = new JLabel("<html><center>Please use a registered existing account on this PC.");
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                JOptionPane.showMessageDialog(null, label, "Accounts limit reached", JOptionPane.INFORMATION_MESSAGE);
+
+            } else {
+
+
+                    statement = conn.prepareStatement("insert into aliases (alias, password) values (?,?)");
+                    statement.setString(1, hAlias);
+                    statement.setString(2, hPassw);
+                    boolean error = statement.execute();
+                    if (!error) {
+                        label = new JLabel("<html><center>Welcome to MINTWIRE");
+                        label.setHorizontalAlignment(SwingConstants.CENTER);
+                        JOptionPane.showMessageDialog(null, label, "Account created succesfully", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+            }
+
+        
+            try {
+                if (null != conn) {
+                    result.close();
+                    statement.close();
+                    conn.close();
+
+                }
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, new String(ex.getMessage()), "Closing DB Error", JOptionPane.ERROR_MESSAGE);
+            }
+        
 
     }
 
@@ -35,7 +103,7 @@ public class Register extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(94, 87, 104));
 
-        jPanel1.setBackground(new java.awt.Color(94, 87, 104));
+        jPanel1.setBackground(new java.awt.Color(45, 48, 55));
 
         jLabel1.setBackground(new java.awt.Color(94, 87, 104));
         jLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
@@ -160,7 +228,25 @@ public class Register extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
-        // TODO add your handling code here:
+        String salt = BCrypt.gensalt();
+
+        String alias = new String(aliasField.getText()).toLowerCase();
+        String passw = new String(passwordField.getPassword()).toLowerCase();
+        if (!CredentialChecker.check(alias, passw)) {
+            return;
+        }else {
+            String hashAlias = BCrypt.hashpw(alias, salt);
+            String hashPassw = BCrypt.hashpw(passw, salt);
+            try{insertToSQLite(alias, passw, hashAlias, hashPassw);
+            
+            }catch(Exception ex){
+                label = new JLabel("<html><center>"+ex.getMessage());
+                        label.setHorizontalAlignment(SwingConstants.CENTER);
+                        JOptionPane.showMessageDialog(null, label, "SQLite Exception", JOptionPane.INFORMATION_MESSAGE); 
+                        
+            }
+        }
+        dispose();
     }//GEN-LAST:event_createButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

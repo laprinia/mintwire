@@ -43,4 +43,10 @@ public class PeerInfo implements Message{
     public int getPriority() {
        return Message.LOW_PRIORITY;
     }
+
+    @Override
+    public String toString() {
+        return alias+" "+status+"["+nodeHandle.getId()+"]";
+    }
+    
 }

@@ -3,9 +3,7 @@ package mintwire.jframes;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import java.util.HashSet;
 
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,13 +16,13 @@ import mintwire.p2pmodels.apps.SendPeerInfoApp;
 import mintwire.p2pmodels.messages.CodeStitch;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.PeerPanel;
-import rice.p2p.commonapi.Id;
-import rice.pastry.NodeHandle;
+import mintwire.utils.Utils;
+
 
 
 
 public class SendCodeStitch extends javax.swing.JFrame {
-    
+    private Utils utils=new Utils();
     private CodeStitch codeStitch;
     private ArrayList<PeerPanel> peerPanels=new ArrayList<>();
     private JLabel label;
@@ -51,15 +49,7 @@ public class SendCodeStitch extends javax.swing.JFrame {
         this.mintNode = mainNode;
         this.codeStitch=codeStitch;
         peerInfoApp = mintNode.getPeerInfoApp();
-        List<NodeHandle> handles = mintNode.getNode().getLeafSet().asList();
-        HashSet<Id> uniqueHandles = new HashSet<>();
-        handles.removeIf(e -> !uniqueHandles.add(e.getId()));
-        for (NodeHandle h : handles) {
-            NodeHandle lh = mintNode.getNode().getLocalHandle();
-            peerInfoApp.requestPeerInfo(h.getId(), new PeerInfo(lh, mainNode.getNode().alias, mintNode.getNode().status, false));
-        
-        }
-
+        utils.updatePeerInfo(mintNode);
         initComponents();
         peerScroll.setPreferredSize(new Dimension(299, 276));
         peerScroll.revalidate();
@@ -91,6 +81,7 @@ public class SendCodeStitch extends javax.swing.JFrame {
             setVisible(false);
         } else {
             for (PeerInfo peerInfo : peerInfoApp.getPeerList()) {
+                System.err.println(peerInfo.toString());
                 PeerPanel panel = new PeerPanel(peerInfo);
                 panel.setPreferredSize(new Dimension(299, 92));
                 panel.revalidate();

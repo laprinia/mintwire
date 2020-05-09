@@ -48,7 +48,9 @@ public class SendPeerInfoApp implements Application {
         if (peerInfo.isItResponse()) {
             System.err.println("am primit raspuns de la: " + peerInfo.getAlias());
             if (!peerList.contains(peerInfo)) {
+                System.err.println("In peerInfo added"+peerInfo.getAlias());
                 peerList.add(peerInfo);
+                System.err.println(peerList.toString());
             }
 
         } else {

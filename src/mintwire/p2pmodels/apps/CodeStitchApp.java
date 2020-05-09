@@ -1,7 +1,7 @@
 
 package mintwire.p2pmodels.apps;
 
-import mintwire.p2pmodels.MintNode;
+
 import mintwire.p2pmodels.messages.CodeStitch;
 import rice.p2p.commonapi.Application;
 import rice.p2p.commonapi.Endpoint;

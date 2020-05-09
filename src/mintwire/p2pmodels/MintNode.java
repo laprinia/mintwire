@@ -26,18 +26,18 @@ public class MintNode {
     private MintMessagingApp messagingApp;
     private SendPeerInfoApp peerInfoApp;
     private CodeStitchApp codeStitchApp;
-    private Environment environment;
+    private Environment env;
     private PastryNode node;
     private JLabel label;
 
-    public MintNode(int bindport, InetSocketAddress bootaddr, String alias, String status, Environment env) throws InterruptedException, IOException, BindException {
+    public MintNode(int bindport, InetSocketAddress bootaddr, String alias, String status) throws InterruptedException, IOException, BindException {
 
-        environment = new Environment();
-        environment.getParameters().setString("nat_search_policy", "never");
+        env = new Environment();
+        env.getParameters().setString("nat_search_policy", "never");
 
         NodeIdFactory nodeIdFactory = new RandomNodeIdFactory(env);
 
-        PastryNodeFactory pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, bindport, environment);
+        PastryNodeFactory pastryNodeFactory = new SocketPastryNodeFactory(nodeIdFactory, bindport, env);
 
         node = pastryNodeFactory.newNode();
         //init apps
@@ -68,7 +68,7 @@ public class MintNode {
     }
 
     public Environment getEnvironment() {
-        return environment;
+        return env;
     }
 
     public PastryNode getNode() {
