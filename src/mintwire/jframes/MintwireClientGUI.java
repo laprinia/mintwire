@@ -180,7 +180,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private Bubbler bubbler;
     private ChatBorder cB = new ChatBorder(45);
     final Color SENT = new Color(244, 101, 101);
-    final Color RECEIVED = new Color(170, 207, 255);
+    
     private JLabel infoLabel;
 
     final JPanel scrollablePanel = new JPanel(new GridLayout(0, 1));
@@ -207,6 +207,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         this.alias = mintNode.getNode().alias;
         this.mintNode = mintNode;
+        mintNode.getMessagingApp().setScrollablePanel(scrollablePanel);
         peerInfoApp=mintNode.getPeerInfoApp();
         this.password = password;
         System.out.println(mintNode.getNode().getId());
@@ -257,7 +258,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                box.removeAll(); box.repaint(); lynxPanels.clear();lynxScroll.revalidate();
            }
            for(PeerInfo p:mintNode.getPeerInfoApp().getPeerList()){
-               System.err.println(p.toString());
+               
                LynxPanel lynx=new LynxPanel(p);
             lynx.setPreferredSize(new Dimension(376,92));
             box.add(lynx);
@@ -282,16 +283,17 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             l.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    
+                        //TODO CLEAN SCROLL BEFORE ADDING
                         l.setCurrentPanel();
                         currentPeerChat=l.getPeerInfo();
+                        mintNode.getMessagingApp().setCurrentId(l.getPeerInfo().getNodeHandle().getId());
+                        
                         currentPfpPanel.repaint();
                         currentPfpPanel.revalidate();
                         currentAliasLabel.setText(l.getPeerInfo().getAlias());
-                        //TODO MAKING OTHERS NOT CURRENT PANEL
-                        //TODO GET HANDLE TO SEND MSG
+                        //TODO TAKE WHAT'S IN CACHE
+                        
                     try {
-                        //TODO HANDLE SHOWING PAST MSGS
                         
                         utils.setPfp(currentPfpLabel, aliasPath, l.getPeerInfo());
                     } catch (IOException ex) {
@@ -1634,10 +1636,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
             Date date=new Date(System.currentTimeMillis());
             
-            MintMessage msg=new MintMessage(chatTextArea.getText(),formatter.format(date),currentPeerChat.getAlias());
+            MintMessage msg=new MintMessage(chatTextArea.getText(),formatter.format(date),mintNode.getNode().getId());
             
-            
-            mintNode.getMessagingApp().deliver(currentPeerChat.getNodeHandle().getId(),msg);
+            System.err.println("sending to from bttn "+currentPeerChat.getNodeHandle().getId());
+            mintNode.getMessagingApp().routeMessage(currentPeerChat.getNodeHandle(),msg);
             chatTextArea.setText("");
             
         }

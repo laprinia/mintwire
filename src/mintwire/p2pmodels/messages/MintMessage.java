@@ -5,18 +5,20 @@
  */
 package mintwire.p2pmodels.messages;
 
+import rice.p2p.commonapi.Id;
 import rice.p2p.commonapi.Message;
 
 
 public class MintMessage implements Message{
     private String text;
     private String dateStamp;
-    private String senderAlias;
     
-    public MintMessage(String text,String date,String senderAlias){
+    private Id senderId;
+    
+    public MintMessage(String text,String date,Id senderId){
         this.text=text;
         this.dateStamp=date;
-        this.senderAlias=senderAlias;
+        this.senderId=senderId;
     }
 
     public String getText() {
@@ -27,18 +29,20 @@ public class MintMessage implements Message{
         return dateStamp;
     }
 
-    public String getSenderAlias() {
-        return senderAlias;
-    }
+   
      @Override
     public String toString() {
-        return "MintMessage{" +text+" "+"sender=" + senderAlias + ", dateStamp=" + dateStamp +'}';
+        return "MintMessage{" +text+" "+"sender=" + senderId + ", dateStamp=" + dateStamp +'}';
+    }
+
+    public Id getSenderId() {
+        return senderId;
     }
     
     
     @Override
     public int getPriority() {
-       return rice.p2p.commonapi.Message.LOW_PRIORITY;
+       return Message.LOW_PRIORITY;
     }
     
 }

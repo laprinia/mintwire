@@ -51,6 +51,7 @@ public class Bubbler {
     }
 
     public void paintLeftBubble(JPanel scrollable,String date) {
+       
         String DATE_TAG_LEFT="<div style='text-align:left; color:Gray;'>"+date+"</div>";
         JLabel aux = new JLabel("<html><body style='padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_LEFT+"</body></html>");
         aux.setFont(new Font("Calibri", Font.BOLD, 18));
@@ -71,6 +72,7 @@ public class Bubbler {
 
         scrollable.add(intermid);
         scrollable.revalidate();
+        scrollable.repaint();
         int height = (int) scrollable.getPreferredSize().getHeight();
         Rectangle rect = new Rectangle(0, height, 10, 10);
         scrollable.scrollRectToVisible(rect);

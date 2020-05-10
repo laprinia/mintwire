@@ -5,10 +5,12 @@
         <group>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/chatpanels/Bubbler.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/MintwireClientGUI.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/Register.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/chaticons/LeftBubble.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/MintNode.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/MintRequests.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/apps/MintMessagingApp.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/Reconfigure.java</file>
         </group>
     </open-files>
 </project-private>
