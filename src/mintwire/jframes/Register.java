@@ -13,7 +13,7 @@ import mintwire.BCrypt;
 import mintwire.CredentialChecker;
 
 public class Register extends javax.swing.JFrame {
-private JLabel label;
+ private JLabel label;
  private final int ACCOUNT_CAP=20;
  private Connection conn=null;
  private PreparedStatement statement=null;
@@ -28,6 +28,7 @@ private JLabel label;
     }
 
     private Register() {
+        setTitle("Mint Register");
         initComponents();
         try{
             Class.forName("org.sqlite.JDBC");

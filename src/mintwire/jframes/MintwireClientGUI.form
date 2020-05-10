@@ -880,7 +880,7 @@
                                   <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                                   <Component id="jScrollPane3" pref="723" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
-                                  <Component id="jLabel4" min="-2" pref="78" max="-2" attributes="0"/>
+                                  <Component id="sendTextLabel" min="-2" pref="78" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -890,7 +890,7 @@
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace pref="23" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel4" min="-2" pref="58" max="-2" attributes="0"/>
+                                      <Component id="sendTextLabel" min="-2" pref="58" max="-2" attributes="0"/>
                                       <Component id="jScrollPane3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
@@ -932,7 +932,7 @@
                             </Component>
                           </SubComponents>
                         </Container>
-                        <Component class="javax.swing.JLabel" name="jLabel4">
+                        <Component class="javax.swing.JLabel" name="sendTextLabel">
                           <Properties>
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="5c" green="50" red="4b" type="rgb"/>
@@ -943,8 +943,8 @@
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel4MouseClicked"/>
-                            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jLabel4KeyPressed"/>
+                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sendTextLabelMouseClicked"/>
+                            <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="sendTextLabelKeyPressed"/>
                           </Events>
                         </Component>
                       </SubComponents>

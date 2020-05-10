@@ -82,6 +82,10 @@ public class MintNode {
     public CodeStitchApp getCodeStitchApp() {
         return codeStitchApp;
     }
+
+    public MintMessagingApp getMessagingApp() {
+        return messagingApp;
+    }
     
 
 

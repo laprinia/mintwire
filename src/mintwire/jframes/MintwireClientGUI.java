@@ -31,7 +31,9 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,6 +76,7 @@ import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
 
 import mintwire.p2pmodels.messages.CodeStitch;
+import mintwire.p2pmodels.messages.MintMessage;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.mintlynx.LynxPanel;
 
@@ -84,8 +87,9 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jdesktop.swingx.util.OS;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+
+
+//TODO MINT LYNX STERGE SAGETELE,TRIMITE PFP PRIN SEND PEER INFO,
 
 public class MintwireClientGUI extends javax.swing.JFrame {
 
@@ -249,6 +253,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         
     }
     public void paintMitLynx(ArrayList<LynxPanel> lynxPanels){
+           if(box.getComponentCount()>0){
+               box.removeAll(); box.repaint(); lynxPanels.clear();lynxScroll.revalidate();
+           }
            for(PeerInfo p:mintNode.getPeerInfoApp().getPeerList()){
                System.err.println(p.toString());
                LynxPanel lynx=new LynxPanel(p);
@@ -641,7 +648,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         jPanel11 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         chatTextArea = new javax.swing.JTextArea();
-        jLabel4 = new javax.swing.JLabel();
+        sendTextLabel = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         searchPeerTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
@@ -1120,17 +1127,17 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         chatTextArea.setCaretPosition(0);
         jScrollPane3.setViewportView(chatTextArea);
 
-        jLabel4.setBackground(new java.awt.Color(75, 80, 92));
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send-message.png"))); // NOI18N
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+        sendTextLabel.setBackground(new java.awt.Color(75, 80, 92));
+        sendTextLabel.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        sendTextLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send-message.png"))); // NOI18N
+        sendTextLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabel4MouseClicked(evt);
+                sendTextLabelMouseClicked(evt);
             }
         });
-        jLabel4.addKeyListener(new java.awt.event.KeyAdapter() {
+        sendTextLabel.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                jLabel4KeyPressed(evt);
+                sendTextLabelKeyPressed(evt);
             }
         });
 
@@ -1142,7 +1149,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGap(21, 21, 21)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 723, Short.MAX_VALUE)
                 .addGap(41, 41, 41)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sendTextLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(22, 22, 22))
         );
         jPanel11Layout.setVerticalGroup(
@@ -1150,7 +1157,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sendTextLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26))
         );
@@ -1562,7 +1569,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 while (identity.getInstance() != null) {
                     Thread.sleep(3000);
                 }
-                //reset pfp and status
+                
                 setPfp();
                 
                 statusPanel.repaint();
@@ -1616,18 +1623,30 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_TabbedPaneStateChanged
 
-    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
-        //verif ca e trimis catre cineva
+    private void sendTextLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendTextLabelMouseClicked
+       
         if (!(chatTextArea.getText().equals(""))) {
             bubbler = new Bubbler(chatTextArea.getText(), SENT);
             bubbler.paintRightBubble(scrollablePanel);
-            chatTextArea.setText("");
+            
         }
-    }//GEN-LAST:event_jLabel4MouseClicked
+        if(currentPeerChat!=null){
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
+            Date date=new Date(System.currentTimeMillis());
+            
+            MintMessage msg=new MintMessage(chatTextArea.getText(),formatter.format(date),currentPeerChat.getAlias());
+            
+            
+            mintNode.getMessagingApp().deliver(currentPeerChat.getNodeHandle().getId(),msg);
+            chatTextArea.setText("");
+            
+        }
+        
+    }//GEN-LAST:event_sendTextLabelMouseClicked
 
-    private void jLabel4KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jLabel4KeyPressed
+    private void sendTextLabelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sendTextLabelKeyPressed
 
-    }//GEN-LAST:event_jLabel4KeyPressed
+    }//GEN-LAST:event_sendTextLabelKeyPressed
 
     private void searchPeerTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_searchPeerTextFieldFocusGained
         searchPeerTextField.setText("");
@@ -1727,7 +1746,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
@@ -1746,6 +1764,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton saveButton;
     private javax.swing.JTextField searchPeerTextField;
     private javax.swing.JButton sendButton;
+    private javax.swing.JLabel sendTextLabel;
     private javax.swing.JScrollPane sporeScroll;
     private javax.swing.JButton sporeSearch;
     private javax.swing.JTable sporeTable;

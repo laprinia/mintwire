@@ -12,9 +12,8 @@ public class CredentialChecker {
 private static JLabel label;
 private static final int ACCOUNT_MIN_CHARS = 4;
 public static boolean check(String alias, String passw){
-    Pattern pattern = Pattern.compile("[a-z0-9 ]", Pattern.CASE_INSENSITIVE);
-    
-    Matcher hasPattern=pattern.matcher(alias);
+   boolean hasSpecial = alias.matches(".*[!@#$%^&*].*");
+   boolean hasUpper=alias.matches("[A-Z ]*");
    
     if (alias.length() <= ACCOUNT_MIN_CHARS|| alias == null || passw.length() <= ACCOUNT_MIN_CHARS || passw == null) {
               label = new JLabel("<html><center>Please have your password or alias of at least 5 characters!");
@@ -23,8 +22,8 @@ public static boolean check(String alias, String passw){
             
            return false;
         } 
-    else if(hasPattern.find() ){
-           label = new JLabel("<html><center>Please make sure your alias contains lowercase  letters and or numbers!");
+    else if(hasUpper||hasSpecial ){
+           label = new JLabel("<html><center>Please make sure your alias contains lowercase letters and or numbers!");
                     label.setHorizontalAlignment(SwingConstants.CENTER);
                     JOptionPane.showMessageDialog(null, label, "Not valid credentials", JOptionPane.INFORMATION_MESSAGE);
             

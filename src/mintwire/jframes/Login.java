@@ -79,8 +79,8 @@ public class Login extends javax.swing.JFrame {
         }
 
        
-            String path = "src/mintwire/jframes/dbs/login.sqlite";
-            String dbURL = "jdbc:sqlite:"
+            String path = "resource:mintwire/jframes/dbs/login.sqlite";
+            String dbURL = "jdbc:sqlite::"
                     + path;
             conn = DriverManager.getConnection(dbURL);
             //check if it reaches cap

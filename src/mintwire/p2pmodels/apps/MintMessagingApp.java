@@ -30,7 +30,7 @@ public class MintMessagingApp implements Application{
     @Override
     public void deliver(Id id, Message msg) {
         MintMessage mintMessage=(MintMessage)msg;
-        mintMessage.toString();
+        System.err.println(mintMessage.toString());
     }
 
     @Override
