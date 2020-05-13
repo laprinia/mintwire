@@ -26,10 +26,10 @@ public class Bubbler {
     private Color color;
     private Bubble bubble;
     private Utils utils = new Utils();
-    private SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
+    
     private Date date = new Date(System.currentTimeMillis());
     
-    private final String DATE_TAG_RIGHT="<div style='text-align:right; color:rgb(64,64,64);'>"+formatter.format(date)+"</div>";
+    
     
     public Bubbler(String text, Color color) {
         this.text = text;
@@ -78,8 +78,8 @@ public class Bubbler {
         scrollable.scrollRectToVisible(rect);
     }
 
-    public void paintRightBubble(JPanel scrollable) {
-      
+    public void paintRightBubble(JPanel scrollable,String date) {
+        String DATE_TAG_RIGHT="<div style='text-align:right; color:rgb(64,64,64);'>"+date+"</div>";
         JLabel aux = new JLabel("<html><body style='text-align:right;padding:12px;'>"+utils.insertPeriodically(this.text,"<br/>",70)+DATE_TAG_RIGHT+"</body></html>");
         aux.setMaximumSize(new Dimension(100,200));
         aux.setFont(new Font("Calibri", Font.PLAIN, 18));

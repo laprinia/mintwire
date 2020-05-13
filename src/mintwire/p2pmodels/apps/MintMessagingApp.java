@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import mintwire.cache.MessageCacher;
 import mintwire.chatpanels.Bubbler;
 import mintwire.p2pmodels.messages.MintMessage;
 import mintwire.p2pmodels.messages.PeerInfo;
@@ -18,7 +19,7 @@ import rice.pastry.PastryNode;
 
 public class MintMessagingApp implements Application{
     final Color RECEIVED = new Color(170, 207, 255);
-    
+    private MessageCacher cacher;
     private JPanel scrollablePanel;
     private PastryNode pastryNode;
     private Endpoint endpoint;
@@ -43,19 +44,18 @@ public class MintMessagingApp implements Application{
     @Override
     public void deliver(Id id, Message msg) {
         MintMessage mintMessage=(MintMessage)msg;
-        
+        System.err.println(msg.toString());
         if(currentId==null || scrollablePanel==null) return; //cache
         else{
            
             if(currentId.equals(mintMessage.getSenderId())){
-                System.err.println("current id check passed");
+                
                 Bubbler bubbler = new Bubbler(mintMessage.getText(), RECEIVED);
                 bubbler.paintLeftBubble(scrollablePanel, mintMessage.getDateStamp());
                 //TODO NU PICTEZI BINE
             }
         }
-        //elsif cache
-       //DEFAPT TOT IN CACHE
+        cacher.cache(mintMessage.getSenderId(), mintMessage);
     }
 
     @Override
@@ -73,6 +73,9 @@ public class MintMessagingApp implements Application{
 
     public void setScrollablePanel(JPanel scrollablePanel) {
         this.scrollablePanel = scrollablePanel;
+    }
+    public void setCacher(MessageCacher cacher){
+        this.cacher=cacher;
     }
 
    

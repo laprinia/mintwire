@@ -2,6 +2,7 @@ package mintwire.jframes;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 
 import java.awt.Font;
@@ -66,9 +67,11 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 import mintwire.LangSelector;
 import mintwire.borders.ChatBorder;
+import mintwire.cache.MessageCacher;
 import mintwire.chatpanels.Bubbler;
 import mintwire.classes.MintFile;
 import mintwire.jframes.MintwireClientGUI.FileSporeTableModel;
@@ -87,6 +90,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jdesktop.swingx.util.OS;
+import sun.awt.www.content.audio.x_aiff;
 
 
 //TODO MINT LYNX STERGE SAGETELE,TRIMITE PFP PRIN SEND PEER INFO,
@@ -130,24 +134,35 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }
 
-    public class FileExtensionModel extends DefaultTableCellRenderer {
-
+    public class FileExtensionModel implements TableCellRenderer{
+        private  TableCellRenderer defaultrend= new JTable().getDefaultRenderer(Object.class); 
+              
         JLabel label = new JLabel();
         ImageIcon ii;
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            
+            DefaultTableCellRenderer c =(DefaultTableCellRenderer) defaultrend.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            
             if (column == 0) {
-
+                
                 String ext = mintFiles.get(row).getFileName().substring(mintFiles.get(row).getFileName().indexOf("."));
-
+                
                 try {
-                    ii = new ImageIcon(getClass().getResource("/res/ext/" + ext + ".png"));
+                    
+                    ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/" + ext.substring(1) + ".png"));
+                   
                 } catch (Exception ex) {
-                    ii = new ImageIcon(getClass().getResource("/res/ext/ai.png"));
+                    ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/txt.png"));
                 }
-                label.setIcon(ii);
-                label.setText(mintFiles.get(row).getFileName());
+                
+                
+                
+               c.setText(mintFiles.get(row).getFileName());
+               
+               c.setIcon(new ImageIcon(ii.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+                
             } else if (column == 1) {
                 label.setText(mintFiles.get(row).getDetails());
 
@@ -157,12 +172,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 label.setText("no check yet");
             }
 
-            return label;
+         return c;
         }
 
     }
     //my vars
-    
+    private MessageCacher cacher=new MessageCacher();
     private Box box = new Box(BoxLayout.Y_AXIS);
     private Color availableColor = new Color(168, 255, 104);
     private Color awayColor = new Color(255, 190, 104);
@@ -172,7 +187,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private PeerInfo currentPeerChat;
     private SendPeerInfoApp peerInfoApp;
     private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
-    private String sharedPath = "C:\\MINTWIRE Shared";
+   
 
     private FileSporeTableModel sporeModel = new FileSporeTableModel();
 
@@ -208,14 +223,15 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         this.alias = mintNode.getNode().alias;
         this.mintNode = mintNode;
         mintNode.getMessagingApp().setScrollablePanel(scrollablePanel);
+        mintNode.getMessagingApp().setCacher(cacher);
         peerInfoApp=mintNode.getPeerInfoApp();
         this.password = password;
         System.out.println(mintNode.getNode().getId());
-
+        
         if (isLinux) {
             aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
         }
-        
+       
         
         initComponents();
         initRSyntax(requestTextArea,RequestSPanel,requestLanguageToggle, true);
@@ -234,6 +250,15 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     
 
     //LAYEREDPANE INITS
+    public void initFileSpore(){
+        mintFiles.add(new MintFile("cine.txt","details","mambo"));
+        mintFiles.add(new MintFile("cine.png","details","mambo"));
+        mintFiles.add(new MintFile("cine.flv","details","mambo"));
+         mintFiles.add(new MintFile("cine.docx","details","mambo"));
+        sporeModel.fireTableDataChanged();
+        sporeTable.repaint(); sporeScroll.repaint();
+         
+    }
     public void initMintLynx() {
            ArrayList<LynxPanel> lynxPanels=new ArrayList<>();
            
@@ -243,7 +268,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             @Override
             protected Object doInBackground() throws Exception {
                 Thread.sleep(200);
-                paintMitLynx(lynxPanels);
+                paintMintLynx(lynxPanels);
                 return null;
             }
 
@@ -253,7 +278,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
            
         
     }
-    public void paintMitLynx(ArrayList<LynxPanel> lynxPanels){
+    public void paintMintLynx(ArrayList<LynxPanel> lynxPanels){
            if(box.getComponentCount()>0){
                box.removeAll(); box.repaint(); lynxPanels.clear();lynxScroll.revalidate();
            }
@@ -283,16 +308,26 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             l.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                        //TODO CLEAN SCROLL BEFORE ADDING
+                        scrollablePanel.removeAll();scrollablePanel.repaint();chatScrollPane.repaint();
+                        try{
+                            ArrayList<MintMessage> mm=cacher.getMessagesById(currentPeerChat.getNodeHandle().getId());
+                            utils.paintCachedMessages(mintNode, mm, scrollablePanel);
+                        }catch(NullPointerException ex){
+                            ex.getCause();
+                        }
                         l.setCurrentPanel();
+                        for(LynxPanel lx:lynxPanels){
+                            if(!lx.equals(l)){
+                                l.setNotCurrentPanel();
+                            }
+                        }
                         currentPeerChat=l.getPeerInfo();
                         mintNode.getMessagingApp().setCurrentId(l.getPeerInfo().getNodeHandle().getId());
                         
                         currentPfpPanel.repaint();
                         currentPfpPanel.revalidate();
                         currentAliasLabel.setText(l.getPeerInfo().getAlias());
-                        //TODO TAKE WHAT'S IN CACHE
-                        
+      
                     try {
                         
                         utils.setPfp(currentPfpLabel, aliasPath, l.getPeerInfo());
@@ -326,13 +361,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 
                 File outputF = new File(aliasPath + alias + "/pfp/pfp.png");
                 ImageIO.write(bi, "PNG", outputF);
-//                FileWriter fw = new FileWriter(aliasPath + alias + "/history.json");
-//                JSONObject obj = new JSONObject();
-//
-//                JSONArray arr = new JSONArray();
-//
-//                obj.put(arr, "downloadhistory");
-//                fw.write(obj.toJSONString());
+
 
             } catch (Exception ex) {
                 System.out.println("err in creare fold:" + ex.getMessage());
@@ -637,9 +666,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 }else setForeground(Color.YELLOW);
 
                 graphics.setColor(getBackground());
-                graphics.fillOval(0, 0, width-8, height-8);
+                graphics.fillOval(0, 0, width-2, height-8);
                 graphics.setColor(getForeground());
-                graphics.drawOval(0, 0, width-8, height-8);
+                graphics.drawOval(0, 0, width-2, height-8);
 
             }
         }
@@ -771,11 +800,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addComponent(CStitchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(163, 163, 163)
                 .addComponent(CStitchPartyLabel)
-                .addGap(155, 155, 155)
+                .addGap(178, 178, 178)
                 .addComponent(MintLynxLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(189, 189, 189)
+                .addGap(166, 166, 166)
                 .addComponent(FileSporeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addContainerGap(97, Short.MAX_VALUE))
             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
@@ -792,7 +821,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        CStitchLabel.getAccessibleContext().setAccessibleName("CStitchLabel");
+        CStitchLabel.getAccessibleContext().setAccessibleName("");
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, -10, 1330, 150));
 
@@ -1068,51 +1097,52 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         jPanel3.setBackground(new java.awt.Color(45, 48, 55));
 
         currentPfpPanel.setBackground(new java.awt.Color(45, 48, 55));
-        currentPfpPanel.setPreferredSize(new java.awt.Dimension(88, 90));
+        currentPfpPanel.setPreferredSize(new java.awt.Dimension(110, 110));
 
-        currentPfpLabel.setPreferredSize(new java.awt.Dimension(93, 93));
+        currentPfpLabel.setPreferredSize(new java.awt.Dimension(81, 81));
 
         javax.swing.GroupLayout currentPfpPanelLayout = new javax.swing.GroupLayout(currentPfpPanel);
         currentPfpPanel.setLayout(currentPfpPanelLayout);
         currentPfpPanelLayout.setHorizontalGroup(
             currentPfpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(currentPfpPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGap(14, 14, 14)
+                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         currentPfpPanelLayout.setVerticalGroup(
             currentPfpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(currentPfpPanelLayout.createSequentialGroup()
-                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 29, Short.MAX_VALUE))
+                .addGap(14, 14, 14)
+                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         currentAliasLabel.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        currentAliasLabel.setForeground(new java.awt.Color(0, 204, 102));
-        currentAliasLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        currentAliasLabel.setForeground(new java.awt.Color(97, 214, 28));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(27, 27, 27)
+                .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(111, 111, 111)
                 .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(197, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(currentPfpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(8, Short.MAX_VALUE))
         );
 
         jPanel11.setBackground(new java.awt.Color(75, 80, 92));
@@ -1268,187 +1298,162 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         sporeTable.setBackground(new java.awt.Color(59, 62, 69));
         sporeTable.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         sporeTable.setForeground(new java.awt.Color(204, 204, 204));
-        sporeTable.setModel(
-            //new javax.swing.table.DefaultTableModel(
-                //    new Object [][] {
-                    //
-                    //    },
-                //    new String [] {
-                    //        "File", "Details", "Owner's Alias", "Checkbox"
-                    //    }
-                //) {
-                //    Class[] types = new Class [] {
-                    //        java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class
-                    //    };
-                //    boolean[] canEdit = new boolean [] {
-                    //        false, false, false, true
-                    //    };
-                //
-                //    public Class getColumnClass(int columnIndex) {
-                    //        return types [columnIndex];
-                    //    }
-                //
-                //    public boolean isCellEditable(int rowIndex, int columnIndex) {
-                    //        return canEdit [columnIndex];
-                    //    }
-                //}
+        sporeTable.setModel(sporeModel
+        );
+        sporeScroll.setViewportView(sporeTable);
+        sporeTable.setRowHeight (50);
+        sporeTable.getColumnModel().getColumn(0).setCellRenderer(new FileExtensionModel());
 
-            sporeModel
-            //)
-    );
-    sporeScroll.setViewportView(sporeTable);
-    sporeTable.setRowHeight (50);
+        sporeSearch.setText("Search");
 
-    sporeSearch.setText("Search");
-
-    javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-    jPanel8.setLayout(jPanel8Layout);
-    jPanel8Layout.setHorizontalGroup(
-        jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-            .addContainerGap()
-            .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel8Layout.createSequentialGroup()
-                    .addComponent(sporeText)
-                    .addGap(35, 35, 35)
-                    .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addComponent(sporeScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE))
-            .addGap(32, 32, 32))
-    );
-    jPanel8Layout.setVerticalGroup(
-        jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(jPanel8Layout.createSequentialGroup()
-            .addContainerGap()
-            .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(sporeText, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(sporeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(25, 25, 25))
-    );
-
-    sporeScroll.getViewport().setBackground(new java.awt.Color(45, 48, 56));
-    sporeScroll.setBorder(createEmptyBorder());
-
-    jPanel9.setBackground(new java.awt.Color(45, 48, 56));
-
-    jButton2.setText("Obtain selected item");
-    jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            jButton2MouseClicked(evt);
-        }
-    });
-
-    jButton1.setText("Transform to CodeStitch...");
-    jButton1.setToolTipText("");
-    jButton1.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            jButton1ActionPerformed(evt);
-        }
-    });
-
-    javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-    jPanel9.setLayout(jPanel9Layout);
-    jPanel9Layout.setHorizontalGroup(
-        jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(jPanel9Layout.createSequentialGroup()
-            .addContainerGap()
-            .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
-                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addContainerGap())
-    );
-    jPanel9Layout.setVerticalGroup(
-        jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(jPanel9Layout.createSequentialGroup()
-            .addGap(118, 118, 118)
-            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(18, 18, 18)
-            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-    );
-
-    javax.swing.GroupLayout FileSporePanelLayout = new javax.swing.GroupLayout(FileSporePanel);
-    FileSporePanel.setLayout(FileSporePanelLayout);
-    FileSporePanelLayout.setHorizontalGroup(
-        FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(FileSporePanelLayout.createSequentialGroup()
-            .addContainerGap()
-            .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGap(18, 18, 18)
-            .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addContainerGap(117, Short.MAX_VALUE))
-    );
-    FileSporePanelLayout.setVerticalGroup(
-        FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FileSporePanelLayout.createSequentialGroup()
-            .addContainerGap()
-            .addGroup(FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addContainerGap())
-    );
-
-    MainLayeredPane.setLayer(CodeStitchPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-    MainLayeredPane.setLayer(CodeStitchPartyPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-    MainLayeredPane.setLayer(MintLynxPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-    MainLayeredPane.setLayer(FileSporePanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-    javax.swing.GroupLayout MainLayeredPaneLayout = new javax.swing.GroupLayout(MainLayeredPane);
-    MainLayeredPane.setLayout(MainLayeredPaneLayout);
-    MainLayeredPaneLayout.setHorizontalGroup(
-        MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap()))
-        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(sporeText)
+                        .addGap(35, 35, 35)
+                        .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(sporeScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE))
+                .addGap(32, 32, 32))
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap()))
-        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap()))
-    );
-    MainLayeredPaneLayout.setVerticalGroup(
-        MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap()))
-        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap()))
-        .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MainLayeredPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap()))
-    );
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(sporeText, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addComponent(sporeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
+        );
 
-    jPanel1.add(MainLayeredPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 140, 1330, 660));
+        sporeScroll.getViewport().setBackground(new java.awt.Color(45, 48, 56));
+        sporeScroll.setBorder(createEmptyBorder());
 
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-    );
-    layout.setVerticalGroup(
-        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-    );
+        jPanel9.setBackground(new java.awt.Color(45, 48, 56));
 
-    pack();
+        jButton2.setText("Obtain selected item");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
+
+        jButton1.setText("Transform to CodeStitch...");
+        jButton1.setToolTipText("");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addGap(96, 96, 96)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout FileSporePanelLayout = new javax.swing.GroupLayout(FileSporePanel);
+        FileSporePanel.setLayout(FileSporePanelLayout);
+        FileSporePanelLayout.setHorizontalGroup(
+            FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(FileSporePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(117, Short.MAX_VALUE))
+        );
+        FileSporePanelLayout.setVerticalGroup(
+            FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FileSporePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        MainLayeredPane.setLayer(CodeStitchPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainLayeredPane.setLayer(CodeStitchPartyPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainLayeredPane.setLayer(MintLynxPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        MainLayeredPane.setLayer(FileSporePanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        javax.swing.GroupLayout MainLayeredPaneLayout = new javax.swing.GroupLayout(MainLayeredPane);
+        MainLayeredPane.setLayout(MainLayeredPaneLayout);
+        MainLayeredPaneLayout.setHorizontalGroup(
+            MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        MainLayeredPaneLayout.setVerticalGroup(
+            MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(CodeStitchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(CodeStitchPartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(MintLynxPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+            .addGroup(MainLayeredPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(MainLayeredPaneLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(FileSporePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        jPanel1.add(MainLayeredPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 140, 1330, 660));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -1612,6 +1617,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         CodeStitchPartyPanel.setVisible(false);
         MintLynxPanel.setVisible(false);
         FileSporePanel.setVisible(true);
+        initFileSpore();
 
     }//GEN-LAST:event_FileSporeLabelMouseClicked
 
@@ -1626,21 +1632,22 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_TabbedPaneStateChanged
 
     private void sendTextLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendTextLabelMouseClicked
-       
+       SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
+       Date date=new Date(System.currentTimeMillis());
         if (!(chatTextArea.getText().equals(""))) {
             bubbler = new Bubbler(chatTextArea.getText(), SENT);
-            bubbler.paintRightBubble(scrollablePanel);
+            bubbler.paintRightBubble(scrollablePanel,formatter.format(date));
             
         }
         if(currentPeerChat!=null){
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
-            Date date=new Date(System.currentTimeMillis());
+            
             
             MintMessage msg=new MintMessage(chatTextArea.getText(),formatter.format(date),mintNode.getNode().getId());
-            
+            cacher.cache(currentPeerChat.getNodeHandle().getId(), msg);
             System.err.println("sending to from bttn "+currentPeerChat.getNodeHandle().getId());
             mintNode.getMessagingApp().routeMessage(currentPeerChat.getNodeHandle(),msg);
             chatTextArea.setText("");
+            
             
         }
         

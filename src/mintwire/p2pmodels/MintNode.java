@@ -9,8 +9,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import mintwire.p2pmodels.apps.CodeStitchApp;
+import mintwire.p2pmodels.apps.FileSporeApp;
 import mintwire.p2pmodels.apps.MintMessagingApp;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
+import org.jdesktop.swingx.util.OS;
 
 import rice.environment.Environment;
 
@@ -23,6 +25,9 @@ import rice.pastry.socket.SocketPastryNodeFactory;
 import rice.pastry.standard.RandomNodeIdFactory;
 
 public class MintNode {
+    private final boolean isLinux = OS.isLinux();
+    private String sharedPath = "C:\\MINTWIRE Shared";
+    private FileSporeApp fileSporeApp;
     private MintMessagingApp messagingApp;
     private SendPeerInfoApp peerInfoApp;
     private CodeStitchApp codeStitchApp;
@@ -31,7 +36,10 @@ public class MintNode {
     private JLabel label;
 
     public MintNode(int bindport, InetSocketAddress bootaddr, String alias, String status) throws InterruptedException, IOException, BindException {
-
+         if (isLinux) {
+            this.sharedPath = System.getProperty("user.home") + "/MINTWIRE Shared/";
+        }
+         //TODO READ PREF FILE FOR SHAREDPATH
         env = new Environment();
         env.getParameters().setString("nat_search_policy", "never");
 
@@ -44,6 +52,7 @@ public class MintNode {
         codeStitchApp = new CodeStitchApp(node);
         peerInfoApp = new SendPeerInfoApp(node);
         messagingApp=new MintMessagingApp(node);
+        fileSporeApp=new FileSporeApp(node, sharedPath);
         node.boot(bootaddr);
 
         node.alias = alias;
@@ -85,6 +94,10 @@ public class MintNode {
 
     public MintMessagingApp getMessagingApp() {
         return messagingApp;
+    }
+
+    public String getSharedPath() {
+        return sharedPath;
     }
     
 

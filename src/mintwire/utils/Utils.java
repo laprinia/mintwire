@@ -1,7 +1,8 @@
 
 package mintwire.utils;
-
+import java.util.ArrayList;
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -18,7 +19,10 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import mintwire.chatpanels.Bubbler;
 import mintwire.p2pmodels.MintNode;
+import mintwire.p2pmodels.messages.MintMessage;
 import mintwire.p2pmodels.messages.PeerInfo;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -130,6 +134,20 @@ public class Utils {
         }
 
     }
+   public void paintCachedMessages(MintNode mintNode, ArrayList<MintMessage> msgs,JPanel scrollable){
+       
+       Id currId=mintNode.getNode().getId();
+       for(MintMessage m:msgs){
+           if(m.getSenderId().equals(currId)){
+               Bubbler bubbler=new Bubbler(m.getText(),new Color(244, 101, 101));
+               bubbler.paintRightBubble(scrollable, m.getDateStamp());
+           }else{
+               Bubbler bubbler=new Bubbler(m.getText(),new Color(170, 207, 255));
+               bubbler.paintLeftBubble(scrollable, m.getDateStamp());
+           }
+          
+       }
+   }
    
 }
  

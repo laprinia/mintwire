@@ -34,6 +34,9 @@ public class LynxPanel extends javax.swing.JPanel {
     public void setCurrentPanel(){
         arrowLabel.setVisible(true);
     }
+    public void setNotCurrentPanel(){
+        arrowLabel.setVisible(false);
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
