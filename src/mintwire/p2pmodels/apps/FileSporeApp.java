@@ -3,10 +3,13 @@ package mintwire.p2pmodels.apps;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import mintwire.classes.MintFile;
 import mintwire.p2pmodels.MintNode;
+import mintwire.p2pmodels.messages.ResourceRequest;
 import org.mpisws.p2p.filetransfer.BBReceipt;
 import org.mpisws.p2p.filetransfer.FileReceipt;
 import org.mpisws.p2p.filetransfer.FileTransfer;
@@ -58,7 +61,8 @@ public class FileSporeApp implements Application {
                     public void fileReceived(File file, ByteBuffer bb) {
                         try {
                             String fileName = new SimpleInputBuffer(bb).readUTF();
-                            File destinationFile = new File(sharedPath + fileName);
+                            File destinationFile = new File(sharedPath +"/"+ fileName);
+                            System.err.println(file.renameTo(destinationFile));
                             
              label = new JLabel("<html><center>Trasfer succesful for "+destinationFile);
             label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -178,14 +182,29 @@ public class FileSporeApp implements Application {
         }, 30000);
     }
 
+    public void requestFiles(MintFile[] files, NodeHandle nh){
+        ArrayList<String> paths=new ArrayList<>();
+        for(MintFile f:files){
+            paths.add(f.getFilePath());
+        }
+        
+         endpoint.route(null, new ResourceRequest(pastryNode.alias, paths,pastryNode.getLocalHandle()), nh);
+    }
     @Override
     public boolean forward(RouteMessage rm) {
         return true;
     }
+    
 
     @Override
     public void deliver(Id id, Message msg) {
-        System.err.println(msg.toString());
+       ResourceRequest request=(ResourceRequest)msg;
+       String[] buttons = { "Yes", "Yes to all", "No"};    
+        int returnValue = JOptionPane.showOptionDialog(null, request.getAlias()+" is requesting resources. Do you accept the transfer?", "File Spore request from "+request.getAlias(),
+        JOptionPane.WARNING_MESSAGE, 0, null, buttons, buttons[0]);
+        for (String path:request.getFilePaths()){
+            sendFile(request.getNh(), path);
+        }
     }
 
     @Override

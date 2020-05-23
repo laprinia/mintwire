@@ -39,7 +39,7 @@ public class Register extends javax.swing.JFrame {
     }
        private void insertToSQLite(String alias, String passw, String hAlias, String hPassw) throws SQLException {
 
-            String path = "src/mintwire/jframes/dbs/login.sqlite";
+               String path = "src/mintwire/jframes/dbs/login.sqlite";
             String dbURL = "jdbc:sqlite:"
                     + path;
             conn = DriverManager.getConnection(dbURL);
@@ -67,7 +67,7 @@ public class Register extends javax.swing.JFrame {
                         label = new JLabel("<html><center>Welcome to MINTWIRE");
                         label.setHorizontalAlignment(SwingConstants.CENTER);
                         JOptionPane.showMessageDialog(null, label, "Account created succesfully", JOptionPane.INFORMATION_MESSAGE);
-                    }
+                    }else System.err.println("error");
 
             }
 

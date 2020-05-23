@@ -30,7 +30,7 @@ public class SendPeerInfoApp implements Application {
 
     public void requestPeerInfo(Id id, PeerInfo info) {
         endpoint.route(id, info, null);
-    }
+    } 
 
     public ArrayList<PeerInfo> getPeerList() {
         return peerList;

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class MessageCacher {  
-    Cache<Id, ArrayList<MintMessage>> cache;
+    private Cache<Id, ArrayList<MintMessage>> cache;
  
     
 public MessageCacher(){

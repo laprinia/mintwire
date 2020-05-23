@@ -3,15 +3,16 @@ package mintwire.p2pmodels;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
-
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import mintwire.p2pmodels.apps.CodeStitchApp;
+import mintwire.p2pmodels.apps.CodeStitchPartyApp;
 import mintwire.p2pmodels.apps.FileSporeApp;
 import mintwire.p2pmodels.apps.MintMessagingApp;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
+import mintwire.p2pmodels.apps.SendSharedResourceApp;
+
 import org.jdesktop.swingx.util.OS;
 
 import rice.environment.Environment;
@@ -27,10 +28,12 @@ import rice.pastry.standard.RandomNodeIdFactory;
 public class MintNode {
     private final boolean isLinux = OS.isLinux();
     private String sharedPath = "C:\\MINTWIRE Shared";
+    private SendSharedResourceApp sharedResourceApp;
     private FileSporeApp fileSporeApp;
     private MintMessagingApp messagingApp;
     private SendPeerInfoApp peerInfoApp;
     private CodeStitchApp codeStitchApp;
+    private CodeStitchPartyApp codeStitchPartyApp;
     private Environment env;
     private PastryNode node;
     private JLabel label;
@@ -53,6 +56,7 @@ public class MintNode {
         peerInfoApp = new SendPeerInfoApp(node);
         messagingApp=new MintMessagingApp(node);
         fileSporeApp=new FileSporeApp(node, sharedPath);
+        sharedResourceApp=new SendSharedResourceApp(node);
         node.boot(bootaddr);
 
         node.alias = alias;
@@ -61,7 +65,7 @@ public class MintNode {
         synchronized (node) {
             while (!node.isReady() && !node.joinFailed()) {
 
-                node.wait(100);
+                node.wait(10);
 
                 if (node.joinFailed()) {
                     System.err.println("node fail");
@@ -99,6 +103,19 @@ public class MintNode {
     public String getSharedPath() {
         return sharedPath;
     }
+
+    public SendSharedResourceApp getSharedResourceApp() {
+        return sharedResourceApp;
+    }
+
+    public CodeStitchPartyApp getCodeStitchPartyApp() {
+        return codeStitchPartyApp;
+    }
+
+    public FileSporeApp getFileSporeApp() {
+        return fileSporeApp;
+    }
+    
     
 
 

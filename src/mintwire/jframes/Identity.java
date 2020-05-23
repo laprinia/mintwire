@@ -202,7 +202,7 @@ public class Identity extends javax.swing.JFrame {
         jPanel1.add(label, cl);
 
         jLabel3.setBackground(new java.awt.Color(49, 46, 54));
-        jLabel3.setFont(new java.awt.Font("Monospaced", 1, 14));
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(67, 207, 137));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);

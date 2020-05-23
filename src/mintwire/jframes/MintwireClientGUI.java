@@ -45,6 +45,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 import javax.swing.JMenu;
@@ -85,21 +86,23 @@ import mintwire.panels.mintlynx.LynxPanel;
 
 
 import mintwire.utils.Utils;
+import org.ehcache.core.util.CollectionUtil;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jdesktop.swingx.util.OS;
+import rice.pastry.NodeHandle;
 import sun.awt.www.content.audio.x_aiff;
 
 
-//TODO MINT LYNX STERGE SAGETELE,TRIMITE PFP PRIN SEND PEER INFO,
+//PFP PRIN PEERINFO,FISIERE TRIMITERE
 
 public class MintwireClientGUI extends javax.swing.JFrame {
 
     public class FileSporeTableModel extends AbstractTableModel {
 
-        String columns[] = {"File", "Details", "Owner's Alias", "Checkbox"};
+        String columns[] = {"Extension","File", "Details", "Owner's Alias", "Checkbox"};
 
         @Override
         public String getColumnName(int column) {
@@ -115,22 +118,51 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         public int getColumnCount() {
             return columns.length;
         }
-
+         @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        
+         switch (columnIndex) {
+                case 0:
+                    return null;
+                case 1:
+                    return mintFiles.get(0).getFileName().getClass();
+                case 2:
+                    return mintFiles.get(0).getDetails().getClass();
+                case 3:
+                    return mintFiles.get(0).getAlias().getClass();
+                case 4:
+                    return Boolean.class;
+                default:
+                    return null;
+            }
+    }
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             switch (columnIndex) {
                 case 0:
-                    return mintFiles.get(rowIndex).getFileName();
+                    return "";
                 case 1:
-                    return mintFiles.get(rowIndex).getDetails();
+                    return mintFiles.get(rowIndex).getFileName();
                 case 2:
-                    return mintFiles.get(rowIndex).getAlias();
+                    return mintFiles.get(rowIndex).getDetails();
                 case 3:
-                    return "not yet";
+                    return mintFiles.get(rowIndex).getAlias();
+                case 4:
+                    return mintFiles.get(rowIndex).isItSelected();
                 default:
                     return 0;
             }
         }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+             if(columnIndex == 4) return true;
+              return false; 
+        }
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+         mintFiles.get(rowIndex).setSelected((Boolean)aValue);
+          }
 
     }
 
@@ -157,10 +189,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                     ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/txt.png"));
                 }
                 
-                
-                
-               c.setText(mintFiles.get(row).getFileName());
-               
+            
                c.setIcon(new ImageIcon(ii.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
                 
             } else if (column == 1) {
@@ -169,13 +198,16 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             } else if (column == 2) {
                 label.setText(mintFiles.get(row).getAlias());
             } else if (column == 3) {
-                label.setText("no check yet");
+                
+                label.setText("");
             }
 
          return c;
         }
 
     }
+ 
+    
     //my vars
     private MessageCacher cacher=new MessageCacher();
     private Box box = new Box(BoxLayout.Y_AXIS);
@@ -191,7 +223,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private FileSporeTableModel sporeModel = new FileSporeTableModel();
 
-    private ArrayList<MintFile> mintFiles = new ArrayList();
+    private ArrayList<MintFile> mintFiles;
     private Bubbler bubbler;
     private ChatBorder cB = new ChatBorder(45);
     final Color SENT = new Color(244, 101, 101);
@@ -222,6 +254,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         this.alias = mintNode.getNode().alias;
         this.mintNode = mintNode;
+        mintFiles=mintNode.getSharedResourceApp().getMintFiles();
+        mintNode.getSharedResourceApp().setMintNode(mintNode);
         mintNode.getMessagingApp().setScrollablePanel(scrollablePanel);
         mintNode.getMessagingApp().setCacher(cacher);
         peerInfoApp=mintNode.getPeerInfoApp();
@@ -251,10 +285,19 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     //LAYEREDPANE INITS
     public void initFileSpore(){
-        mintFiles.add(new MintFile("cine.txt","details","mambo"));
-        mintFiles.add(new MintFile("cine.png","details","mambo"));
-        mintFiles.add(new MintFile("cine.flv","details","mambo"));
-         mintFiles.add(new MintFile("cine.docx","details","mambo"));
+        sporeModel.fireTableDataChanged();
+        mintNode.getSharedResourceApp().getMintFiles().clear();
+           SwingWorker sw = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                 sporeModel.fireTableDataChanged();
+                mintNode.getSharedResourceApp().requestResources();
+                Thread.sleep(30);
+              return null;
+            }
+
+        };
+        sw.execute();
         sporeModel.fireTableDataChanged();
         sporeTable.repaint(); sporeScroll.repaint();
          
@@ -355,9 +398,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             //CREATE PFP FOLDER
             File f3 = new File(aliasPath + alias + "/pfp");
             f3.mkdir();
-            File f4 = new File("src/mintwire/res/pngs/profilepic.png");
+         
             try {
-                BufferedImage bi = ImageIO.read(f4);
+                BufferedImage bi = ImageIO.read(getClass().getResourceAsStream("/mintwire/res/pngs/pfp.png"));
                 
                 File outputF = new File(aliasPath + alias + "/pfp/pfp.png");
                 ImageIO.write(bi, "PNG", outputF);
@@ -367,6 +410,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 System.out.println("err in creare fold:" + ex.getMessage());
             }
 
+        }
+        File shared=new File(mintNode.getSharedPath());
+        if(!(shared.exists())){
+            shared.mkdir();
         }
 
         Path path = Paths.get(aliasPath + alias);
@@ -1670,8 +1717,22 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        int poz = sporeTable.getSelectedRow();
-        // selectedFile = mintFiles.get(poz).getFileName();
+      ArrayList<NodeHandle> nhs=new ArrayList<>();
+        System.err.println("MINTFILES SELECTION");
+        
+        for(MintFile file:mintFiles){
+           if(file.isItSelected()&& (!nhs.contains(file.getHandle()))){
+              
+               nhs.add(file.getHandle());
+           }
+       }
+        for(NodeHandle nh:nhs){
+          MintFile [] files= mintFiles.stream().filter(e-> e.getHandle().equals(nh)&& e.isItSelected()).toArray(MintFile[]::new); 
+         
+          mintNode.getFileSporeApp().requestFiles(files, nh);
+             
+        }
+       
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
