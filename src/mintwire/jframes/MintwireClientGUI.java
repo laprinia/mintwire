@@ -111,7 +111,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         @Override
         public int getRowCount() {
-            return mintFiles.size();
+            return mintNode.getSharedResourceApp().getMintFiles().size();
         }
 
         @Override
@@ -125,11 +125,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 case 0:
                     return null;
                 case 1:
-                    return mintFiles.get(0).getFileName().getClass();
+                    return mintNode.getSharedResourceApp().getMintFiles().get(0).getFileName().getClass();
                 case 2:
-                    return mintFiles.get(0).getDetails().getClass();
+                    return mintNode.getSharedResourceApp().getMintFiles().get(0).getDetails().getClass();
                 case 3:
-                    return mintFiles.get(0).getAlias().getClass();
+                    return mintNode.getSharedResourceApp().getMintFiles().get(0).getAlias().getClass();
                 case 4:
                     return Boolean.class;
                 default:
@@ -142,13 +142,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 case 0:
                     return "";
                 case 1:
-                    return mintFiles.get(rowIndex).getFileName();
+                    return mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getFileName();
                 case 2:
-                    return mintFiles.get(rowIndex).getDetails();
+                    return  mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getDetails();
                 case 3:
-                    return mintFiles.get(rowIndex).getAlias();
+                    return  mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getAlias();
                 case 4:
-                    return mintFiles.get(rowIndex).isItSelected();
+                    return  mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).isItSelected();
                 default:
                     return 0;
             }
@@ -161,7 +161,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         }
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-         mintFiles.get(rowIndex).setSelected((Boolean)aValue);
+          mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).setSelected((Boolean)aValue);
           }
 
     }
@@ -179,7 +179,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             
             if (column == 0) {
                 
-                String ext = mintFiles.get(row).getFileName().substring(mintFiles.get(row).getFileName().indexOf("."));
+                String ext =  mintNode.getSharedResourceApp().getMintFiles().get(row).getFileName().substring( mintNode.getSharedResourceApp().getMintFiles().get(row).getFileName().indexOf("."));
                 
                 try {
                     
@@ -193,10 +193,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                c.setIcon(new ImageIcon(ii.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
                 
             } else if (column == 1) {
-                label.setText(mintFiles.get(row).getDetails());
+                label.setText( mintNode.getSharedResourceApp().getMintFiles().get(row).getDetails());
 
             } else if (column == 2) {
-                label.setText(mintFiles.get(row).getAlias());
+                label.setText( mintNode.getSharedResourceApp().getMintFiles().get(row).getAlias());
             } else if (column == 3) {
                 
                 label.setText("");
@@ -223,7 +223,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private FileSporeTableModel sporeModel = new FileSporeTableModel();
 
-    private ArrayList<MintFile> mintFiles;
+    
     private Bubbler bubbler;
     private ChatBorder cB = new ChatBorder(45);
     final Color SENT = new Color(244, 101, 101);
@@ -254,7 +254,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         this.alias = mintNode.getNode().alias;
         this.mintNode = mintNode;
-        mintFiles=mintNode.getSharedResourceApp().getMintFiles();
+        
         mintNode.getSharedResourceApp().setMintNode(mintNode);
         mintNode.getMessagingApp().setScrollablePanel(scrollablePanel);
         mintNode.getMessagingApp().setCacher(cacher);
@@ -285,21 +285,21 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     //LAYEREDPANE INITS
     public void initFileSpore(){
-        sporeModel.fireTableDataChanged();
+        
         mintNode.getSharedResourceApp().getMintFiles().clear();
            SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                 sporeModel.fireTableDataChanged();
+                
                 mintNode.getSharedResourceApp().requestResources();
-                Thread.sleep(30);
+                Thread.sleep(100);
+                sporeModel.fireTableDataChanged();
               return null;
             }
-
+          
         };
         sw.execute();
-        sporeModel.fireTableDataChanged();
-        sporeTable.repaint(); sporeScroll.repaint();
+       
          
     }
     public void initMintLynx() {
@@ -1720,14 +1720,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
       ArrayList<NodeHandle> nhs=new ArrayList<>();
         System.err.println("MINTFILES SELECTION");
         
-        for(MintFile file:mintFiles){
+        for(MintFile file: mintNode.getSharedResourceApp().getMintFiles()){
            if(file.isItSelected()&& (!nhs.contains(file.getHandle()))){
               
                nhs.add(file.getHandle());
            }
        }
         for(NodeHandle nh:nhs){
-          MintFile [] files= mintFiles.stream().filter(e-> e.getHandle().equals(nh)&& e.isItSelected()).toArray(MintFile[]::new); 
+          MintFile [] files=  mintNode.getSharedResourceApp().getMintFiles().stream().filter(e-> e.getHandle().equals(nh)&& e.isItSelected()).toArray(MintFile[]::new); 
          
           mintNode.getFileSporeApp().requestFiles(files, nh);
              

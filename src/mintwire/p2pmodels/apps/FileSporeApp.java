@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import mintwire.classes.MintFile;
-import mintwire.p2pmodels.MintNode;
+
 import mintwire.p2pmodels.messages.ResourceRequest;
 import org.mpisws.p2p.filetransfer.BBReceipt;
 import org.mpisws.p2p.filetransfer.FileReceipt;
@@ -22,7 +22,7 @@ import rice.p2p.commonapi.Application;
 import rice.p2p.commonapi.Endpoint;
 import rice.p2p.commonapi.Id;
 import rice.p2p.commonapi.Message;
-import rice.p2p.commonapi.Node;
+
 import rice.p2p.commonapi.NodeHandle;
 import rice.p2p.commonapi.RouteMessage;
 import rice.p2p.commonapi.appsocket.AppSocket;
@@ -61,13 +61,12 @@ public class FileSporeApp implements Application {
                     public void fileReceived(File file, ByteBuffer bb) {
                         try {
                             String fileName = new SimpleInputBuffer(bb).readUTF();
-                            File destinationFile = new File(sharedPath +"/"+ fileName);
+                            File destinationFile = new File(sharedPath + "/" + fileName);
                             System.err.println(file.renameTo(destinationFile));
-                            
-             label = new JLabel("<html><center>Trasfer succesful for "+destinationFile);
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            JOptionPane.showMessageDialog(null, label, "FileSpore Transfer", JOptionPane.INFORMATION_MESSAGE);
-                            
+
+                            label = new JLabel("<html><center>Trasfer succesful for " + destinationFile);
+                            label.setHorizontalAlignment(SwingConstants.CENTER);
+                            JOptionPane.showMessageDialog(null, label, "FileSpore Transfer", JOptionPane.INFORMATION_MESSAGE);
 
                         } catch (IOException ex) {
                             ex.printStackTrace();
@@ -144,10 +143,10 @@ public class FileSporeApp implements Application {
                 try {
                     final File f = new File(filePath);
                     if (!f.exists()) {
-                        
-                    label=new JLabel("<html><center>Your peer tried downloading "+filePath+", but it's not here.");
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    JOptionPane.showMessageDialog(null, label, "Request for spore failed", JOptionPane.INFORMATION_MESSAGE);
+
+                        label = new JLabel("<html><center>Your peer tried downloading " + filePath + ", but it's not here.");
+                        label.setHorizontalAlignment(SwingConstants.CENTER);
+                        JOptionPane.showMessageDialog(null, label, "Request for spore failed", JOptionPane.INFORMATION_MESSAGE);
                         System.exit(1);
                     }
                     SimpleOutputBuffer sobuf = new SimpleOutputBuffer();
@@ -182,28 +181,41 @@ public class FileSporeApp implements Application {
         }, 30000);
     }
 
-    public void requestFiles(MintFile[] files, NodeHandle nh){
-        ArrayList<String> paths=new ArrayList<>();
-        for(MintFile f:files){
+    public void requestFiles(MintFile[] files, NodeHandle nh) {
+        ArrayList<String> paths = new ArrayList<>();
+        for (MintFile f : files) {
             paths.add(f.getFilePath());
         }
-        
-         endpoint.route(null, new ResourceRequest(pastryNode.alias, paths,pastryNode.getLocalHandle()), nh);
+
+        endpoint.route(null, new ResourceRequest(pastryNode.alias, paths, pastryNode.getLocalHandle()), nh);
     }
+
     @Override
     public boolean forward(RouteMessage rm) {
         return true;
     }
-    
 
     @Override
     public void deliver(Id id, Message msg) {
-       ResourceRequest request=(ResourceRequest)msg;
-       String[] buttons = { "Yes", "Yes to all", "No"};    
-        int returnValue = JOptionPane.showOptionDialog(null, request.getAlias()+" is requesting resources. Do you accept the transfer?", "File Spore request from "+request.getAlias(),
-        JOptionPane.WARNING_MESSAGE, 0, null, buttons, buttons[0]);
-        for (String path:request.getFilePaths()){
-            sendFile(request.getNh(), path);
+        ResourceRequest request = (ResourceRequest) msg;
+        String[] buttons = {"Yes", "Yes to all", "No"};
+        int returnValue = JOptionPane.showOptionDialog(null, request.getAlias() + " is requesting resources. Do you accept the transfer?", "File Spore request from " + request.getAlias(),
+                JOptionPane.WARNING_MESSAGE, 0, null, buttons, buttons[1]);
+        System.err.println("RETURN VAL: "+returnValue);
+        if (returnValue == 2) {
+            return;
+        } else {
+            for (String path : request.getFilePaths()) {
+                if (returnValue == 0) {
+                    String[] buttons2 = {"Yes", "No"};
+                    int returnVal = JOptionPane.showOptionDialog(null, request.getAlias() + " is requesting " + path + ". Do you wish to transfer it?", "File Spore request from " + request.getAlias(),
+                            JOptionPane.WARNING_MESSAGE, 0, null, buttons2, buttons2[0]);
+                    if (returnVal == 1) {
+                        sendFile(request.getNh(), path);
+                    }
+                }else sendFile(request.getNh(), path);
+
+            }
         }
     }
 
