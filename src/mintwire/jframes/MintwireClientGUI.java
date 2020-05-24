@@ -86,17 +86,17 @@ import mintwire.panels.mintlynx.LynxPanel;
 
 
 import mintwire.utils.Utils;
-import org.ehcache.core.util.CollectionUtil;
+
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jdesktop.swingx.util.OS;
 import rice.pastry.NodeHandle;
-import sun.awt.www.content.audio.x_aiff;
 
 
-//PFP PRIN PEERINFO,FISIERE TRIMITERE
+
+//PFP PRIN PEERINFO la send si connected peers trb refresh
 
 public class MintwireClientGUI extends javax.swing.JFrame {
 
@@ -676,6 +676,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             }
         };
         jLabel6 = new javax.swing.JLabel();
+        IdentityLabel1 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         MainLayeredPane = new javax.swing.JLayeredPane();
         CodeStitchPanel = new javax.swing.JPanel();
@@ -876,8 +877,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         jLabel1.setBackground(new java.awt.Color(43, 43, 43));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/logos/logo-mediumish.png"))); // NOI18N
+        jLabel1.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/logos/logo-1-biggest.png")).getImage().getScaledInstance(112, 112, Image.SCALE_SMOOTH)));
         jLabel1.setOpaque(true);
+        jLabel1.setPreferredSize(new java.awt.Dimension(112, 112));
 
         MintRequestLabel.setBackground(new java.awt.Color(43, 43, 43));
         MintRequestLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
@@ -986,6 +988,26 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        IdentityLabel1.setBackground(new java.awt.Color(43, 43, 43));
+        IdentityLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        IdentityLabel1.setForeground(new java.awt.Color(167, 255, 185));
+        IdentityLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        IdentityLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/connectedpeers.png")));
+        IdentityLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        IdentityLabel1.setOpaque(true);
+        IdentityLabel1.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        IdentityLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                IdentityLabel1MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                IdentityLabel1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                IdentityLabel1MouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -994,38 +1016,40 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addComponent(FileHaulLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(PreferencesLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(IdentityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(IdentityLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(jLabel1)
-                .addContainerGap(21, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(48, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(69, 69, 69))))
+                        .addGap(69, 69, 69))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42))))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(45, 45, 45)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(7, 7, 7)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(MintRequestLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(MintRequestLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(FileHaulLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(PreferencesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(IdentityLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(IdentityLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addGap(28, 28, 28))
         );
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 200, 800));
@@ -1762,6 +1786,22 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_saveButtonMouseClicked
 
+    private void IdentityLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabel1MouseClicked
+        ConnectedPeers cp = ConnectedPeers.getInstance(mintNode);
+        cp.pack();
+        cp.setLocationRelativeTo(null);
+        cp.setVisible(true);
+      
+    }//GEN-LAST:event_IdentityLabel1MouseClicked
+
+    private void IdentityLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabel1MouseEntered
+        IdentityLabel1.setText("Connected peers");
+    }//GEN-LAST:event_IdentityLabel1MouseEntered
+
+    private void IdentityLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabel1MouseExited
+       IdentityLabel1.setText("");
+    }//GEN-LAST:event_IdentityLabel1MouseExited
+
    
     public static void main(String args[]) {
        
@@ -1798,6 +1838,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JLabel FileSporeLabel;
     private javax.swing.JPanel FileSporePanel;
     private javax.swing.JLabel IdentityLabel;
+    private javax.swing.JLabel IdentityLabel1;
     private javax.swing.JLayeredPane MainLayeredPane;
     private javax.swing.JLabel MintLynxLabel;
     private javax.swing.JPanel MintLynxPanel;
