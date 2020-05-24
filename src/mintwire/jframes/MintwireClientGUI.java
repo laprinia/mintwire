@@ -1072,7 +1072,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         RequestSPanel.setBackground(new java.awt.Color(51, 51, 51));
         RequestSPanel.setForeground(new java.awt.Color(51, 255, 0));
         RequestSPanel.setLayout(new java.awt.BorderLayout());
-        TabbedPane.addTab("Request a Stitching", RequestSPanel);
+        TabbedPane.addTab("Request a stitch", RequestSPanel);
 
         SendSPanel.setBackground(new java.awt.Color(51, 51, 51));
         SendSPanel.setForeground(new java.awt.Color(51, 255, 51));
@@ -1082,10 +1082,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             }
         });
         SendSPanel.setLayout(new java.awt.BorderLayout());
-        TabbedPane.addTab("Send a Stitching", SendSPanel);
+        TabbedPane.addTab("Send a stitch", SendSPanel);
 
         saveButton.setForeground(new java.awt.Color(255, 255, 255));
-        saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png"))); // NOI18N
+        saveButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         saveButton.setText("Save stitch");
         saveButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 102, 102)));
         saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1102,7 +1102,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         });
 
         sendButton.setForeground(new java.awt.Color(255, 255, 255));
-        sendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send.png"))); // NOI18N
+        sendButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         sendButton.setText("Send stitch");
         sendButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 102, 102)));
         sendButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -1408,14 +1408,16 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         jPanel9.setBackground(new java.awt.Color(45, 48, 56));
 
-        jButton2.setText("Obtain selected item");
+        jButton2.setText("Request items");
+        jButton2.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/requestfile.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton2MouseClicked(evt);
             }
         });
 
-        jButton1.setText("Transform to CodeStitch...");
+        jButton1.setText("Refresh items");
+        jButton1.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/refreshfile.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
         jButton1.setToolTipText("");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1437,9 +1439,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGap(96, 96, 96)
+                .addGap(75, 75, 75)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(37, 37, 37)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );

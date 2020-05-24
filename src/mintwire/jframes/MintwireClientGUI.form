@@ -626,8 +626,8 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Request a Stitching">
-                            <Property name="tabTitle" type="java.lang.String" value="Request a Stitching"/>
+                          <JTabbedPaneConstraints tabName="Request a stitch">
+                            <Property name="tabTitle" type="java.lang.String" value="Request a stitch"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -648,8 +648,8 @@
                       </Events>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                          <JTabbedPaneConstraints tabName="Send a Stitching">
-                            <Property name="tabTitle" type="java.lang.String" value="Send a Stitching"/>
+                          <JTabbedPaneConstraints tabName="Send a stitch">
+                            <Property name="tabTitle" type="java.lang.String" value="Send a stitch"/>
                           </JTabbedPaneConstraints>
                         </Constraint>
                       </Constraints>
@@ -663,8 +663,8 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/mintwire/res/pngs/save-file.png"/>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new ImageIcon(new javax.swing.ImageIcon(getClass().getResource(&quot;/mintwire/res/pngs/save-file.png&quot;)).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH))" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Save stitch"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -687,8 +687,8 @@
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
                     </Property>
-                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                      <Image iconType="3" name="/mintwire/res/pngs/send.png"/>
+                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="new ImageIcon(new javax.swing.ImageIcon(getClass().getResource(&quot;/mintwire/res/pngs/send.png&quot;)).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH))" type="code"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Send stitch"/>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -1250,9 +1250,9 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="96" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
                               <Component id="jButton2" min="-2" pref="78" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                               <Component id="jButton1" min="-2" pref="79" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
@@ -1262,15 +1262,18 @@
                   <SubComponents>
                     <Component class="javax.swing.JButton" name="jButton2">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Obtain selected item"/>
+                        <Property name="text" type="java.lang.String" value="Request items"/>
                       </Properties>
                       <Events>
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton2MouseClicked"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jButton2.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource(&quot;/mintwire/res/pngs/requestfile.png&quot;)).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));"/>
+                      </AuxValues>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButton1">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Transform to CodeStitch..."/>
+                        <Property name="text" type="java.lang.String" value="Refresh items" postCode="jButton1.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource(&quot;/mintwire/res/pngs/refreshfile.png&quot;)).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));"/>
                         <Property name="toolTipText" type="java.lang.String" value=""/>
                       </Properties>
                       <Events>
