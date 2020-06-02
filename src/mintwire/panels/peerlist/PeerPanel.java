@@ -54,7 +54,7 @@ public class PeerPanel extends javax.swing.JPanel {
             initComponents();
             setPreferredSize(new Dimension(299,92));
             revalidate();
-            utils.setPfp(pfpLabel,aliasPath,peerInfo);
+            utils.setPfp(pfpLabel,aliasPath,peerInfo,true);
         } catch (IOException ex) {
             Logger.getLogger(PeerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -138,7 +138,7 @@ public class PeerPanel extends javax.swing.JPanel {
         );
 
         try{
-            utils.setPfp(pfpLabel, aliasPath, peerInfo);
+            utils.setPfp(pfpLabel, aliasPath, peerInfo,true);
         }catch(Exception ex){ex.printStackTrace();}
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +26,7 @@ import mintwire.chatpanels.Bubbler;
 import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.messages.MintMessage;
 import mintwire.p2pmodels.messages.PeerInfo;
+import org.jdesktop.swingx.util.OS;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import rice.p2p.commonapi.Id;
@@ -97,20 +100,14 @@ public class Utils {
             }
         }
     }
-      public void setPfp(JLabel pfpLabel,String aliasPath, PeerInfo peerInfo) throws IOException {
+      public void setPfp(JLabel pfpLabel,String aliasPath, PeerInfo peerInfo,boolean isPeer) throws IOException {
        BufferedImage bi;
         File pfp;
         try {
             pfp = new File(aliasPath +peerInfo.getAlias() + "/pfp/pfp.png");
+            if(isPeer) pfp = new File(aliasPath +peerInfo.getAlias() + "/pfp/"+peerInfo.getAlias()+".png");
             bi = ImageIO.read(pfp);
-            
-           
-        } catch (Exception ex) {
-           
-           pfp = new File(aliasPath +peerInfo.getAlias()+ "/pfp/pfp.png");
-            bi = ImageIO.read(pfp);
-        }
-           BufferedImage biR =makeRound(bi);
+              BufferedImage biR =makeRound(bi);
            
             Dimension d=pfpLabel.getPreferredSize();
             
@@ -119,6 +116,12 @@ public class Utils {
             ImageIcon ico = new ImageIcon(resultScaled);
 
             pfpLabel.setIcon(ico);
+           
+        } catch (Exception ex) {
+           
+          
+        }
+         
     }
     public void updatePeerInfo(MintNode mintNode){
        
@@ -134,6 +137,22 @@ public class Utils {
         }
 
     }
+    public void updatePeerPfp(MintNode mn,ArrayList<PeerInfo> peers){
+        String appString=System.getenv("APPDATA") + "/MINTWIRE/";
+        if(OS.isLinux()) appString=System.getProperty("user.home") + "/MINTWIRE/";
+        for(PeerInfo info:peers){
+            String alias=info.getAlias();
+            String composedString=appString+alias+"/pfp/"+alias+".png";
+            System.err.println("cmp str: "+composedString);
+            
+            File file=new File(composedString);
+              if(!(file.exists())){
+                System.err.println("Step 1 pfp not existant");
+                mn.getPfpApp().requestPfp(new PeerInfo(mn.getNode().getLocalHandle(), mn.getNode().alias, alias, false), info.getNodeHandle());
+            }
+        }
+    }
+   
    public void paintCachedMessages(MintNode mintNode, ArrayList<MintMessage> msgs,JPanel scrollable){
        
        Id currId=mintNode.getNode().getId();

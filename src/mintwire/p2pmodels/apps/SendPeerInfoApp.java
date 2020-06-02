@@ -46,18 +46,17 @@ public class SendPeerInfoApp implements Application {
         PeerInfo peerInfo = (PeerInfo) msg;
 
         if (peerInfo.isItResponse()) {
-            System.err.println("am primit raspuns de la: " + peerInfo.getAlias());
+           
             if (!peerList.contains(peerInfo)) {
-                System.err.println("In peerInfo added"+peerInfo.getAlias());
+                
                 peerList.add(peerInfo);
-                System.err.println(peerList.toString());
+              
             }
 
         } else {
-            System.out.println("received request for info from " + peerInfo.getAlias());
+           
             requestPeerInfo(peerInfo.getNodeHandle().getId(), new PeerInfo(pastryNode.getLocalHandle(), pastryNode.alias, pastryNode.status, true));
-            //send back info using nodehandle
-            //impacheteaza frumusetea aia de poza de profil si pune o si pe aia
+          
         }
     }
 

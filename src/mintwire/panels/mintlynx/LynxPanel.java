@@ -21,7 +21,7 @@ public class LynxPanel extends javax.swing.JPanel {
             }
         this.peerInfo = peerInfo;
         initComponents();
-        try{utils.setPfp(pfpLabel, aliasPath, peerInfo);
+        try{utils.setPfp(pfpLabel, aliasPath, peerInfo,true);
         
         }catch(Exception ex){
             ex.printStackTrace();

@@ -1,5 +1,6 @@
 package mintwire.jframes;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -84,7 +85,6 @@ import mintwire.p2pmodels.messages.MintMessage;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.mintlynx.LynxPanel;
 
-
 import mintwire.utils.Utils;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -94,15 +94,12 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jdesktop.swingx.util.OS;
 import rice.pastry.NodeHandle;
 
-
-
 //PFP PRIN PEERINFO la send si connected peers trb refresh
-
 public class MintwireClientGUI extends javax.swing.JFrame {
 
     public class FileSporeTableModel extends AbstractTableModel {
 
-        String columns[] = {"Extension","File", "Details", "Owner's Alias", "Checkbox"};
+        String columns[] = {"Extension", "File", "Details", "Owner's Alias", "Checkbox"};
 
         @Override
         public String getColumnName(int column) {
@@ -118,10 +115,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         public int getColumnCount() {
             return columns.length;
         }
-         @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        
-         switch (columnIndex) {
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+
+            switch (columnIndex) {
                 case 0:
                     return null;
                 case 1:
@@ -135,7 +133,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 default:
                     return null;
             }
-    }
+        }
+
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             switch (columnIndex) {
@@ -144,11 +143,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 case 1:
                     return mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getFileName();
                 case 2:
-                    return  mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getDetails();
+                    return mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getDetails();
                 case 3:
-                    return  mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getAlias();
+                    return mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).getAlias();
                 case 4:
-                    return  mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).isItSelected();
+                    return mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).isItSelected();
                 default:
                     return 0;
             }
@@ -156,60 +155,62 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-             if(columnIndex == 4) return true;
-              return false; 
+            if (columnIndex == 4) {
+                return true;
+            }
+            return false;
         }
+
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-          mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).setSelected((Boolean)aValue);
-          }
+            mintNode.getSharedResourceApp().getMintFiles().get(rowIndex).setSelected((Boolean) aValue);
+        }
 
     }
 
-    public class FileExtensionModel implements TableCellRenderer{
-        private  TableCellRenderer defaultrend= new JTable().getDefaultRenderer(Object.class); 
-              
+    public class FileExtensionModel implements TableCellRenderer {
+
+        private TableCellRenderer defaultrend = new JTable().getDefaultRenderer(Object.class);
+
         JLabel label = new JLabel();
         ImageIcon ii;
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            
-            DefaultTableCellRenderer c =(DefaultTableCellRenderer) defaultrend.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            
+
+            DefaultTableCellRenderer c = (DefaultTableCellRenderer) defaultrend.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
             if (column == 0) {
-                
-                String ext =  mintNode.getSharedResourceApp().getMintFiles().get(row).getFileName().substring( mintNode.getSharedResourceApp().getMintFiles().get(row).getFileName().indexOf("."));
-                
+
+                String ext = mintNode.getSharedResourceApp().getMintFiles().get(row).getFileName().substring(mintNode.getSharedResourceApp().getMintFiles().get(row).getFileName().indexOf("."));
+
                 try {
-                    
+
                     ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/" + ext.substring(1) + ".png"));
-                   
+
                 } catch (Exception ex) {
                     ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/txt.png"));
                 }
-                
-            
-               c.setIcon(new ImageIcon(ii.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
-                
+
+                c.setIcon(new ImageIcon(ii.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
+
             } else if (column == 1) {
-                label.setText( mintNode.getSharedResourceApp().getMintFiles().get(row).getDetails());
+                label.setText(mintNode.getSharedResourceApp().getMintFiles().get(row).getDetails());
 
             } else if (column == 2) {
-                label.setText( mintNode.getSharedResourceApp().getMintFiles().get(row).getAlias());
+                label.setText(mintNode.getSharedResourceApp().getMintFiles().get(row).getAlias());
             } else if (column == 3) {
-                
+
                 label.setText("");
             }
 
-         return c;
+            return c;
         }
 
     }
- 
-    
+
     //my vars
-    private MessageCacher cacher=new MessageCacher();
+    private MessageCacher cacher = new MessageCacher();
     private Box box = new Box(BoxLayout.Y_AXIS);
     private Color availableColor = new Color(168, 255, 104);
     private Color awayColor = new Color(255, 190, 104);
@@ -219,15 +220,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private PeerInfo currentPeerChat;
     private SendPeerInfoApp peerInfoApp;
     private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
-   
 
     private FileSporeTableModel sporeModel = new FileSporeTableModel();
 
-    
     private Bubbler bubbler;
     private ChatBorder cB = new ChatBorder(45);
     final Color SENT = new Color(244, 101, 101);
-    
+
     private JLabel infoLabel;
 
     final JPanel scrollablePanel = new JPanel(new GridLayout(0, 1));
@@ -235,14 +234,15 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private final boolean isLinux = OS.isLinux();
     private String alias;
     private String password;
-    private  RSyntaxTextArea requestTextArea=new RSyntaxTextArea(20, 60);
-    private  RSyntaxTextArea sendTextArea= new RSyntaxTextArea(20, 60);
+    private RSyntaxTextArea partyTextArea = new RSyntaxTextArea(20, 16);
+    private RSyntaxTextArea requestTextArea = new RSyntaxTextArea(20, 60);
+    private RSyntaxTextArea sendTextArea = new RSyntaxTextArea(20, 60);
     private String filePath;
     private final String langPre = "SyntaxConstants.SYNTAX_STYLE_";
     private static JMenu requestLanguageToggle;
-    private  static JMenu sendLanguageToggle;
+    private static JMenu sendLanguageToggle;
+    private static JMenu partyLanguageToggle;
     private ArrayList<String> array = new ArrayList<String>();
-   
 
     //end of my vars
     public MintwireClientGUI() {
@@ -254,62 +254,71 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         this.alias = mintNode.getNode().alias;
         this.mintNode = mintNode;
-        
+
         mintNode.getSharedResourceApp().setMintNode(mintNode);
         mintNode.getMessagingApp().setScrollablePanel(scrollablePanel);
         mintNode.getMessagingApp().setCacher(cacher);
-        peerInfoApp=mintNode.getPeerInfoApp();
+        peerInfoApp = mintNode.getPeerInfoApp();
         this.password = password;
         System.out.println(mintNode.getNode().getId());
-        
+
         if (isLinux) {
             aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
         }
-       
-        
+
         initComponents();
-        initRSyntax(requestTextArea,RequestSPanel,requestLanguageToggle, true);
-        initRSyntax(sendTextArea, SendSPanel, sendLanguageToggle,false);
+        initLayered();
+        initRSyntax(requestTextArea, RequestSPanel, requestLanguageToggle, "request");
+        initRSyntax(sendTextArea, SendSPanel, sendLanguageToggle, "send");
+        initRSyntax(partyTextArea, PartyPanel, partyLanguageToggle, "party");
 
         setTabbedDesign();
         setStitchLabelOn();
-        
-        
+
         initFileStructure(alias);
 
         setPfp();
 
     }
     //FUNCTIONS THAT REQUIRE P2P
-    
 
     //LAYEREDPANE INITS
-    public void initFileSpore(){
-        
+    public void initLayered() {
+        CodeStitchPanel.setVisible(true);
+        CodeStitchPartyPanel.setVisible(false);
+        MintLynxPanel.setVisible(false);
+        FileSporePanel.setVisible(false);
+    }
+
+    public void initFileSpore() {
+
         mintNode.getSharedResourceApp().getMintFiles().clear();
-           SwingWorker sw = new SwingWorker() {
+        SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                
+
                 mintNode.getSharedResourceApp().requestResources();
                 Thread.sleep(100);
                 sporeModel.fireTableDataChanged();
-              return null;
+                return null;
             }
-          
+
         };
         sw.execute();
-       
-         
+
     }
+
     public void initMintLynx() {
-           ArrayList<LynxPanel> lynxPanels=new ArrayList<>();
-           
-           
-            utils.updatePeerInfo(mintNode);
-            SwingWorker sw = new SwingWorker() {
+        ArrayList<LynxPanel> lynxPanels = new ArrayList<>();
+
+        utils.updatePeerInfo(mintNode);
+        
+
+        SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
+                Thread.sleep(200);
+                utils.updatePeerPfp(mintNode, mintNode.getPeerInfoApp().getPeerList());
                 Thread.sleep(200);
                 paintMintLynx(lynxPanels);
                 return null;
@@ -318,73 +327,78 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         };
 
         sw.execute();
-           
-        
+
     }
-    public void paintMintLynx(ArrayList<LynxPanel> lynxPanels){
-           if(box.getComponentCount()>0){
-               box.removeAll(); box.repaint(); lynxPanels.clear();lynxScroll.revalidate();
-           }
-           for(PeerInfo p:mintNode.getPeerInfoApp().getPeerList()){
-               
-               LynxPanel lynx=new LynxPanel(p);
-            lynx.setPreferredSize(new Dimension(376,92));
+
+    public void initCodeStitch() {
+
+    }
+
+    public void paintMintLynx(ArrayList<LynxPanel> lynxPanels) {
+        if (box.getComponentCount() > 0) {
+            box.removeAll();
+            box.repaint();
+            lynxPanels.clear();
+            lynxScroll.revalidate();
+        }
+        for (PeerInfo p : mintNode.getPeerInfoApp().getPeerList()) {
+
+            LynxPanel lynx = new LynxPanel(p);
+            lynx.setPreferredSize(new Dimension(376, 92));
             box.add(lynx);
             lynxPanels.add(lynx);
             box.revalidate();
             lynxScroll.repaint();
-           }
-           
-           
-           setMintLynxListeners(lynxPanels);
+        }
+
+        setMintLynxListeners(lynxPanels);
 
     }
     //END OF LAYERED PANE INITS
 
     //MY METHODS
- 
-    private void setMintLynxListeners(ArrayList<LynxPanel> lynxPanels){
-        
-        
-        if(lynxPanels==null||lynxPanels.size()<1) return;
-        for(LynxPanel l: lynxPanels){
+    private void setMintLynxListeners(ArrayList<LynxPanel> lynxPanels) {
+
+        if (lynxPanels == null || lynxPanels.size() < 1) {
+            return;
+        }
+        for (LynxPanel l : lynxPanels) {
             l.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                        scrollablePanel.removeAll();scrollablePanel.repaint();chatScrollPane.repaint();
-                        try{
-                            ArrayList<MintMessage> mm=cacher.getMessagesById(currentPeerChat.getNodeHandle().getId());
-                            utils.paintCachedMessages(mintNode, mm, scrollablePanel);
-                        }catch(NullPointerException ex){
-                            ex.getCause();
-                        }
-                        l.setCurrentPanel();
-                        for(LynxPanel lx:lynxPanels){
-                            if(!lx.equals(l)){
-                                l.setNotCurrentPanel();
-                            }
-                        }
-                        currentPeerChat=l.getPeerInfo();
-                        mintNode.getMessagingApp().setCurrentId(l.getPeerInfo().getNodeHandle().getId());
-                        
-                        currentPfpPanel.repaint();
-                        currentPfpPanel.revalidate();
-                        currentAliasLabel.setText(l.getPeerInfo().getAlias());
-      
+                    scrollablePanel.removeAll();
+                    scrollablePanel.repaint();
+                    chatScrollPane.repaint();
                     try {
-                        
-                        utils.setPfp(currentPfpLabel, aliasPath, l.getPeerInfo());
+                        ArrayList<MintMessage> mm = cacher.getMessagesById(currentPeerChat.getNodeHandle().getId());
+                        utils.paintCachedMessages(mintNode, mm, scrollablePanel);
+                    } catch (NullPointerException ex) {
+                        ex.getCause();
+                    }
+                    l.setCurrentPanel();
+                    for (LynxPanel lx : lynxPanels) {
+                        if (!lx.equals(l)) {
+                            l.setNotCurrentPanel();
+                        }
+                    }
+                    currentPeerChat = l.getPeerInfo();
+                    mintNode.getMessagingApp().setCurrentId(l.getPeerInfo().getNodeHandle().getId());
+
+                    currentPfpPanel.repaint();
+                    currentPfpPanel.revalidate();
+                    currentAliasLabel.setText(l.getPeerInfo().getAlias());
+
+                    try {
+
+                        utils.setPfp(currentPfpLabel, aliasPath, l.getPeerInfo(),true);
                     } catch (IOException ex) {
                         Logger.getLogger(MintwireClientGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                         
-   
-                    
+
                 }
-            });   
+            });
         }
     }
-  
 
     private void initFileStructure(String alias) {
         File f1 = new File(aliasPath);
@@ -398,21 +412,20 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             //CREATE PFP FOLDER
             File f3 = new File(aliasPath + alias + "/pfp");
             f3.mkdir();
-         
+
             try {
                 BufferedImage bi = ImageIO.read(getClass().getResourceAsStream("/mintwire/res/pngs/pfp.png"));
-                
+
                 File outputF = new File(aliasPath + alias + "/pfp/pfp.png");
                 ImageIO.write(bi, "PNG", outputF);
-
 
             } catch (Exception ex) {
                 System.out.println("err in creare fold:" + ex.getMessage());
             }
 
         }
-        File shared=new File(mintNode.getSharedPath());
-        if(!(shared.exists())){
+        File shared = new File(mintNode.getSharedPath());
+        if (!(shared.exists())) {
             shared.mkdir();
         }
 
@@ -454,7 +467,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         sp.setCorner(RTextScrollPane.LOWER_LEFT_CORNER, p);
         sp.setCorner(RTextScrollPane.LOWER_RIGHT_CORNER, p);
         sp.setCorner(RTextScrollPane.LOWER_LEADING_CORNER, p);
-       
+
         sp.getVerticalScrollBar().setBackground(Color.GRAY);
 
         sp.getHorizontalScrollBar().setBackground(Color.GRAY);
@@ -516,8 +529,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         });
 
         panel.add(sp);
-        panel.revalidate();
-        panel.repaint();
+
     }
 
     public void setTabbedDesign() {
@@ -535,30 +547,33 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         setTitle("Mintwire Code Stitch");
     }
 
+    public void initRSyntax(RSyntaxTextArea textArea, JPanel panel, JMenu languageToggle, String place) {
 
-    public void initRSyntax(RSyntaxTextArea textArea,JPanel panel,JMenu languageToggle, boolean isRequest) {
-        
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.setCodeFoldingEnabled(true);
         ActionListener actionListener;
-        textArea.repaint();
+
         RTextScrollPane sp = new RTextScrollPane(textArea);
         //configure scrollbars for rtextscrollpane
         configSbars(sp, panel);
-        
+
         //popup custom
         JPopupMenu syntaxMenu = textArea.getPopupMenu();
-        
+
         syntaxMenu.addSeparator();
         languageToggle = new JMenu("Change Language...");
-       languageToggle.setBackground(new Color(43, 43, 43));
+        languageToggle.setBackground(new Color(43, 43, 43));
         languageToggle.setForeground(new Color(238, 205, 127));
         Field[] languages = SyntaxConstants.class.getFields();
         String separ = "public static final java.lang.String org.fife.ui.rsyntaxtextarea.SyntaxConstants.SYNTAX_STYLE_";
-       //action listener
-        if(isRequest){
-           actionListener=new RequestMenuActionListener();
-        }else actionListener=new SendMenuActionListener();
+        //action listener
+        if ("request".equals(place)) {
+            actionListener = new RequestMenuActionListener();
+        } else if ("send".equals(place)) {
+            actionListener = new SendMenuActionListener();
+        } else {
+            actionListener = new PartyMenuActionListener();
+        }
         String vect = "";
         for (Field language : languages) {
             String name = language.toString();
@@ -571,7 +586,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 languageToggle.add(itm);
                 JMenuItem subitm = new JMenuItem(name);
                 itm.setOpaque(true);
-                //adding colors
+
                 itm.setBackground(new Color(43, 43, 43));
                 itm.setForeground(new Color(238, 205, 127));
                 subitm.setBackground(new Color(43, 43, 43));
@@ -583,7 +598,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             } else {
                 JMenuItem subitm = new JMenuItem(name);
                 subitm.setOpaque(true);
-                //adding colors
+
                 subitm.setBackground(new Color(43, 43, 43));
                 subitm.setForeground(new Color(238, 205, 12));
                 JMenu itm = (JMenu) languageToggle.getMenuComponent(vect.indexOf(letter));
@@ -607,33 +622,47 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         textArea.setFont(new Font("Monospace", Font.BOLD, 20));
 
     }
- 
-  
+
     //ACTION LISTENERS FOR MENUS
+    class PartyMenuActionListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            LangSelector lang = new LangSelector();
+            String context = lang.select(e.getActionCommand());
+
+            partyTextArea.setSyntaxEditingStyle(context);
+
+        }
+    }
+
     class SendMenuActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-           
+
             LangSelector lang = new LangSelector();
             String context = lang.select(e.getActionCommand());
-            System.err.println(context);
+
             sendTextArea.setSyntaxEditingStyle(context);
-       
+
         }
     }
+
     class RequestMenuActionListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-           
+
             LangSelector lang = new LangSelector();
             String context = lang.select(e.getActionCommand());
-            
-           requestTextArea.setSyntaxEditingStyle(context);
-         
+
+            requestTextArea.setSyntaxEditingStyle(context);
+
         }
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -686,7 +715,13 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         saveButton = new javax.swing.JButton();
         sendButton = new javax.swing.JButton();
         CodeStitchPartyPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
+        PartyPanel = new javax.swing.JPanel(new BorderLayout());
+        jPanel10 = new javax.swing.JPanel();
+        jButton3 = new javax.swing.JButton();
+        startSession = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
         MintLynxPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
@@ -1144,23 +1179,72 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         CodeStitchPartyPanel.setBackground(new java.awt.Color(94, 87, 104));
 
-        jLabel3.setText("CODE STITCH PARTY");
+        PartyPanel.setPreferredSize(new java.awt.Dimension(1059, 472));
+        PartyPanel.setLayout(new java.awt.BorderLayout());
+
+        jButton3.setText("Save Stitch");
+        jButton3.setBorder(null);
+
+        startSession.setText("Start Session");
+        startSession.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        startSession.setBorderPainted(false);
+
+        jButton5.setText("Leave Session");
+        jButton5.setBorder(null);
+
+        jButton6.setText("Join Session");
+        jButton6.setBorder(null);
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(startSession, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(48, 48, 48)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(51, 51, 51))
+            .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel10Layout.createSequentialGroup()
+                    .addGap(16, 16, 16)
+                    .addComponent(startSession, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(384, Short.MAX_VALUE)))
+        );
 
         javax.swing.GroupLayout CodeStitchPartyPanelLayout = new javax.swing.GroupLayout(CodeStitchPartyPanel);
         CodeStitchPartyPanel.setLayout(CodeStitchPartyPanelLayout);
         CodeStitchPartyPanelLayout.setHorizontalGroup(
             CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CodeStitchPartyPanelLayout.createSequentialGroup()
-                .addGap(343, 343, 343)
-                .addComponent(jLabel3)
-                .addContainerGap(858, Short.MAX_VALUE))
+                .addGap(19, 19, 19)
+                .addGroup(CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1)
+                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         CodeStitchPartyPanelLayout.setVerticalGroup(
             CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CodeStitchPartyPanelLayout.createSequentialGroup()
-                .addGap(163, 163, 163)
-                .addComponent(jLabel3)
-                .addContainerGap(469, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CodeStitchPartyPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(35, 35, 35))
         );
 
         MintLynxPanel.setBackground(new java.awt.Color(94, 87, 104));
@@ -1398,7 +1482,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sporeText, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                 .addComponent(sporeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25))
         );
@@ -1451,11 +1535,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         FileSporePanelLayout.setHorizontalGroup(
             FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(FileSporePanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(38, 38, 38)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 52, Short.MAX_VALUE)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(117, Short.MAX_VALUE))
+                .addGap(51, 51, 51))
         );
         FileSporePanelLayout.setVerticalGroup(
             FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1615,8 +1699,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void MintRequestLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MintRequestLabelMouseClicked
         MintRequestLabel.setBackground(new Color(53, 53, 53));
         //START MINTREQUESTS
-        
-        MintRequests mr = MintRequests.getInstance(requestTextArea,mintNode);
+
+        MintRequests mr = MintRequests.getInstance(requestTextArea, mintNode);
         mr.pack();
         mr.setLocationRelativeTo(null);
         mr.setVisible(true);
@@ -1649,9 +1733,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 while (identity.getInstance() != null) {
                     Thread.sleep(3000);
                 }
-                
+
                 setPfp();
-                
+
                 statusPanel.repaint();
                 return null;
             }
@@ -1668,6 +1752,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         CodeStitchPartyPanel.setVisible(true);
         MintLynxPanel.setVisible(false);
         FileSporePanel.setVisible(false);
+        initCodeStitch();
     }//GEN-LAST:event_CStitchPartyLabelMouseClicked
 
     private void CStitchLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CStitchLabelMouseClicked
@@ -1701,29 +1786,26 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void TabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_TabbedPaneStateChanged
 
 
-
     }//GEN-LAST:event_TabbedPaneStateChanged
 
     private void sendTextLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendTextLabelMouseClicked
-       SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
-       Date date=new Date(System.currentTimeMillis());
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
+        Date date = new Date(System.currentTimeMillis());
         if (!(chatTextArea.getText().equals(""))) {
             bubbler = new Bubbler(chatTextArea.getText(), SENT);
-            bubbler.paintRightBubble(scrollablePanel,formatter.format(date));
-            
+            bubbler.paintRightBubble(scrollablePanel, formatter.format(date));
+
         }
-        if(currentPeerChat!=null){
-            
-            
-            MintMessage msg=new MintMessage(chatTextArea.getText(),formatter.format(date),mintNode.getNode().getId());
+        if (currentPeerChat != null) {
+
+            MintMessage msg = new MintMessage(chatTextArea.getText(), formatter.format(date), mintNode.getNode().getId());
             cacher.cache(currentPeerChat.getNodeHandle().getId(), msg);
-            System.err.println("sending to from bttn "+currentPeerChat.getNodeHandle().getId());
-            mintNode.getMessagingApp().routeMessage(currentPeerChat.getNodeHandle(),msg);
+            System.err.println("sending to from bttn " + currentPeerChat.getNodeHandle().getId());
+            mintNode.getMessagingApp().routeMessage(currentPeerChat.getNodeHandle(), msg);
             chatTextArea.setText("");
-            
-            
+
         }
-        
+
     }//GEN-LAST:event_sendTextLabelMouseClicked
 
     private void sendTextLabelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sendTextLabelKeyPressed
@@ -1743,41 +1825,41 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-      ArrayList<NodeHandle> nhs=new ArrayList<>();
+        ArrayList<NodeHandle> nhs = new ArrayList<>();
         System.err.println("MINTFILES SELECTION");
-        
-        for(MintFile file: mintNode.getSharedResourceApp().getMintFiles()){
-           if(file.isItSelected()&& (!nhs.contains(file.getHandle()))){
-              
-               nhs.add(file.getHandle());
-           }
-       }
-        for(NodeHandle nh:nhs){
-          MintFile [] files=  mintNode.getSharedResourceApp().getMintFiles().stream().filter(e-> e.getHandle().equals(nh)&& e.isItSelected()).toArray(MintFile[]::new); 
-         
-          mintNode.getFileSporeApp().requestFiles(files, nh);
-             
+
+        for (MintFile file : mintNode.getSharedResourceApp().getMintFiles()) {
+            if (file.isItSelected() && (!nhs.contains(file.getHandle()))) {
+
+                nhs.add(file.getHandle());
+            }
         }
-       
+        for (NodeHandle nh : nhs) {
+            MintFile[] files = mintNode.getSharedResourceApp().getMintFiles().stream().filter(e -> e.getHandle().equals(nh) && e.isItSelected()).toArray(MintFile[]::new);
+
+            mintNode.getFileSporeApp().requestFiles(files, nh);
+
+        }
+
     }//GEN-LAST:event_jButton2MouseClicked
 
     private void sendButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendButtonMouseClicked
-       if(sendTextArea.getText().toString().equals("")){
-            infoLabel=new JLabel("<html><center>Make sure you entered your stitch in the Send Area.");
-                    infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                    JOptionPane.showMessageDialog(null, infoLabel, "No stitch found!", JOptionPane.INFORMATION_MESSAGE);
-       }else
-       {CodeStitch codeStitch=new CodeStitch(alias, "null", sendTextArea.getSyntaxEditingStyle(), sendTextArea.getText().toString());
-        
-        SendCodeStitch scs =SendCodeStitch.getInstance(codeStitch, mintNode);
-        scs.setCodeStitch(codeStitch);
-        
-        scs.pack();
-        scs.setLocationRelativeTo(null);
-        scs.setVisible(true);
-        scs.setVisible(true);
-       }
-        
+        if (sendTextArea.getText().toString().equals("")) {
+            infoLabel = new JLabel("<html><center>Make sure you entered your stitch in the Send Area.");
+            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, infoLabel, "No stitch found!", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            CodeStitch codeStitch = new CodeStitch(alias, "null", sendTextArea.getSyntaxEditingStyle(), sendTextArea.getText().toString());
+
+            SendCodeStitch scs = SendCodeStitch.getInstance(codeStitch, mintNode);
+            scs.setCodeStitch(codeStitch);
+
+            scs.pack();
+            scs.setLocationRelativeTo(null);
+            scs.setVisible(true);
+            scs.setVisible(true);
+        }
+
     }//GEN-LAST:event_sendButtonMouseClicked
 
     private void saveButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_saveButtonKeyPressed
@@ -1793,7 +1875,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         cp.pack();
         cp.setLocationRelativeTo(null);
         cp.setVisible(true);
-      
+
     }//GEN-LAST:event_IdentityLabel1MouseClicked
 
     private void IdentityLabel1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabel1MouseEntered
@@ -1801,12 +1883,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_IdentityLabel1MouseEntered
 
     private void IdentityLabel1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabel1MouseExited
-       IdentityLabel1.setText("");
+        IdentityLabel1.setText("");
     }//GEN-LAST:event_IdentityLabel1MouseExited
 
-   
     public static void main(String args[]) {
-       
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -1823,7 +1904,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MintwireClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-       
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MintwireClientGUI().setVisible(true);
@@ -1845,6 +1926,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JLabel MintLynxLabel;
     private javax.swing.JPanel MintLynxPanel;
     private javax.swing.JLabel MintRequestLabel;
+    private javax.swing.JPanel PartyPanel;
     private javax.swing.JLabel PreferencesLabel;
     private javax.swing.JPanel RequestSPanel;
     private javax.swing.JPanel SendSPanel;
@@ -1856,13 +1938,16 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel currentPfpPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1871,6 +1956,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane lynxScroll;
     private javax.swing.JLabel pfpLabel;
@@ -1882,6 +1968,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton sporeSearch;
     private javax.swing.JTable sporeTable;
     private javax.swing.JTextField sporeText;
+    private javax.swing.JButton startSession;
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
 }

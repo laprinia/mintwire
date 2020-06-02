@@ -45,6 +45,7 @@ public class ConnectedPeers extends javax.swing.JFrame {
         this.mintNode = mn;
         this.peerInfoApp = mintNode.getPeerInfoApp();
         utils.updatePeerInfo(mintNode);
+        
         initComponents();
         peerScroll.setPreferredSize(new Dimension(299, 276));
         peerScroll.revalidate();
@@ -52,6 +53,8 @@ public class ConnectedPeers extends javax.swing.JFrame {
         SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
+                Thread.sleep(200);
+                utils.updatePeerPfp(mn,mintNode.getPeerInfoApp().getPeerList());
                 Thread.sleep(200);
                 paintPeers();
                 return null;

@@ -10,6 +10,7 @@ import mintwire.p2pmodels.apps.CodeStitchApp;
 import mintwire.p2pmodels.apps.CodeStitchPartyApp;
 import mintwire.p2pmodels.apps.FileSporeApp;
 import mintwire.p2pmodels.apps.MintMessagingApp;
+import mintwire.p2pmodels.apps.ProfilePictureApp;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
 import mintwire.p2pmodels.apps.SendSharedResourceApp;
 
@@ -27,7 +28,9 @@ import rice.pastry.standard.RandomNodeIdFactory;
 
 public class MintNode {
     private final boolean isLinux = OS.isLinux();
+    
     private String sharedPath = "C:\\MINTWIRE Shared";
+    private ProfilePictureApp pfpApp;
     private SendSharedResourceApp sharedResourceApp;
     private FileSporeApp fileSporeApp;
     private MintMessagingApp messagingApp;
@@ -52,10 +55,13 @@ public class MintNode {
 
         node = pastryNodeFactory.newNode();
         //init apps
+        
         codeStitchApp = new CodeStitchApp(node);
         peerInfoApp = new SendPeerInfoApp(node);
         messagingApp=new MintMessagingApp(node);
         fileSporeApp=new FileSporeApp(node, sharedPath);
+        pfpApp=new ProfilePictureApp(node);
+        
         sharedResourceApp=new SendSharedResourceApp(node);
         node.boot(bootaddr);
 
@@ -114,6 +120,10 @@ public class MintNode {
 
     public FileSporeApp getFileSporeApp() {
         return fileSporeApp;
+    }
+
+    public ProfilePictureApp getPfpApp() {
+        return pfpApp;
     }
     
     

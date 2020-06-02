@@ -14,11 +14,13 @@ public class PeerInfo implements Message{
     private String alias;
     private String status;
     private boolean isResponse;
+   
     public PeerInfo(NodeHandle nh,String alias, String status,boolean isResponse){
         this.isResponse=isResponse;
         this.nodeHandle=nh;
         this.alias=alias;
         this.status=status;
+     
              
     }
 
@@ -44,9 +46,13 @@ public class PeerInfo implements Message{
        return Message.LOW_PRIORITY;
     }
 
+  
+    
+
     @Override
     public String toString() {
         return alias+" "+status+"["+nodeHandle.getId()+"]";
     }
+    
     
 }

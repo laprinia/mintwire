@@ -54,7 +54,7 @@ public class ConnectedPeerPanel extends javax.swing.JPanel {
             initComponents();
             setPreferredSize(new Dimension(299,92));
             revalidate();
-            utils.setPfp(pfpLabel,aliasPath,peerInfo);
+            utils.setPfp(pfpLabel,aliasPath,peerInfo,true);
         } catch (IOException ex) {
             Logger.getLogger(ConnectedPeerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -132,7 +132,7 @@ public class ConnectedPeerPanel extends javax.swing.JPanel {
         );
 
         try{
-            utils.setPfp(pfpLabel, aliasPath, peerInfo);
+            utils.setPfp(pfpLabel, aliasPath, peerInfo,true);
         }catch(Exception ex){ex.printStackTrace();}
 
         aliasLabel1.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
