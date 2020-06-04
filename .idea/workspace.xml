@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="49596620-834d-4a8d-929b-088b9da3b4b3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$2$1.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$2$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/built-jar.properties" beforeDir="false" afterPath="$PROJECT_DIR$/build/built-jar.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/.netbeans_automatic_build" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/.netbeans_update_resources" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/BCrypt.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/BCrypt.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/CredentialChecker.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/CredentialChecker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/CustomTheme.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/CustomTheme.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/LangSelector.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/LangSelector.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/Mintwire.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/Mintwire.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/borders/ChatBorder.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/borders/ChatBorder.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/cache/MessageCacher.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/cache/MessageCacher.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/chaticons/Bubble.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/chaticons/Bubble.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/chaticons/LeftBubble.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/chaticons/LeftBubble.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/chaticons/RightBubble.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/chaticons/RightBubble.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/chatpanels/Bubbler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/chatpanels/Bubbler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/classes/MintFile.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/classes/MintFile.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/ConnectedPeers.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$StatusRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity$StatusRenderer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Identity.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Login.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintRequests.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$10.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$10.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$11.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$11.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$12.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$12.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$13.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$13.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$14.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$14.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$15.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$15.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$16.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$16.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$17.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$17.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$18.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$18.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$19.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$19.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$20.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$20.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$21.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$21.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$22.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$22.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$23.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$23.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$24.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$24.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$25.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$25.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$26.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$26.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$27.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$27.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$28.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$28.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$7.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$7.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$8.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$8.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$9.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$9.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$FileExtensionModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$FileExtensionModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$FileSporeTableModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$FileSporeTableModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$PartyMenuActionListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$PartyMenuActionListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$RequestMenuActionListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$RequestMenuActionListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$SendMenuActionListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI$SendMenuActionListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/MintwireClientGUI.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Preferences.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure$6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Reconfigure.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$5.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$6.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$7.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register$7.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/Register.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/jframes/SendCodeStitch.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/listeners/AcceptStitchListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/listeners/AcceptStitchListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/MintNode.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/MintNode.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/CodeStitchApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/CodeStitchApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/CodeStitchPartyApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/CodeStitchPartyApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$1$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$1$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$2$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$SporeListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp$SporeListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/FileSporeApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/MintMessagingApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/MintMessagingApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$1$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$1$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$2$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$SporeListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp$SporeListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/ProfilePictureApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/SendPeerInfoApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/SendPeerInfoApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/SendSharedResourceApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/apps/SendSharedResourceApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/CodeStitch.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/CodeStitch.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/MintMessage.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/MintMessage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/PeerInfo.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/PeerInfo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/ResourceRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/ResourceRequest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/SharedResource.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/p2pmodels/messages/SharedResource.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/mintlynx/LynxPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/mintlynx/LynxPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/mintlynx/LynxPanel.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/ConnectedPeerPanel.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/peerlist/PeerPanel.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/requestpanels/BlancPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/requestpanels/BlancPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/requestpanels/BlancPanel.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/requestpanels/RequestPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/panels/requestpanels/RequestPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/panels/requestpanels/RequestPanel.form" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/res/tablemodels/FileSporeTableModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/res/tablemodels/FileSporeTableModel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/theme/CustomTheme.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/theme/CustomTheme.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/PreferenceLoader.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/utils/PreferenceLoader.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$3.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$4.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/Status$5.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/Status.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/utils/Status.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/mintwire/utils/Utils.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/mintwire/utils/Utils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mintwire.iml" beforeDir="false" afterPath="$PROJECT_DIR$/mintwire.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/genfiles.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/genfiles.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/private/private.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/private/private.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/private/private.xml" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/private/private.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nbproject/project.properties" beforeDir="false" afterPath="$PROJECT_DIR$/nbproject/project.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mintwire/jframes/Identity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/mintwire/jframes/Identity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mintwire/p2pmodels/apps/ProfilePictureApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/mintwire/p2pmodels/apps/ProfilePictureApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mintwire/theme/CustomTheme.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/mintwire/theme/CustomTheme.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mintwire/utils/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/mintwire/utils/Utils.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1cqat6rFAnL6PNS3OAEvCf2zik6" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="49596620-834d-4a8d-929b-088b9da3b4b3" name="Default Changelist" comment="" />
+      <created>1591258788929</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1591258788929</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="549" y="153" key="FileChooserDialogImpl" timestamp="1591258930954">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="549" y="153" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1591258930954" />
+    <state x="444" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1591258867427">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="444" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1591258867427" />
+    <state x="209" y="0" key="new project wizard" timestamp="1591258932217">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="209" y="0" key="new project wizard/0.0.1536.824@0.0.1536.824" timestamp="1591258932217" />
+  </component>
+</project>

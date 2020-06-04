@@ -53,9 +53,9 @@ public class ConnectedPeers extends javax.swing.JFrame {
         SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                Thread.sleep(200);
+                Thread.sleep(60);
                 utils.updatePeerPfp(mn,mintNode.getPeerInfoApp().getPeerList());
-                Thread.sleep(200);
+                Thread.sleep(60);
                 paintPeers();
                 return null;
             }
@@ -205,7 +205,8 @@ public class ConnectedPeers extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel1KeyPressed
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        setVisible(false);
+        dispose();
+        instance=null;
     }//GEN-LAST:event_jLabel1MouseClicked
 
     /**

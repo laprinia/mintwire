@@ -70,12 +70,13 @@ public class ProfilePictureApp implements Application {
                     @Override
                     public void fileReceived(File file, ByteBuffer bb) {
                         try {
-                            String fileName = new SimpleInputBuffer(bb).readUTF();
+                          String fileName = new SimpleInputBuffer(bb).readUTF();
                             System.err.println("filename for pfp: "+fileName);
-                            String fileAlias = StringUtils.substringBefore(fileName, "-");
+                            String fileAlias = StringUtils.substringBefore(fileName, ".");
                            
-                            File destinationFile = new File(appPath + fileAlias+"/pfp/" + fileAlias+".png");
-                            
+                            File destinationFile = new File(appPath + fileAlias+"/pfp/" + fileName);
+                            if(destinationFile.exists()) destinationFile.delete();
+                            System.err.println(destinationFile);
                             System.err.println(file.renameTo(destinationFile));
 
                            

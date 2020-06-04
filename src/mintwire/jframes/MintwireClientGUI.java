@@ -317,9 +317,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         SwingWorker sw = new SwingWorker() {
             @Override
             protected Object doInBackground() throws Exception {
-                Thread.sleep(200);
+                Thread.sleep(60);
                 utils.updatePeerPfp(mintNode, mintNode.getPeerInfoApp().getPeerList());
-                Thread.sleep(200);
+                Thread.sleep(60);
                 paintMintLynx(lynxPanels);
                 return null;
             }

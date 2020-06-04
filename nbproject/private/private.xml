@@ -3,10 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/ConnectedPeers.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/utils/Utils.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/MintwireClientGUI.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/SendCodeStitch.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/apps/ProfilePictureApp.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/apps/SendPeerInfoApp.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/messages/CodeStitch.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/panels/peerlist/ConnectedPeerPanel.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/messages/PeerInfo.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/panels/peerlist/PeerPanel.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/SendCodeStitch.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/apps/CodeStitchApp.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/Identity.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/MintNode.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/panels/mintlynx/LynxPanel.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/MintRequests.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/theme/CustomTheme.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/Login.java</file>
         </group>
     </open-files>
 </project-private>

@@ -35,6 +35,7 @@ import mintwire.utils.Status;
 
 import mintwire.utils.Utils;
 import org.jdesktop.swingx.util.OS;
+import rice.pastry.NodeHandle;
 
 public class Identity extends javax.swing.JFrame {
 
@@ -289,15 +290,15 @@ public class Identity extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(207, 207, 207)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addComponent(jLabel1))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(225, 225, 225)
-                        .addComponent(jLabel1)))
+                        .addGap(258, 258, 258)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(264, 264, 264))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -361,10 +362,14 @@ public class Identity extends javax.swing.JFrame {
                 super.done();
                 finalIcon = new ImageIcon(resultScaled);
                 pfpLabel.setIcon(finalIcon);
+                 for(NodeHandle nh: utils.getNodeHandleList(mintNode)){
+                  mintNode.getPfpApp().sendFile(nh);
+                 }
 
             }
         };
         sw.execute();
+       
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
@@ -384,8 +389,7 @@ public class Identity extends javax.swing.JFrame {
                 e.printStackTrace();
             }
         } else {
-            //info
-            System.out.println("neschimb");
+          
 
         }
         //SERVER ACTION
