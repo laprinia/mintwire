@@ -44,9 +44,9 @@ public class MintMessagingApp implements Application{
     @Override
     public void deliver(Id id, Message msg) {
         MintMessage mintMessage=(MintMessage)msg;
-        System.err.println(msg.toString());
-        if(currentId==null || scrollablePanel==null) return; //cache
-        else{
+        
+        cacher.cache(mintMessage.getSenderId(), mintMessage);
+        if(currentId!=null || scrollablePanel!=null){
            
             if(currentId.equals(mintMessage.getSenderId())){
                 
@@ -55,7 +55,7 @@ public class MintMessagingApp implements Application{
                 //TODO NU PICTEZI BINE
             }
         }
-        cacher.cache(mintMessage.getSenderId(), mintMessage);
+       
     }
 
     @Override

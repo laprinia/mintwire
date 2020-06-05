@@ -1,5 +1,6 @@
 package mintwire.jframes;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -40,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -189,7 +191,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                     ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/" + ext.substring(1) + ".png"));
 
                 } catch (Exception ex) {
-                    ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/txt.png"));
+                    ii = new ImageIcon(getClass().getResource("/mintwire/res/ext/none.png"));
                 }
 
                 c.setIcon(new ImageIcon(ii.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));
@@ -242,7 +244,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private static JMenu requestLanguageToggle;
     private static JMenu sendLanguageToggle;
     private static JMenu partyLanguageToggle;
-    private ArrayList<String> array = new ArrayList<String>();
+    private Border emptyBorder = BorderFactory.createLineBorder(new Color(45,48,56));
 
     //end of my vars
     public MintwireClientGUI() {
@@ -715,26 +717,28 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         saveButton = new javax.swing.JButton();
         sendButton = new javax.swing.JButton();
         CodeStitchPartyPanel = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
         PartyPanel = new javax.swing.JPanel(new BorderLayout());
-        jPanel10 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
-        startSession = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jButton7 = new javax.swing.JButton();
         MintLynxPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
+        currentAliasLabel = new javax.swing.JLabel();
         currentPfpPanel = new javax.swing.JPanel()
         {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Dimension arcs = new Dimension(15,15);
-                int width = getWidth()-8;
+                int width = getWidth();
                 int height = getHeight();
                 Graphics2D graphics = (Graphics2D) g;
                 graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                //graphics.setStroke(new BasicStroke(1));
                 if(currentPeerChat==null){
                     setForeground(new Color(45,48,55));
                 }else if("available".equals(currentPeerChat.getStatus()))
@@ -749,15 +753,15 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 }else setForeground(Color.YELLOW);
 
                 graphics.setColor(getBackground());
-                graphics.fillOval(0, 0, width-2, height-8);
+                graphics.fillOval(0, 0, width-1, height-1);
                 graphics.setColor(getForeground());
-                graphics.drawOval(0, 0, width-2, height-8);
-
+                graphics.drawOval(0, 0, width-1, height-1);
             }
         }
         ;
-        currentPfpLabel = new javax.swing.JLabel();
-        currentAliasLabel = new javax.swing.JLabel();
+        currentPfpLabel = new javax.swing.JLabel()
+
+        ;
         chatScrollPane = new javax.swing.JScrollPane(scrollablePanel);
         jPanel11 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -1182,122 +1186,131 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         PartyPanel.setPreferredSize(new java.awt.Dimension(1059, 472));
         PartyPanel.setLayout(new java.awt.BorderLayout());
 
-        jButton3.setText("Save Stitch");
-        jButton3.setBorder(null);
+        jButton4.setText("Leave Session");
 
-        startSession.setText("Start Session");
-        startSession.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        startSession.setBorderPainted(false);
+        jButton5.setText("Join Session");
 
-        jButton5.setText("Leave Session");
-        jButton5.setBorder(null);
+        jButton6.setText("Start Session");
 
-        jButton6.setText("Join Session");
-        jButton6.setBorder(null);
+        jButton7.setText("Save Session");
 
-        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
-        jPanel10.setLayout(jPanel10Layout);
-        jPanel10Layout.setHorizontalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jButton5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
-            .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(startSession, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1)
+                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 999, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
-        jPanel10Layout.setVerticalGroup(
-            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(51, 51, 51))
-            .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel10Layout.createSequentialGroup()
-                    .addGap(16, 16, 16)
-                    .addComponent(startSession, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(384, Short.MAX_VALUE)))
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addGap(0, 8, Short.MAX_VALUE)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(19, 19, 19)))
+                .addContainerGap())
         );
+
+        jButton4.setBorder(emptyBorder);
+        jButton4.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/leave-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
+        jButton5.setBorder(emptyBorder);
+        jButton5.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/join-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
+        Border emptyBorder = BorderFactory.createLineBorder(new Color(45,48,56));
+        jButton6.setBorder(emptyBorder);
+        jButton6.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/start-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
+        jButton7.setBorder(emptyBorder);
+        jButton7.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
 
         javax.swing.GroupLayout CodeStitchPartyPanelLayout = new javax.swing.GroupLayout(CodeStitchPartyPanel);
         CodeStitchPartyPanel.setLayout(CodeStitchPartyPanelLayout);
         CodeStitchPartyPanelLayout.setHorizontalGroup(
             CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CodeStitchPartyPanelLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1)
-                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap()
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(12, Short.MAX_VALUE))
         );
         CodeStitchPartyPanelLayout.setVerticalGroup(
             CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CodeStitchPartyPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(35, 35, 35))
+            .addGroup(CodeStitchPartyPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         MintLynxPanel.setBackground(new java.awt.Color(94, 87, 104));
 
         jPanel3.setBackground(new java.awt.Color(45, 48, 55));
 
-        currentPfpPanel.setBackground(new java.awt.Color(45, 48, 55));
-        currentPfpPanel.setPreferredSize(new java.awt.Dimension(110, 110));
+        currentAliasLabel.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        currentAliasLabel.setForeground(new java.awt.Color(97, 214, 28));
 
-        currentPfpLabel.setPreferredSize(new java.awt.Dimension(81, 81));
+        currentPfpPanel.setPreferredSize(new java.awt.Dimension(92, 92));
+
+        currentPfpLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        currentPfpLabel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        currentPfpLabel.setPreferredSize(new java.awt.Dimension(92, 92));
+        currentPfpLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                currentPfpLabelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout currentPfpPanelLayout = new javax.swing.GroupLayout(currentPfpPanel);
         currentPfpPanel.setLayout(currentPfpPanelLayout);
         currentPfpPanelLayout.setHorizontalGroup(
             currentPfpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(currentPfpPanelLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         currentPfpPanelLayout.setVerticalGroup(
             currentPfpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(currentPfpPanelLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(currentPfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+            .addComponent(currentPfpLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
         );
-
-        currentAliasLabel.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        currentAliasLabel.setForeground(new java.awt.Color(97, 214, 28));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addGap(15, 15, 15)
                 .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(111, 111, 111)
+                .addGap(31, 31, 31)
                 .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(197, Short.MAX_VALUE))
+                .addContainerGap(307, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addGap(22, 22, 22)
+                .addComponent(currentPfpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel11.setBackground(new java.awt.Color(75, 80, 92));
@@ -1527,7 +1540,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(386, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout FileSporePanelLayout = new javax.swing.GroupLayout(FileSporePanel);
@@ -1709,6 +1722,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void FileHaulLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseClicked
         FileHaulLabel.setBackground(new Color(53, 53, 53));
+            FileHaul fh = new FileHaul();
+            fh.pack();
+            fh.setLocationRelativeTo(null);
+            fh.setVisible(true);
+            fh.setVisible(true);
     }//GEN-LAST:event_FileHaulLabelMouseClicked
 
     private void PreferencesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseClicked
@@ -1886,6 +1904,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         IdentityLabel1.setText("");
     }//GEN-LAST:event_IdentityLabel1MouseExited
 
+    private void currentPfpLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_currentPfpLabelMouseClicked
+
+    }//GEN-LAST:event_currentPfpLabelMouseClicked
+
     public static void main(String args[]) {
 
         try {
@@ -1938,22 +1960,23 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel currentPfpPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1968,7 +1991,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton sporeSearch;
     private javax.swing.JTable sporeTable;
     private javax.swing.JTextField sporeText;
-    private javax.swing.JButton startSession;
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
 }

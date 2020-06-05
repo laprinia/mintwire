@@ -48,6 +48,7 @@ public class MintNode {
          //TODO READ PREF FILE FOR SHAREDPATH
         env = new Environment();
         env.getParameters().setString("nat_search_policy", "never");
+        env.getParameters().setString(status, status);
 
         NodeIdFactory nodeIdFactory = new RandomNodeIdFactory(env);
 

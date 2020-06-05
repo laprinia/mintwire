@@ -14,7 +14,7 @@ public class MessageCacher {
     
 public MessageCacher(){
     cache=Caffeine.newBuilder()
-            .expireAfterWrite(3, TimeUnit.HOURS)
+            .expireAfterWrite(4, TimeUnit.HOURS)
             .build();
     
 }
