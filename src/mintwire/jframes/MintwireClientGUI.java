@@ -74,6 +74,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import mintwire.LangSelector;
+import mintwire.PartyState;
 import mintwire.borders.ChatBorder;
 import mintwire.cache.MessageCacher;
 import mintwire.chatpanels.Bubbler;
@@ -83,6 +84,7 @@ import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
 
 import mintwire.p2pmodels.messages.CodeStitch;
+import mintwire.p2pmodels.messages.HostTopic;
 import mintwire.p2pmodels.messages.MintMessage;
 import mintwire.p2pmodels.messages.PartyStitch;
 import mintwire.p2pmodels.messages.PeerInfo;
@@ -96,6 +98,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jdesktop.swingx.util.OS;
+import rice.p2p.scribe.Topic;
 import rice.pastry.NodeHandle;
 
 //PFP PRIN PEERINFO la send si connected peers trb refresh
@@ -214,6 +217,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
 
     //my vars
+    private PartyState partyState = PartyState.NotStarted;
     private MessageCacher cacher = new MessageCacher();
     private Box partyBox = new Box(BoxLayout.X_AXIS);
     private Box lynxBox = new Box(BoxLayout.Y_AXIS);
@@ -1191,6 +1195,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         PartyPanel.setLayout(new java.awt.BorderLayout());
 
         leaveSessionButton.setText("Leave Session");
+        leaveSessionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                leaveSessionButtonMouseClicked(evt);
+            }
+        });
 
         joinSessionButton.setText("Join Session");
         joinSessionButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1924,24 +1933,64 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_currentPfpLabelMouseClicked
 
     private void startSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startSessionButtonMouseClicked
-        PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, "host", false));
-        partyPeerPanel.setPreferredSize(new Dimension(176, 132));
-        partyBox.removeAll();
-        partyBox.add(partyPeerPanel);
-        partyBox.revalidate();
-        mintNode.getPartyClient().createTopic(mintNode.getNode().getLocalHandle(), alias);
-        mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea);
-        mintNode.getPartyClient().startPublishTask();
+        if (partyState.equals(PartyState.NotStarted)) {
+            partyState = PartyState.Started;
+            PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, "host", false));
+            partyPeerPanel.setPreferredSize(new Dimension(176, 132));
+            partyBox.removeAll();
+            partyBox.add(partyPeerPanel);
+            partyBox.revalidate();
+            
+            mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea);
+            HostTopic topic= mintNode.getPartyClient().sendCredentials();
+            mintNode.getPartyClient().startPublishTask();
+            //
+            PassphraseViewer pv = PassphraseViewer.getInstance(topic.getPassphrase());
+            pv.pack();
+            pv.setLocationRelativeTo(null);
+            pv.setVisible(true);
+            //
+            
+        } else {
+            infoLabel = new JLabel("<html><center>Already engaged in a session. Leave it before starting a new one.");
+            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, infoLabel, "Cannot start session", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_startSessionButtonMouseClicked
 
     private void joinSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_joinSessionButtonMouseClicked
-    // TODO add your handling code here:
-        PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, mintNode.getNode().status, false));
-        partyPeerPanel.setPreferredSize(new Dimension(176, 132));
-        mintNode.getPartyClient().joinTopic(mintNode.getNode().getLocalHandle());
-        mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea);
-        mintNode.getPartyClient().startPublishTask();
+        // TODO add your handling code here:
+        if (partyState.equals(PartyState.NotStarted)) {
+            partyState = PartyState.Joined;
+            PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, mintNode.getNode().status, false));
+            partyPeerPanel.setPreferredSize(new Dimension(176, 132));
+            //
+            PassphraseGiver pg = PassphraseGiver.getInstance(mintNode, partyTextArea);
+            pg.pack();
+            pg.setLocationRelativeTo(null);
+            pg.setVisible(true);
+            //
+            
+        } else {
+            infoLabel = new JLabel("<html><center>Already engaged in a session. Leave it before joining a new one.");
+            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, infoLabel, "Cannot join session", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_joinSessionButtonMouseClicked
+
+    private void leaveSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_leaveSessionButtonMouseClicked
+
+        if (partyState.equals(PartyState.NotStarted)) {
+            infoLabel = new JLabel("<html><center>No party to leave.");
+            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, infoLabel, "Cannot leave a party that hasn't started", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            if(partyState.equals(PartyState.Started)) mintNode.getPartyClient().destroy();
+            else mintNode.getPartyClient().unsubscribe();
+            partyState = PartyState.NotStarted;
+            
+        }
+    }//GEN-LAST:event_leaveSessionButtonMouseClicked
 
     public static void main(String args[]) {
 

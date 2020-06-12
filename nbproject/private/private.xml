@@ -3,15 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/utils/Utils.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/MintwireClientGUI.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/messages/PartyStitch.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/apps/SendPeerInfoApp.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/apps/CodeStitchApp.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/PassphraseGiver.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/MintNode.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/messages/HostTopic.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/PartyState.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/apps/CodeStitchPartyClient.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/Login.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/PassphraseViewer.java</file>
         </group>
     </open-files>
 </project-private>

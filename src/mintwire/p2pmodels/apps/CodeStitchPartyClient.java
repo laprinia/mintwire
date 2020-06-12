@@ -63,40 +63,43 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
         topic = new Topic(new PastryIdFactory(environment), "partytopic");
 
         scribe.subscribe(topic, this, null, nh);
+     
 
 
     }
      public void setPublishInfo(MintNode mn, RSyntaxTextArea textArea) {
         mintNode = mn;
         partyArea = textArea;
-        sendCredentials();
+       
         
     }
-    public void sendCredentials(){
+    public HostTopic sendCredentials(){
         List<rice.pastry.NodeHandle> handles = node.getLeafSet().asList();
         HashSet<Id> uniqueHandles = new HashSet<>();
         handles.removeIf(e -> !uniqueHandles.add(e.getId()));
+        HostTopic hostTopic=new HostTopic(RandomString.generatePassphrase(), topic,new PeerInfo(mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false));
         for (NodeHandle h : handles) {
             System.err.println("sending topic to "+h.toString());
-            endpoint.route(null, new HostTopic(RandomString.generatePassphrase(), topic,new PeerInfo(mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false)), h);
+            endpoint.route(null,hostTopic, h);
         }
+       return hostTopic;
     }
 
-    public void joinTopic(NodeHandle nodeHandle) {
-        String input = JOptionPane.showInputDialog("Please input passphrase");
-        if (availableTopics.containsKey(input)) {
-            Topic topic = availableTopics.get(input).getTopic();
-           
+    public void joinTopic(NodeHandle nodeHandle,Topic topic) {
+      
             this.topic = topic;
             scribe.subscribe(topic, this, null, nh);
-        }
-
+   
     }
 
    
 
     public void unsubscribe() {
         scribe.unsubscribe(topic, this);
+       
+    }
+    public void destroy(){
+         scribe.destroy();
     }
 
     public void startPublishTask() {
@@ -193,5 +196,11 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
         return scribe.getChildrenOfTopic(topic);
 
     }
+
+    public HashMap<String, HostTopic> getAvailableTopics() {
+        return availableTopics;
+    }
+    
+    
 
 }

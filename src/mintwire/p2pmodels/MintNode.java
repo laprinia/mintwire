@@ -117,9 +117,7 @@ public class MintNode {
         return sharedResourceApp;
     }
 
-    public CodeStitchPartyClient getCodeStitchPartyApp() {
-        return codeStitchPartyApp;
-    }
+   
 
     public FileSporeApp getFileSporeApp() {
         return fileSporeApp;
