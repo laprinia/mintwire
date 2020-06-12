@@ -35,7 +35,7 @@ import rice.pastry.PastryNode;
  *
  * @author Lavinia
  */
-public class FileSporeApp implements Application {
+public class FileSporeApp implements Application { 
 
     private final int BYTE_BUFFER_SIZE = 4;
     private String sharedPath;
@@ -101,13 +101,13 @@ public class FileSporeApp implements Application {
 
         @Override
         public void fileTransferred(FileReceipt fr, long l, long l1, boolean bln) {
-            double percentage = 100.0 * l / l1;
+            
 
         }
 
         @Override
         public void msgTransferred(BBReceipt bbr, int i, int i1, boolean bln) {
-            double percentage = 100.0 * i / i1;
+           
         }
 
         @Override
@@ -201,7 +201,7 @@ public class FileSporeApp implements Application {
         String[] buttons = {"Yes", "Yes to all", "No"};
         int returnValue = JOptionPane.showOptionDialog(null, request.getAlias() + " is requesting resources. Do you accept the transfer?", "File Spore request from " + request.getAlias(),
                 JOptionPane.WARNING_MESSAGE, 0, null, buttons, buttons[1]);
-        System.err.println("RETURN VAL: "+returnValue);
+        
         if (returnValue == 2) {
             return;
         } else {

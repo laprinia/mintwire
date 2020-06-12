@@ -60,7 +60,7 @@ public class SendSharedResourceApp implements Application {
     public void deliver(Id id, Message msg) {
         SharedResource sh=(SharedResource) msg;
         if(sh.isItResponse()){
-            System.err.println("received response for res from: "+sh.getLocalhandle());
+            
             ArrayList<MintFile> mfs=sh.getMintfiles();
             for(MintFile mf:mfs){
             if(!mintFiles.contains(mf)){
@@ -69,7 +69,7 @@ public class SendSharedResourceApp implements Application {
         }
             
         }else{
-            System.err.println("received request for res from:"+sh.getLocalhandle());
+            
             File shared=new File(mintNode.getSharedPath());
             ArrayList<MintFile> delivery=new ArrayList<>();
             File[] list = shared.listFiles();

@@ -84,8 +84,10 @@ import mintwire.p2pmodels.apps.SendPeerInfoApp;
 
 import mintwire.p2pmodels.messages.CodeStitch;
 import mintwire.p2pmodels.messages.MintMessage;
+import mintwire.p2pmodels.messages.PartyStitch;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.mintlynx.LynxPanel;
+import mintwire.panels.peerlist.PartyPeerPanel;
 
 import mintwire.utils.Utils;
 
@@ -213,7 +215,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     //my vars
     private MessageCacher cacher = new MessageCacher();
-    private Box box = new Box(BoxLayout.Y_AXIS);
+    private Box partyBox = new Box(BoxLayout.X_AXIS);
+    private Box lynxBox = new Box(BoxLayout.Y_AXIS);
     private Color availableColor = new Color(168, 255, 104);
     private Color awayColor = new Color(255, 190, 104);
     private Color doNotDisturbColor = new Color(255, 104, 168);
@@ -244,7 +247,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private static JMenu requestLanguageToggle;
     private static JMenu sendLanguageToggle;
     private static JMenu partyLanguageToggle;
-    private Border emptyBorder = BorderFactory.createLineBorder(new Color(45,48,56));
+    private Border emptyBorder = BorderFactory.createLineBorder(new Color(45, 48, 56));
 
     //end of my vars
     public MintwireClientGUI() {
@@ -300,7 +303,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             protected Object doInBackground() throws Exception {
 
                 mintNode.getSharedResourceApp().requestResources();
-                Thread.sleep(100);
+                Thread.sleep(300);
                 sporeModel.fireTableDataChanged();
                 return null;
             }
@@ -314,7 +317,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         ArrayList<LynxPanel> lynxPanels = new ArrayList<>();
 
         utils.updatePeerInfo(mintNode);
-        
 
         SwingWorker sw = new SwingWorker() {
             @Override
@@ -337,9 +339,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
 
     public void paintMintLynx(ArrayList<LynxPanel> lynxPanels) {
-        if (box.getComponentCount() > 0) {
-            box.removeAll();
-            box.repaint();
+        if (lynxBox.getComponentCount() > 0) {
+            lynxBox.removeAll();
+            lynxBox.repaint();
             lynxPanels.clear();
             lynxScroll.revalidate();
         }
@@ -347,9 +349,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
             LynxPanel lynx = new LynxPanel(p);
             lynx.setPreferredSize(new Dimension(376, 92));
-            box.add(lynx);
+            lynxBox.add(lynx);
             lynxPanels.add(lynx);
-            box.revalidate();
+            lynxBox.revalidate();
             lynxScroll.repaint();
         }
 
@@ -392,7 +394,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
                     try {
 
-                        utils.setPfp(currentPfpLabel, aliasPath, l.getPeerInfo(),true);
+                        utils.setPfp(currentPfpLabel, aliasPath, l.getPeerInfo(), true);
                     } catch (IOException ex) {
                         Logger.getLogger(MintwireClientGUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -718,12 +720,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         sendButton = new javax.swing.JButton();
         CodeStitchPartyPanel = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        partyScroll = new javax.swing.JScrollPane(partyBox);
         PartyPanel = new javax.swing.JPanel(new BorderLayout());
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        leaveSessionButton = new javax.swing.JButton();
+        joinSessionButton = new javax.swing.JButton();
+        startSessionButton = new javax.swing.JButton();
+        saveSessionButton = new javax.swing.JButton();
         MintLynxPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
@@ -770,7 +772,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         jPanel6 = new javax.swing.JPanel();
         searchPeerTextField = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        lynxScroll = new javax.swing.JScrollPane(box);
+        lynxScroll = new javax.swing.JScrollPane(lynxBox);
         FileSporePanel = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         sporeText = new javax.swing.JTextField();
@@ -1183,16 +1185,28 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         CodeStitchPartyPanel.setBackground(new java.awt.Color(94, 87, 104));
 
+        partyScroll.setPreferredSize(new java.awt.Dimension(999, 136));
+
         PartyPanel.setPreferredSize(new java.awt.Dimension(1059, 472));
         PartyPanel.setLayout(new java.awt.BorderLayout());
 
-        jButton4.setText("Leave Session");
+        leaveSessionButton.setText("Leave Session");
 
-        jButton5.setText("Join Session");
+        joinSessionButton.setText("Join Session");
+        joinSessionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                joinSessionButtonMouseClicked(evt);
+            }
+        });
 
-        jButton6.setText("Start Session");
+        startSessionButton.setText("Start Session");
+        startSessionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                startSessionButtonMouseClicked(evt);
+            }
+        });
 
-        jButton7.setText("Save Session");
+        saveSessionButton.setText("Save Session");
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -1201,46 +1215,47 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1)
-                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 999, Short.MAX_VALUE))
+                    .addComponent(partyScroll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(leaveSessionButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addComponent(joinSessionButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(saveSessionButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(startSessionButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(partyScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                         .addGap(0, 8, Short.MAX_VALUE)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(startSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(joinSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(leaveSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(saveSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(19, 19, 19)))
                 .addContainerGap())
         );
 
-        jButton4.setBorder(emptyBorder);
-        jButton4.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/leave-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
-        jButton5.setBorder(emptyBorder);
-        jButton5.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/join-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
+        partyScroll.getViewport().setBackground(new Color(45,48,56));
+        leaveSessionButton.setBorder(emptyBorder);
+        leaveSessionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/leave-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
+        joinSessionButton.setBorder(emptyBorder);
+        joinSessionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/join-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
         Border emptyBorder = BorderFactory.createLineBorder(new Color(45,48,56));
-        jButton6.setBorder(emptyBorder);
-        jButton6.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/start-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
-        jButton7.setBorder(emptyBorder);
-        jButton7.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
+        startSessionButton.setBorder(emptyBorder);
+        startSessionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/start-ses.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
+        saveSessionButton.setBorder(emptyBorder);
+        saveSessionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png")).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));
 
         javax.swing.GroupLayout CodeStitchPartyPanelLayout = new javax.swing.GroupLayout(CodeStitchPartyPanel);
         CodeStitchPartyPanel.setLayout(CodeStitchPartyPanelLayout);
@@ -1249,7 +1264,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addGroup(CodeStitchPartyPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         CodeStitchPartyPanelLayout.setVerticalGroup(
             CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1722,11 +1737,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void FileHaulLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseClicked
         FileHaulLabel.setBackground(new Color(53, 53, 53));
-            FileHaul fh = new FileHaul();
-            fh.pack();
-            fh.setLocationRelativeTo(null);
-            fh.setVisible(true);
-            fh.setVisible(true);
+        FileHaul fh = new FileHaul();
+        fh.pack();
+        fh.setLocationRelativeTo(null);
+        fh.setVisible(true);
+        fh.setVisible(true);
     }//GEN-LAST:event_FileHaulLabelMouseClicked
 
     private void PreferencesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseClicked
@@ -1908,6 +1923,26 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_currentPfpLabelMouseClicked
 
+    private void startSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startSessionButtonMouseClicked
+        PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, "host", false));
+        partyPeerPanel.setPreferredSize(new Dimension(176, 132));
+        partyBox.removeAll();
+        partyBox.add(partyPeerPanel);
+        partyBox.revalidate();
+        mintNode.getPartyClient().createTopic(mintNode.getNode().getLocalHandle(), alias);
+        mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea);
+        mintNode.getPartyClient().startPublishTask();
+    }//GEN-LAST:event_startSessionButtonMouseClicked
+
+    private void joinSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_joinSessionButtonMouseClicked
+    // TODO add your handling code here:
+        PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, mintNode.getNode().status, false));
+        partyPeerPanel.setPreferredSize(new Dimension(176, 132));
+        mintNode.getPartyClient().joinTopic(mintNode.getNode().getLocalHandle());
+        mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea);
+        mintNode.getPartyClient().startPublishTask();
+    }//GEN-LAST:event_joinSessionButtonMouseClicked
+
     public static void main(String args[]) {
 
         try {
@@ -1960,10 +1995,6 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel currentPfpPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
@@ -1979,11 +2010,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton joinSessionButton;
+    private javax.swing.JButton leaveSessionButton;
     private javax.swing.JScrollPane lynxScroll;
+    private javax.swing.JScrollPane partyScroll;
     private javax.swing.JLabel pfpLabel;
     private javax.swing.JButton saveButton;
+    private javax.swing.JButton saveSessionButton;
     private javax.swing.JTextField searchPeerTextField;
     private javax.swing.JButton sendButton;
     private javax.swing.JLabel sendTextLabel;
@@ -1991,6 +2025,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton sporeSearch;
     private javax.swing.JTable sporeTable;
     private javax.swing.JTextField sporeText;
+    private javax.swing.JButton startSessionButton;
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
 }

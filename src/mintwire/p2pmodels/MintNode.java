@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import mintwire.p2pmodels.apps.CodeStitchApp;
-import mintwire.p2pmodels.apps.CodeStitchPartyApp;
+import mintwire.p2pmodels.apps.CodeStitchPartyClient;
 import mintwire.p2pmodels.apps.FileSporeApp;
 import mintwire.p2pmodels.apps.MintMessagingApp;
 import mintwire.p2pmodels.apps.ProfilePictureApp;
@@ -31,12 +31,13 @@ public class MintNode {
     
     private String sharedPath = "C:\\MINTWIRE Shared";
     private ProfilePictureApp pfpApp;
+    private CodeStitchPartyClient partyClient;
     private SendSharedResourceApp sharedResourceApp;
     private FileSporeApp fileSporeApp;
     private MintMessagingApp messagingApp;
     private SendPeerInfoApp peerInfoApp;
     private CodeStitchApp codeStitchApp;
-    private CodeStitchPartyApp codeStitchPartyApp;
+    private CodeStitchPartyClient codeStitchPartyApp;
     private Environment env;
     private PastryNode node;
     private JLabel label;
@@ -62,6 +63,7 @@ public class MintNode {
         messagingApp=new MintMessagingApp(node);
         fileSporeApp=new FileSporeApp(node, sharedPath);
         pfpApp=new ProfilePictureApp(node);
+        partyClient=new CodeStitchPartyClient(node);
         
         sharedResourceApp=new SendSharedResourceApp(node);
         node.boot(bootaddr);
@@ -115,7 +117,7 @@ public class MintNode {
         return sharedResourceApp;
     }
 
-    public CodeStitchPartyApp getCodeStitchPartyApp() {
+    public CodeStitchPartyClient getCodeStitchPartyApp() {
         return codeStitchPartyApp;
     }
 
@@ -126,6 +128,11 @@ public class MintNode {
     public ProfilePictureApp getPfpApp() {
         return pfpApp;
     }
+
+    public CodeStitchPartyClient getPartyClient() {
+        return partyClient;
+    }
+    
     
     
 

@@ -46,13 +46,13 @@ public class MintMessagingApp implements Application{
         MintMessage mintMessage=(MintMessage)msg;
         
         cacher.cache(mintMessage.getSenderId(), mintMessage);
-        if(currentId!=null || scrollablePanel!=null){
+        if(currentId!=null && scrollablePanel!=null){
            
             if(currentId.equals(mintMessage.getSenderId())){
                 
                 Bubbler bubbler = new Bubbler(mintMessage.getText(), RECEIVED);
                 bubbler.paintLeftBubble(scrollablePanel, mintMessage.getDateStamp());
-                //TODO NU PICTEZI BINE
+                
             }
         }
        
