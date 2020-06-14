@@ -217,7 +217,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
 
     //my vars
-    private PartyState partyState = PartyState.NotStarted;
+    public static PartyState partyState = PartyState.NotStarted;
     private MessageCacher cacher = new MessageCacher();
     private Box partyBox = new Box(BoxLayout.X_AXIS);
     private Box lynxBox = new Box(BoxLayout.Y_AXIS);
@@ -1940,8 +1940,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             partyBox.removeAll();
             partyBox.add(partyPeerPanel);
             partyBox.revalidate();
-            
-            mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea);
+            mintNode.getPartyClient().createTopic(mintNode.getNode().getLocalHandle(), alias);
+            mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea, partyBox);
             HostTopic topic= mintNode.getPartyClient().sendCredentials();
             mintNode.getPartyClient().startPublishTask();
             //
@@ -1962,10 +1962,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (partyState.equals(PartyState.NotStarted)) {
             partyState = PartyState.Joined;
-            PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, mintNode.getNode().status, false));
-            partyPeerPanel.setPreferredSize(new Dimension(176, 132));
+            
             //
-            PassphraseGiver pg = PassphraseGiver.getInstance(mintNode, partyTextArea);
+            PassphraseGiver pg = PassphraseGiver.getInstance(mintNode, partyTextArea, partyBox);
             pg.pack();
             pg.setLocationRelativeTo(null);
             pg.setVisible(true);
@@ -1986,10 +1985,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, infoLabel, "Cannot leave a party that hasn't started", JOptionPane.INFORMATION_MESSAGE);
         } else {
             if(partyState.equals(PartyState.Started)) mintNode.getPartyClient().destroy();
-            else mintNode.getPartyClient().unsubscribe();
+            else{ mintNode.getPartyClient().unsubscribe();
             partyState = PartyState.NotStarted;
-            
+            partyBox.removeAll();partyBox.repaint(); partyTextArea.setText(""); partyTextArea.repaint();
+            }
         }
+         
     }//GEN-LAST:event_leaveSessionButtonMouseClicked
 
     public static void main(String args[]) {

@@ -56,7 +56,7 @@ public class PeerPanel extends javax.swing.JPanel {
             revalidate();
             utils.setPfp(pfpLabel,aliasPath,peerInfo,true);
         } catch (IOException ex) {
-            Logger.getLogger(PeerPanel.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println(ex.toString());
         }
 
     }

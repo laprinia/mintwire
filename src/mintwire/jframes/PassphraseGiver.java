@@ -5,29 +5,35 @@
  */
 package mintwire.jframes;
 
+import java.awt.Dimension;
 import java.awt.Image;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import mintwire.p2pmodels.MintNode;
+import mintwire.p2pmodels.messages.PeerInfo;
+import mintwire.panels.peerlist.PartyPeerPanel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import rice.p2p.scribe.Topic;
+import rice.pastry.NodeHandle;
 
 /**
  *
  * @author Lavinia
  */
 public class PassphraseGiver extends javax.swing.JFrame {
-
+    private Box box;
     private MintNode mintNode;
     private RSyntaxTextArea textArea;
     private static PassphraseGiver instance = null;
 
-    public static PassphraseGiver getInstance(MintNode mintNode, RSyntaxTextArea textArea) {
-        return instance = new PassphraseGiver(mintNode, textArea);
+    public static PassphraseGiver getInstance(MintNode mintNode, RSyntaxTextArea textArea, Box box) {
+        return instance = new PassphraseGiver(mintNode, textArea, box);
     }
 
-    private PassphraseGiver(MintNode mintNode, RSyntaxTextArea textArea) {
+    private PassphraseGiver(MintNode mintNode, RSyntaxTextArea textArea, Box box) {
         this.mintNode = mintNode;
         this.textArea = textArea;
+        this.box=box;
         initComponents();
     }
 
@@ -158,11 +164,28 @@ public class PassphraseGiver extends javax.swing.JFrame {
 
         if (mintNode.getPartyClient().getAvailableTopics().containsKey(passTextField.getText())) {
             Topic topic = mintNode.getPartyClient().getAvailableTopics().get(passTextField.getText()).getTopic();
-            mintNode.getPartyClient().joinTopic(mintNode.getNode().getLocalHandle(), topic);
+            mintNode.getPartyClient().setPublishInfo(mintNode, textArea,box);
+            NodeHandle hostHandle=mintNode.getPartyClient().getAvailableTopics().get(passTextField.getText()).getPeerInfo().getNodeHandle();
+            mintNode.getPartyClient().joinTopic(mintNode.getNode().getLocalHandle(), topic,hostHandle);
             System.err.println(topic.toString());
-            mintNode.getPartyClient().setPublishInfo(mintNode, textArea);
-            mintNode.getPartyClient().startPublishTask();
+            //mintNode.getPartyClient().startPublishTask();
+            
+            
+            PeerInfo hostInfo=mintNode.getPartyClient().getAvailableTopics().get(passTextField.getText()).getPeerInfo();
+            PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(hostInfo.getNodeHandle(), hostInfo.getAlias(), "host", false));
+            partyPeerPanel.setPreferredSize(new Dimension(176, 132));
+            
+            PartyPeerPanel partyPeerPanel2 = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false));
+            partyPeerPanel2.setPreferredSize(new Dimension(176, 132));
+            
+            
+            box.add(partyPeerPanel);
+            box.revalidate();
+            box.add(partyPeerPanel2);
+            box.revalidate();
         }
+        
+        dispose();
     }//GEN-LAST:event_jButton1MouseClicked
 
     private void passTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passTextFieldKeyTyped

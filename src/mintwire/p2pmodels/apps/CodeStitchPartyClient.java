@@ -1,15 +1,24 @@
 package mintwire.p2pmodels.apps;
 
+import java.awt.Dimension;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import javax.swing.Box;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import mintwire.PartyState;
+
 import mintwire.RandomString;
+import mintwire.jframes.ConnectedPeers;
 import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.messages.HostTopic;
 import mintwire.p2pmodels.messages.PartyStitch;
 import mintwire.p2pmodels.messages.PeerInfo;
+import mintwire.p2pmodels.messages.TerminalMessage;
+import mintwire.panels.peerlist.PartyPeerPanel;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import rice.environment.Environment;
 
@@ -38,6 +47,10 @@ import rice.pastry.commonapi.PastryIdFactory;
  */
 public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
+    private Box box;
+    private JLabel label;
+    private HashMap<NodeHandle, PartyPeerPanel> peerPanels=new HashMap<>();
+    private HashMap<NodeHandle, PeerInfo> connectedPeers = new HashMap<>();
     private HashMap<String, HostTopic> availableTopics = new HashMap<>();
     private CancellableTask publishTask;
     private MintNode mintNode;
@@ -60,52 +73,70 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
     public void createTopic(NodeHandle nh, String alias) {
         //TODO daca nu e root, se trimite ultimul stitch al parintelul
         this.nh = nh;
-        topic = new Topic(new PastryIdFactory(environment), "partytopic");
+        this.topic = new Topic(new PastryIdFactory(environment), "partytopic");
 
         scribe.subscribe(topic, this, null, nh);
-     
-
 
     }
-     public void setPublishInfo(MintNode mn, RSyntaxTextArea textArea) {
+
+    public void setPublishInfo(MintNode mn, RSyntaxTextArea textArea, Box box) {
         mintNode = mn;
         partyArea = textArea;
-       
-        
+        this.box = box;
+
     }
-    public HostTopic sendCredentials(){
+
+    private List<rice.pastry.NodeHandle> getUniquesHandles() {
         List<rice.pastry.NodeHandle> handles = node.getLeafSet().asList();
         HashSet<Id> uniqueHandles = new HashSet<>();
         handles.removeIf(e -> !uniqueHandles.add(e.getId()));
-        HostTopic hostTopic=new HostTopic(RandomString.generatePassphrase(), topic,new PeerInfo(mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false));
-        for (NodeHandle h : handles) {
-            System.err.println("sending topic to "+h.toString());
-            endpoint.route(null,hostTopic, h);
+        return handles;
+    }
+
+    public HostTopic sendCredentials() {
+
+        System.err.println(topic);
+        HostTopic hostTopic = new HostTopic(RandomString.generatePassphrase(), topic, new PeerInfo(mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false));
+        for (NodeHandle h : getUniquesHandles()) {
+            System.err.println("sending topic to " + h.toString());
+            endpoint.route(null, hostTopic, h);
         }
-       return hostTopic;
+        return hostTopic;
     }
 
-    public void joinTopic(NodeHandle nodeHandle,Topic topic) {
-      
-            this.topic = topic;
-            scribe.subscribe(topic, this, null, nh);
-   
-    }
+    public void joinTopic(NodeHandle nodeHandle, Topic topic, NodeHandle host) {
 
-   
+        this.topic = topic;
+        scribe.subscribe(topic, this, null, nh);
+        PeerInfo peerInfo=new PeerInfo((rice.pastry.NodeHandle)mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false);
+        endpoint.route(null,peerInfo ,host );
+
+    }
 
     public void unsubscribe() {
         scribe.unsubscribe(topic, this);
-       
+        
+        
+
     }
-    public void destroy(){
-         scribe.destroy();
+
+    public void destroy() {
+        for (NodeHandle h : getChildren()) {
+            endpoint.route(null, new TerminalMessage(), h);
+        }
+        scribe.unsubscribe(topic, this);
+        publishTask.cancel();
+
     }
 
     public void startPublishTask() {
 
         publishTask = endpoint.scheduleMessage(new PublishContent(), 5000, 5000);
 
+    }
+
+    public NodeHandle getParent() {
+        return scribe.getParent(topic);
     }
 
     public void deliver(Id id, Message message) {
@@ -118,11 +149,35 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
                 System.err.println("RECEIVED +\n" + topic.toString());
             }
 
+        } else if (message instanceof TerminalMessage) {
+            scribe.unsubscribe(topic, this);
+            label = new JLabel("<html><center>The host stopped the session.");
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, label, "Party stopped", JOptionPane.INFORMATION_MESSAGE);
+            box.removeAll();
+            box.revalidate();
+            partyArea.setText("");
+            partyArea.repaint();
+            mintwire.jframes.MintwireClientGUI.partyState = PartyState.NotStarted;
+        } else if(message instanceof PeerInfo) {
+            PeerInfo peerInfo= (PeerInfo) message;
+            connectedPeers.put(peerInfo.getNodeHandle(), peerInfo);
+            PartyPeerPanel partyPeerPanel = new PartyPeerPanel(peerInfo);
+            partyPeerPanel.setPreferredSize(new Dimension(176, 132));
+            peerPanels.put(peerInfo.getNodeHandle(), partyPeerPanel);
+            box.add(partyPeerPanel);
+            box.revalidate();
         }
     }
 
     public void sendMulticast() {
-      scribe.publish(topic, new PartyStitch(mintNode.getNode().alias, partyArea.getSyntaxEditingStyle(), partyArea.getText()));
+        scribe.publish(topic, new PartyStitch(mintNode.getNode().alias, partyArea.getSyntaxEditingStyle(), partyArea.getText()));
+
+    }
+
+    public void sendAnycast() {
+
+        scribe.anycast(topic, new PartyStitch(mintNode.getNode().alias, partyArea.getSyntaxEditingStyle(), partyArea.getText()));
 
     }
 
@@ -143,26 +198,32 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
     @Override
     public void deliver(Topic topic, ScribeContent sc) {
-       // System.err.println("IN DELIVERY PART");
+        // System.err.println("IN DELIVERY PART");
         PartyStitch partyStitch = (PartyStitch) sc;
         //int caretPosition = partyArea.getCaretPosition();
-        
+
         partyArea.setText(partyStitch.getCode());
-         System.out.println(partyStitch.toString());
+        System.out.println(partyStitch.toString());
         partyArea.setSyntaxEditingStyle(partyStitch.getLanguage());
-       // partyArea.setCaretPosition(caretPosition);
+        // partyArea.setCaretPosition(caretPosition);
 
     }
 
     @Override
     public void childAdded(Topic topic, NodeHandle nh) {
-        //todo paint them in
-        System.err.println("Child added " + nh);
+      
     }
 
     @Override
     public void childRemoved(Topic topic, NodeHandle nh) {
-        System.err.println("Child removed " + nh);
+        System.err.println("child removed");
+       PeerInfo peerInfo=connectedPeers.get(nh);
+       connectedPeers.remove(nh);
+       box.remove(peerPanels.get(nh)); box.repaint(); peerPanels.remove(nh);
+        label=new JLabel("<html><center>Your peer "+ peerInfo.getAlias()+" left the party.");
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Peer left", JOptionPane.INFORMATION_MESSAGE);
+        
     }
 
     @Override
@@ -193,6 +254,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
     }
 
     public Collection<NodeHandle> getChildren() {
+
         return scribe.getChildrenOfTopic(topic);
 
     }
@@ -200,7 +262,5 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
     public HashMap<String, HostTopic> getAvailableTopics() {
         return availableTopics;
     }
-    
-    
 
 }
