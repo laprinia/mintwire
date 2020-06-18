@@ -1961,7 +1961,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void joinSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_joinSessionButtonMouseClicked
         // TODO add your handling code here:
         if (partyState.equals(PartyState.NotStarted)) {
-            partyState = PartyState.Joined;
+            
             
             //
             PassphraseGiver pg = PassphraseGiver.getInstance(mintNode, partyTextArea, partyBox);
@@ -1986,9 +1986,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         } else {
             if(partyState.equals(PartyState.Started)) mintNode.getPartyClient().destroy();
             else{ mintNode.getPartyClient().unsubscribe();
+            
+            }
             partyState = PartyState.NotStarted;
             partyBox.removeAll();partyBox.repaint(); partyTextArea.setText(""); partyTextArea.repaint();
-            }
         }
          
     }//GEN-LAST:event_leaveSessionButtonMouseClicked

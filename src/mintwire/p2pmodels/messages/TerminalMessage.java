@@ -12,10 +12,19 @@ import rice.p2p.commonapi.Message;
  * @author Lavinia
  */
 public class TerminalMessage implements Message{
+ private String alias;
 
+    public TerminalMessage(String alias) {
+        this.alias=alias;
+    }
+ 
     @Override
     public int getPriority() {
        return Message.LOW_PRIORITY;
+    }
+
+    public String getAlias() {
+        return alias;
     }
     
 }

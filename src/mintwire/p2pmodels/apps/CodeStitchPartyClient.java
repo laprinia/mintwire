@@ -121,10 +121,13 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
     }
 
     public void destroy() {
-        for (NodeHandle h : getChildren()) {
-            endpoint.route(null, new TerminalMessage(), h);
+        Collection<NodeHandle> children= getChildren();
+        for (NodeHandle ch : children) {
+            endpoint.route(null, new TerminalMessage(mintNode.getNode().alias), ch);
         }
+        
         scribe.unsubscribe(topic, this);
+        scribe.destroy();
         publishTask.cancel();
 
     }
@@ -150,8 +153,9 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
             }
 
         } else if (message instanceof TerminalMessage) {
+            String hostAlias=((TerminalMessage) message).getAlias();
             scribe.unsubscribe(topic, this);
-            label = new JLabel("<html><center>The host stopped the session.");
+            label = new JLabel("<html><center>"+hostAlias+"(host) stopped the session.");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             JOptionPane.showMessageDialog(null, label, "Party stopped", JOptionPane.INFORMATION_MESSAGE);
             box.removeAll();
@@ -219,7 +223,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
         System.err.println("child removed");
        PeerInfo peerInfo=connectedPeers.get(nh);
        connectedPeers.remove(nh);
-       box.remove(peerPanels.get(nh)); box.repaint(); peerPanels.remove(nh);
+       box.remove(peerPanels.get(nh)); box.revalidate(); peerPanels.remove(nh);
         label=new JLabel("<html><center>Your peer "+ peerInfo.getAlias()+" left the party.");
                     label.setHorizontalAlignment(SwingConstants.CENTER);
                     JOptionPane.showMessageDialog(null, label, "Peer left", JOptionPane.INFORMATION_MESSAGE);

@@ -211,28 +211,28 @@ public class Login extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(58, 68, 93));
 
-        jPanel1.setBackground(new java.awt.Color(94, 87, 104));
+        jPanel1.setBackground(new java.awt.Color(49, 46, 54));
 
         jLabel2.setBackground(new java.awt.Color(94, 87, 104));
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/logos/resized-logo.png")));
 
-        jPanel2.setBackground(new java.awt.Color(94, 87, 104));
+        jPanel2.setBackground(new java.awt.Color(49, 46, 54));
 
         jLabel1.setBackground(new java.awt.Color(94, 87, 104));
         jLabel1.setFont(new java.awt.Font("Loma", 1, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(225, 253, 231));
+        jLabel1.setForeground(new java.awt.Color(204, 204, 204));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("alias");
 
         jLabel3.setBackground(new java.awt.Color(94, 87, 104));
         jLabel3.setFont(new java.awt.Font("Loma", 1, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(225, 253, 231));
+        jLabel3.setForeground(new java.awt.Color(204, 204, 204));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("password");
 
-        jButton1.setBackground(new java.awt.Color(94, 87, 104));
+        jButton1.setBackground(new java.awt.Color(45, 48, 56));
         jButton1.setFont(new java.awt.Font("Loma", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(225, 253, 231));
+        jButton1.setForeground(new java.awt.Color(204, 204, 204));
         jButton1.setText("get on the wire");
         jButton1.setToolTipText("");
         jButton1.setBorder(null);
@@ -267,9 +267,11 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        jTextField1.setBackground(new java.awt.Color(45, 48, 56));
         jTextField1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jTextField1.setForeground(new java.awt.Color(67, 207, 137));
 
+        jPasswordField1.setBackground(new java.awt.Color(45, 48, 56));
         jPasswordField1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jPasswordField1.setForeground(new java.awt.Color(67, 207, 137));
 
