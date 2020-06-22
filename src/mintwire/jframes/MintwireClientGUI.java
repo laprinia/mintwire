@@ -90,6 +90,7 @@ import mintwire.p2pmodels.messages.PartyStitch;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.mintlynx.LynxPanel;
 import mintwire.panels.peerlist.PartyPeerPanel;
+import mintwire.utils.StatusChecker;
 
 import mintwire.utils.Utils;
 
@@ -98,6 +99,8 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jdesktop.swingx.util.OS;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import rice.p2p.scribe.Topic;
 import rice.pastry.NodeHandle;
 
@@ -268,6 +271,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         mintNode.getMessagingApp().setScrollablePanel(scrollablePanel);
         mintNode.getMessagingApp().setCacher(cacher);
         peerInfoApp = mintNode.getPeerInfoApp();
+        mintNode.getFileSporeApp().setCurrentAlias(alias);
         this.password = password;
         System.out.println(mintNode.getNode().getId());
 
@@ -350,13 +354,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             lynxScroll.revalidate();
         }
         for (PeerInfo p : mintNode.getPeerInfoApp().getPeerList()) {
-
-            LynxPanel lynx = new LynxPanel(p);
-            lynx.setPreferredSize(new Dimension(376, 92));
-            lynxBox.add(lynx);
-            lynxPanels.add(lynx);
-            lynxBox.revalidate();
-            lynxScroll.repaint();
+            if (StatusChecker.check(p.getStatus())) {
+                LynxPanel lynx = new LynxPanel(p);
+                lynx.setPreferredSize(new Dimension(376, 92));
+                lynxBox.add(lynx);
+                lynxPanels.add(lynx);
+                lynxBox.revalidate();
+                lynxScroll.repaint();
+            }
         }
 
         setMintLynxListeners(lynxPanels);
@@ -435,6 +440,22 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         File shared = new File(mintNode.getSharedPath());
         if (!(shared.exists())) {
             shared.mkdir();
+        }
+        JSONObject jo = new JSONObject();
+        JSONArray ja = new JSONArray();
+        jo.put("files",ja);
+
+        File historyFile = new File(aliasPath + alias +"/"+ "downloadhistory.json");
+        if (!(historyFile.exists())) {
+            FileWriter fw;
+            try {
+                fw = new FileWriter(historyFile.getAbsolutePath());
+                fw.write(jo.toJSONString());
+                fw.close();
+            } catch (IOException ex) {
+                System.err.println("JSON err: "+ex);
+            }
+            
         }
 
         Path path = Paths.get(aliasPath + alias);
@@ -1216,6 +1237,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         });
 
         saveSessionButton.setText("Save Session");
+        saveSessionButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                saveSessionButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -1746,7 +1772,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void FileHaulLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseClicked
         FileHaulLabel.setBackground(new Color(53, 53, 53));
-        FileHaul fh = new FileHaul();
+        FileHaul fh = FileHaul.getInstance(mintNode);
         fh.pack();
         fh.setLocationRelativeTo(null);
         fh.setVisible(true);
@@ -1831,23 +1857,37 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_TabbedPaneStateChanged
 
     private void sendTextLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendTextLabelMouseClicked
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
-        Date date = new Date(System.currentTimeMillis());
-        if (!(chatTextArea.getText().equals(""))) {
-            bubbler = new Bubbler(chatTextArea.getText(), SENT);
-            bubbler.paintRightBubble(scrollablePanel, formatter.format(date));
 
-        }
         if (currentPeerChat != null) {
+            boolean isSendable = true;
+            if (currentPeerChat.getStatus().equals("donotdisturb")) {
+                int dialogButton = JOptionPane.YES_NO_OPTION;
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Your peer " + currentPeerChat.getAlias() + " doesn't want to be disturbed. Do you wish to continue?", "Do not Disturb Status", dialogButton);
+                if (dialogResult == JOptionPane.NO_OPTION) {
+                    isSendable = false;
+                }
+            }
+            if (isSendable) {
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm 'on' EE dd-MM-yyyy");
+                Date date = new Date(System.currentTimeMillis());
+                if (!(chatTextArea.getText().equals(""))) {
+                    bubbler = new Bubbler(chatTextArea.getText(), SENT);
+                    bubbler.paintRightBubble(scrollablePanel, formatter.format(date));
 
-            MintMessage msg = new MintMessage(chatTextArea.getText(), formatter.format(date), mintNode.getNode().getId());
-            cacher.cache(currentPeerChat.getNodeHandle().getId(), msg);
-            System.err.println("sending to from bttn " + currentPeerChat.getNodeHandle().getId());
-            mintNode.getMessagingApp().routeMessage(currentPeerChat.getNodeHandle(), msg);
-            chatTextArea.setText("");
+                }
 
+                MintMessage msg = new MintMessage(chatTextArea.getText(), formatter.format(date), mintNode.getNode().getId());
+                cacher.cache(currentPeerChat.getNodeHandle().getId(), msg);
+
+                mintNode.getMessagingApp().routeMessage(currentPeerChat.getNodeHandle(), msg);
+                chatTextArea.setText("");
+            }
+
+        } else {
+            infoLabel = new JLabel("<html><center>No correspondent peer selected!");
+            infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            JOptionPane.showMessageDialog(null, infoLabel, "Mint Lynx", JOptionPane.INFORMATION_MESSAGE);
         }
-
     }//GEN-LAST:event_sendTextLabelMouseClicked
 
     private void sendTextLabelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sendTextLabelKeyPressed
@@ -1910,6 +1950,15 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void saveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveButtonMouseClicked
 
+        String[] buttons = {"Requested Stitch", "Sent Stitch"};
+        int returnValue = JOptionPane.showOptionDialog(null, "Which Code Stitch do you wish to save?", "Code Stitch", JOptionPane.WARNING_MESSAGE, 0, null, buttons, buttons[0]);
+        if (returnValue == 0) {
+            utils.saveStitch(requestTextArea, mintNode);
+        } else {
+            utils.saveStitch(sendTextArea, mintNode);
+        }
+
+
     }//GEN-LAST:event_saveButtonMouseClicked
 
     private void IdentityLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdentityLabel1MouseClicked
@@ -1942,7 +1991,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             partyBox.revalidate();
             mintNode.getPartyClient().createTopic(mintNode.getNode().getLocalHandle(), alias);
             mintNode.getPartyClient().setPublishInfo(mintNode, partyTextArea, partyBox);
-            HostTopic topic= mintNode.getPartyClient().sendCredentials();
+            HostTopic topic = mintNode.getPartyClient().sendCredentials();
             mintNode.getPartyClient().startPublishTask();
             //
             PassphraseViewer pv = PassphraseViewer.getInstance(topic.getPassphrase());
@@ -1950,7 +1999,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             pv.setLocationRelativeTo(null);
             pv.setVisible(true);
             //
-            
+
         } else {
             infoLabel = new JLabel("<html><center>Already engaged in a session. Leave it before starting a new one.");
             infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1961,15 +2010,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void joinSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_joinSessionButtonMouseClicked
         // TODO add your handling code here:
         if (partyState.equals(PartyState.NotStarted)) {
-            
-            
+
             //
             PassphraseGiver pg = PassphraseGiver.getInstance(mintNode, partyTextArea, partyBox);
             pg.pack();
             pg.setLocationRelativeTo(null);
             pg.setVisible(true);
             //
-            
+
         } else {
             infoLabel = new JLabel("<html><center>Already engaged in a session. Leave it before joining a new one.");
             infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -1984,15 +2032,25 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
             JOptionPane.showMessageDialog(null, infoLabel, "Cannot leave a party that hasn't started", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            if(partyState.equals(PartyState.Started)) mintNode.getPartyClient().destroy();
-            else{ mintNode.getPartyClient().unsubscribe();
-            
+            if (partyState.equals(PartyState.Started)) {
+                mintNode.getPartyClient().destroy();
+            } else {
+                mintNode.getPartyClient().unsubscribe();
+
             }
             partyState = PartyState.NotStarted;
-            partyBox.removeAll();partyBox.repaint(); partyTextArea.setText(""); partyTextArea.repaint();
+            partyBox.removeAll();
+            partyBox.repaint();
+            partyTextArea.setText("");
+            partyTextArea.repaint();
         }
-         
+
     }//GEN-LAST:event_leaveSessionButtonMouseClicked
+
+    private void saveSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveSessionButtonMouseClicked
+        // TODO add your handling code here:
+        utils.saveStitch(partyTextArea, mintNode);
+    }//GEN-LAST:event_saveSessionButtonMouseClicked
 
     public static void main(String args[]) {
 

@@ -1,16 +1,15 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package mintwire.jframes;
 
 import java.awt.Dimension;
 import java.awt.Image;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import mintwire.PartyState;
-import static mintwire.jframes.MintwireClientGUI.partyState;
+
 import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.PartyPeerPanel;
@@ -23,6 +22,7 @@ import rice.pastry.NodeHandle;
  * @author Lavinia
  */
 public class PassphraseGiver extends javax.swing.JFrame {
+    private JLabel label;
     private Box box;
     private MintNode mintNode;
     private RSyntaxTextArea textArea;
@@ -159,6 +159,10 @@ public class PassphraseGiver extends javax.swing.JFrame {
             box.add(Box.createVerticalGlue());
             box.revalidate();
             MintwireClientGUI.partyState = PartyState.Joined;
+        }else {
+             label=new JLabel("<html><center>Cannot join party as the passphrase is incorrect!");
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Incorrect Passphrase", JOptionPane.INFORMATION_MESSAGE);
         }
         
         dispose();

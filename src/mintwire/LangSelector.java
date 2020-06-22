@@ -74,7 +74,7 @@ public class LangSelector {
             case "JSON":
                 res = "text/json";
                 break;
-            case "WITH_COMMENTS":
+            case "JSHint":
                 res = "text/jshintrc";
                 break;
             case "JSP":

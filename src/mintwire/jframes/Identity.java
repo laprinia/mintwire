@@ -404,7 +404,7 @@ public class Identity extends javax.swing.JFrame {
                 mintNode.getNode().status = Status.donotdisturb.toString();
                 break;
             case 3:
-                mintNode.getNode().status = Status.available.toString();
+                mintNode.getNode().status = Status.invisible.toString();
                 break;
             default:
                 mintNode.getNode().status = Status.available.toString();

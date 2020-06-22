@@ -21,6 +21,7 @@ import mintwire.p2pmodels.apps.SendPeerInfoApp;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.ConnectedPeerPanel;
 import mintwire.panels.peerlist.PeerPanel;
+import mintwire.utils.StatusChecker;
 import mintwire.utils.Utils;
 
 public class ConnectedPeers extends javax.swing.JFrame {
@@ -76,7 +77,7 @@ public class ConnectedPeers extends javax.swing.JFrame {
             setVisible(false);
         } else {
             for (PeerInfo peerInfo : peerInfoApp.getPeerList()) {
-               
+                if(StatusChecker.check(peerInfo.getStatus())){
                 ConnectedPeerPanel panel = new ConnectedPeerPanel(peerInfo);
                 panel.setPreferredSize(new Dimension(299, 92));
                 panel.revalidate();
@@ -84,6 +85,7 @@ public class ConnectedPeers extends javax.swing.JFrame {
                 box.add(panel);
                 box.revalidate();
                 peerPanels.add(panel);
+                }
             }
         }
 

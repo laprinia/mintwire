@@ -845,6 +845,9 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Save Session"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="saveSessionButtonMouseClicked"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="saveSessionButton.setBorder(emptyBorder);&#xa;saveSessionButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource(&quot;/mintwire/res/pngs/save-file.png&quot;)).getImage().getScaledInstance(65, 65, Image.SCALE_SMOOTH)));"/>
                       </AuxValues>

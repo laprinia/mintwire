@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
 
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -16,28 +15,27 @@ import mintwire.p2pmodels.apps.SendPeerInfoApp;
 import mintwire.p2pmodels.messages.CodeStitch;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.PeerPanel;
+import mintwire.utils.StatusChecker;
 import mintwire.utils.Utils;
 
-
-
-
 public class SendCodeStitch extends javax.swing.JFrame {
-    private Utils utils=new Utils();
+
+    private Utils utils = new Utils();
     private CodeStitch codeStitch;
-    private ArrayList<PeerPanel> peerPanels=new ArrayList<>();
+    private ArrayList<PeerPanel> peerPanels = new ArrayList<>();
     private JLabel label;
     private Box box = new Box(BoxLayout.Y_AXIS);
     private static SendCodeStitch instance = null;
     private MintNode mintNode;
-    
+
     private SendPeerInfoApp peerInfoApp;
 
     public static SendCodeStitch getInstance(CodeStitch codeStitch, MintNode mainNode) {
         if (instance == null) {
-            instance=new SendCodeStitch(codeStitch, mainNode);
-           
-        } 
-         return instance;
+            instance = new SendCodeStitch(codeStitch, mainNode);
+
+        }
+        return instance;
     }
 
     private SendCodeStitch() {
@@ -47,7 +45,7 @@ public class SendCodeStitch extends javax.swing.JFrame {
     private SendCodeStitch(CodeStitch codeStitch, MintNode mainNode) {
         setTitle("Send a stitch");
         this.mintNode = mainNode;
-        this.codeStitch=codeStitch;
+        this.codeStitch = codeStitch;
         peerInfoApp = mintNode.getPeerInfoApp();
         utils.updatePeerInfo(mintNode);
         utils.updatePeerPfp(mintNode, mintNode.getPeerInfoApp().getPeerList());
@@ -69,13 +67,12 @@ public class SendCodeStitch extends javax.swing.JFrame {
         };
 
         sw.execute();
-        
+
     }
 
     public void setCodeStitch(CodeStitch codeStitch) {
         this.codeStitch = codeStitch;
     }
-    
 
     public void paintPeers() {
         if (peerInfoApp.getPeerList() == null || peerInfoApp.getPeerList().size() < 1) {
@@ -85,18 +82,19 @@ public class SendCodeStitch extends javax.swing.JFrame {
             setVisible(false);
         } else {
             for (PeerInfo peerInfo : peerInfoApp.getPeerList()) {
-                System.err.println(peerInfo.toString());
-                PeerPanel panel = new PeerPanel(peerInfo);
-                panel.setPreferredSize(new Dimension(299, 92));
-                panel.revalidate();
-                box.add(panel);
-                box.revalidate();
-                peerPanels.add(panel);
+                if (StatusChecker.check(peerInfo.getStatus())) {
+                    System.err.println(peerInfo.toString());
+                    PeerPanel panel = new PeerPanel(peerInfo);
+                    panel.setPreferredSize(new Dimension(299, 92));
+                    panel.revalidate();
+                    box.add(panel);
+                    box.revalidate();
+                    peerPanels.add(panel);
+                }
             }
         }
 
     }
-    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -165,19 +163,30 @@ public class SendCodeStitch extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
-        for(PeerPanel p:peerPanels){
-            if(p.getCheckState()){
-                PeerInfo peer=p.getPeerInfo();
-                if(peer.getNodeHandle().checkLiveness()){
-                mintNode.getCodeStitchApp().routeCodeStitch(peer.getNodeHandle().getId(), codeStitch);
-                }else{
+        for (PeerPanel p : peerPanels) {
+            if (p.getCheckState()) {
+                PeerInfo peer = p.getPeerInfo();
+                if (!peer.getNodeHandle().checkLiveness()) {
+                    mintNode.getCodeStitchApp().routeCodeStitch(peer.getNodeHandle().getId(), codeStitch);
+                } else if (peer.getStatus().equals("donotdisturb")) {
+                    int dialogButton = JOptionPane.YES_NO_OPTION;
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Your peer "+peer.getAlias()+" doesn't want to be disturbed. Do you wish to continue?", "Do not Disturb Status", dialogButton);
+                    if (dialogResult == JOptionPane.YES_OPTION) {
                     
+                        mintNode.getCodeStitchApp().routeCodeStitch(peer.getNodeHandle().getId(), codeStitch);
+
+                    }
+
+                } else {
+                    mintNode.getCodeStitchApp().routeCodeStitch(peer.getNodeHandle().getId(), codeStitch);
                 }
-                
             }
+            dispose();
+            instance = null;
         }
-        dispose(); instance=null;
     }//GEN-LAST:event_jLabel1MouseClicked
+
+    
 
     public static void main(String args[]) {
 

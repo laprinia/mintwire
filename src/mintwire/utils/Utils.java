@@ -8,11 +8,16 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -21,18 +26,28 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import mintwire.ExtensionSelector;
+
 import mintwire.chatpanels.Bubbler;
+import mintwire.classes.HistoryFile;
 import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.messages.MintMessage;
 import mintwire.p2pmodels.messages.PeerInfo;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.jdesktop.swingx.util.OS;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import rice.p2p.commonapi.Id;
 import rice.pastry.NodeHandle;
 
 public class Utils {
+    private JLabel label;
 
     //MAKES A BUFFERED IMG ROUND 4 PROFILE PICS
     public BufferedImage makeRound(BufferedImage master) throws IOException {
@@ -80,25 +95,7 @@ public class Utils {
                 .map(f -> f.substring(filename.lastIndexOf(".") + 1));
     }
 
-    public void writeJSONfiles(String aliasPath, String alias) {
-        FileWriter fw = null;
-        File codetemp;
-        try {
-            fw = new FileWriter(aliasPath + alias + "/history.json");
-            JSONObject obj = new JSONObject();
-            JSONArray arr = new JSONArray();
-            obj.put(arr, "downloadhistory");
-
-        } catch (IOException ex) {
-            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fw.close();
-            } catch (IOException ex) {
-                Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+    
 
     public void setPfp(JLabel pfpLabel, String aliasPath, PeerInfo peerInfo, boolean isPeer) throws IOException {
         BufferedImage bi;
@@ -186,6 +183,67 @@ public class Utils {
             }
 
         }
+    }
+
+    public void saveStitch(RSyntaxTextArea area, MintNode mintNode) {
+        String sharedPath = mintNode.getSharedPath();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy-hh-mm");
+        String language = area.getSyntaxEditingStyle();
+        //TODO GET EXT
+        
+        String stitchPath = sharedPath + "\\" + "CodeStitch-" + formatter.format(new Date(System.currentTimeMillis())) + ExtensionSelector.select(language);
+        
+        PrintWriter printWriter;
+        try {
+            printWriter = new PrintWriter(stitchPath);
+            
+            printWriter.println(area.getText());
+            printWriter.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         label=new JLabel("<html><center>File saved succesfully in "+mintNode.getSharedPath());
+                    label.setHorizontalAlignment(SwingConstants.CENTER);
+                    JOptionPane.showMessageDialog(null, label, "Code Stitch Saved", JOptionPane.INFORMATION_MESSAGE);
+
+    }
+    public void saveHistoryFile(HistoryFile file, String alias) {
+        JSONParser jSONParser=new JSONParser();
+        String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
+        if( OS.isLinux()){
+            aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
+        }
+        try {
+            
+            Object object=jSONParser.parse(new FileReader(aliasPath + alias +"/"+ "downloadhistory.json"));
+//            JSONObject obj=(JSONObject) object;
+            JSONArray arr=(JSONArray) object;
+            System.out.println(arr);
+            
+            JSONObject currObj=new JSONObject();
+           
+            currObj.put("fileName", file.getFileName());
+            currObj.put("size", file.getSize());
+            currObj.put("alias", file.getAlias());
+            currObj.put("date", file.getDate());
+            arr.add(currObj);
+            
+            FileWriter fw = new FileWriter(aliasPath + alias +"/"+ "downloadhistory.json");
+            fw.write(arr.toJSONString());
+            fw.flush();
+            fw.close();
+            
+        } catch (FileNotFoundException ex) {
+            System.err.println("json parse exc "+ ex);
+        } catch (IOException ex) {
+            System.err.println("json parse exc "+ ex);
+        } catch (ParseException ex) {
+            System.err.println("json parse exc "+ ex);
+        }
+        
+                
+        
     }
 
 }

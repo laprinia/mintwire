@@ -3,13 +3,16 @@ package mintwire.p2pmodels.apps;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import mintwire.classes.HistoryFile;
 import mintwire.classes.MintFile;
 
 import mintwire.p2pmodels.messages.ResourceRequest;
+import mintwire.utils.Utils;
 import org.mpisws.p2p.filetransfer.BBReceipt;
 import org.mpisws.p2p.filetransfer.FileReceipt;
 import org.mpisws.p2p.filetransfer.FileTransfer;
@@ -37,11 +40,13 @@ import rice.pastry.PastryNode;
  */
 public class FileSporeApp implements Application { 
 
+    private Utils utils=new Utils();
     private final int BYTE_BUFFER_SIZE = 4;
     private String sharedPath;
     private JLabel label;
     private Endpoint endpoint;
     private PastryNode pastryNode;
+    private String currentAlias;
     private FileTransfer transfer;
 
     public FileSporeApp(PastryNode pastryNode, String sharedPath) {
@@ -67,6 +72,10 @@ public class FileSporeApp implements Application {
                             label = new JLabel("<html><center>Trasfer succesful for " + destinationFile);
                             label.setHorizontalAlignment(SwingConstants.CENTER);
                             JOptionPane.showMessageDialog(null, label, "FileSpore Transfer", JOptionPane.INFORMATION_MESSAGE);
+                            SimpleDateFormat formatter=new SimpleDateFormat("MMM dd yyyy HH:mm");
+                            
+                             HistoryFile historyFile=new HistoryFile(fileName,String.valueOf(destinationFile.length()),"mint",formatter.format(System.currentTimeMillis()));
+                             utils.saveHistoryFile(historyFile, currentAlias);
 
                         } catch (IOException ex) {
                             ex.printStackTrace();
@@ -224,4 +233,13 @@ public class FileSporeApp implements Application {
 
     }
 
+    public String getCurrentAlias() {
+        return currentAlias;
+    }
+
+    public void setCurrentAlias(String currentAlias) {
+        this.currentAlias = currentAlias;
+    }
+
+    
 }
