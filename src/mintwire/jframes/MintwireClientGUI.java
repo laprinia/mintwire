@@ -72,9 +72,11 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import mintwire.JDK9ClasspathLibraryInfo;
 
 import mintwire.LangSelector;
 import mintwire.PartyState;
+import mintwire.RSTALanguageSupport;
 import mintwire.borders.ChatBorder;
 import mintwire.cache.MessageCacher;
 import mintwire.chatpanels.Bubbler;
@@ -93,6 +95,9 @@ import mintwire.panels.peerlist.PartyPeerPanel;
 import mintwire.utils.StatusChecker;
 
 import mintwire.utils.Utils;
+import org.fife.rsta.ac.LanguageSupport;
+import org.fife.rsta.ac.LanguageSupportFactory;
+import org.fife.rsta.ac.java.JavaLanguageSupport;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -249,7 +254,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private RSyntaxTextArea partyTextArea = new RSyntaxTextArea(20, 16);
     private RSyntaxTextArea requestTextArea = new RSyntaxTextArea(20, 60);
     private RSyntaxTextArea sendTextArea = new RSyntaxTextArea(20, 60);
+    private LanguageSupport partyLang;
+    private LanguageSupport requestLang;
+    private LanguageSupport sendLang;
     private String filePath;
+    ;
     private final String langPre = "SyntaxConstants.SYNTAX_STYLE_";
     private static JMenu requestLanguageToggle;
     private static JMenu sendLanguageToggle;
@@ -281,9 +290,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         initComponents();
         initLayered();
-        initRSyntax(requestTextArea, RequestSPanel, requestLanguageToggle, "request");
-        initRSyntax(sendTextArea, SendSPanel, sendLanguageToggle, "send");
-        initRSyntax(partyTextArea, PartyPanel, partyLanguageToggle, "party");
+        initRSyntax(requestTextArea, RequestSPanel, requestLanguageToggle, "request", requestLang);
+        initRSyntax(sendTextArea, SendSPanel, sendLanguageToggle, "send", sendLang);
+        initRSyntax(partyTextArea, PartyPanel, partyLanguageToggle, "party", partyLang);
 
         setTabbedDesign();
         setStitchLabelOn();
@@ -443,9 +452,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         }
         JSONObject jo = new JSONObject();
         JSONArray ja = new JSONArray();
-        jo.put("files",ja);
+        jo.put("files", ja);
 
-        File historyFile = new File(aliasPath + alias +"/"+ "downloadhistory.json");
+        File historyFile = new File(aliasPath + alias + "/" + "downloadhistory.json");
         if (!(historyFile.exists())) {
             FileWriter fw;
             try {
@@ -453,9 +462,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 fw.write(jo.toJSONString());
                 fw.close();
             } catch (IOException ex) {
-                System.err.println("JSON err: "+ex);
+                System.err.println("JSON err: " + ex);
             }
-            
+
         }
 
         Path path = Paths.get(aliasPath + alias);
@@ -576,16 +585,29 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         setTitle("Mintwire Code Stitch");
     }
 
-    public void initRSyntax(RSyntaxTextArea textArea, JPanel panel, JMenu languageToggle, String place) {
+    public void initRSyntax(RSyntaxTextArea textArea, JPanel panel, JMenu languageToggle, String place, LanguageSupport languageSupport) {
 
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.setCodeFoldingEnabled(true);
         ActionListener actionListener;
 
         RTextScrollPane sp = new RTextScrollPane(textArea);
+
         //configure scrollbars for rtextscrollpane
         configSbars(sp, panel);
+        //configure language support 
+        LanguageSupportFactory lsf = LanguageSupportFactory.get();
 
+        lsf.register(textArea);
+        languageSupport = lsf.getSupportFor(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        JavaLanguageSupport javaSupport = (JavaLanguageSupport) languageSupport;
+        try {
+            javaSupport.getJarManager().addClassFileSource(new JDK9ClasspathLibraryInfo());
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+       
         //popup custom
         JPopupMenu syntaxMenu = textArea.getPopupMenu();
 
@@ -662,6 +684,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             String context = lang.select(e.getActionCommand());
 
             partyTextArea.setSyntaxEditingStyle(context);
+            RSTALanguageSupport.getLanguageSupport(partyTextArea);
+            
 
         }
     }
@@ -675,6 +699,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             String context = lang.select(e.getActionCommand());
 
             sendTextArea.setSyntaxEditingStyle(context);
+            RSTALanguageSupport.getLanguageSupport(sendTextArea);
 
         }
     }
@@ -688,6 +713,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             String context = lang.select(e.getActionCommand());
 
             requestTextArea.setSyntaxEditingStyle(context);
+            RSTALanguageSupport.getLanguageSupport(requestTextArea);
 
         }
     }

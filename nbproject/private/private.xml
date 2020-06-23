@@ -4,12 +4,8 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/MintwireClientGUI.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/utils/Utils.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/classes/HistoryFile.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/p2pmodels/MintNode.java</file>
+            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/RSTALanguageSupport.java</file>
             <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/LangSelector.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/jframes/FileHaul.java</file>
-            <file>file:/E:/MINT/App/mintwire/mintwire/src/mintwire/classes/MintFile.java</file>
         </group>
     </open-files>
 </project-private>
