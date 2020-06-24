@@ -135,7 +135,7 @@ public class ProfilePictureApp implements Application {
 
     }
 
-    public void sendFile(NodeHandle nh) {
+    public void sendPfp(NodeHandle nh) {
         endpoint.connect(nh, new AppSocketReceiver() {
             @Override
             public void receiveSocket(AppSocket as) throws IOException {
@@ -210,7 +210,7 @@ public class ProfilePictureApp implements Application {
         System.err.println("Step 3 got request sending pfp");
      PeerInfo peerInfo=(PeerInfo)msg;
      NodeHandle nh=peerInfo.getNodeHandle();
-        sendFile(nh);
+        sendPfp(nh);
     }
 
     @Override

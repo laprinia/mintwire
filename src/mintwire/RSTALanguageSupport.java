@@ -3,13 +3,10 @@ package mintwire;
 import java.io.IOException;
 import org.fife.rsta.ac.LanguageSupport;
 import org.fife.rsta.ac.LanguageSupportFactory;
-import org.fife.rsta.ac.c.CLanguageSupport;
-import org.fife.rsta.ac.css.CssLanguageSupport;
+
 import org.fife.rsta.ac.java.JavaLanguageSupport;
 import org.fife.rsta.ac.js.JavaScriptLanguageSupport;
-import org.fife.rsta.ac.jsp.JspLanguageSupport;
-import org.fife.rsta.ac.perl.PerlLanguageSupport;
-import org.fife.rsta.ac.php.PhpLanguageSupport;
+
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 

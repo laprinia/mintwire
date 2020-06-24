@@ -56,7 +56,6 @@ public class Identity extends javax.swing.JFrame {
 
     }
 
-
     public static Identity getIndentityInstance(MintNode mn) {
         if (instance == null) {
             instance = new Identity(mn);
@@ -67,7 +66,6 @@ public class Identity extends javax.swing.JFrame {
     public Identity getInstance() {
         return this.instance;
     }
-
 
     public class StatusRenderer extends DefaultListCellRenderer {
 
@@ -361,14 +359,11 @@ public class Identity extends javax.swing.JFrame {
                 super.done();
                 finalIcon = new ImageIcon(resultScaled);
                 pfpLabel.setIcon(finalIcon);
-                 for(NodeHandle nh: utils.getNodeHandleList(mintNode)){
-                  mintNode.getPfpApp().sendFile(nh);
-                 }
 
             }
         };
         sw.execute();
-       
+
     }//GEN-LAST:event_jLabel1MouseClicked
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
@@ -388,10 +383,12 @@ public class Identity extends javax.swing.JFrame {
                 e.printStackTrace();
             }
         } else {
-          
 
         }
-        //SERVER ACTION
+        for (NodeHandle nh : utils.getNodeHandleList(mintNode)) {
+            mintNode.getPfpApp().sendPfp(nh);
+        }
+
         //schimbare 
         switch (jComboBox1.getSelectedIndex()) {
             case 0:
@@ -416,7 +413,7 @@ public class Identity extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel2MouseClicked
 
     public static void main(String args[]) {
-       
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

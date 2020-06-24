@@ -764,11 +764,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         MainLayeredPane = new javax.swing.JLayeredPane();
         CodeStitchPanel = new javax.swing.JPanel();
+        jPanel10 = new javax.swing.JPanel();
         TabbedPane = new javax.swing.JTabbedPane();
         RequestSPanel = new javax.swing.JPanel();
         SendSPanel = new javax.swing.JPanel();
-        saveButton = new javax.swing.JButton();
         sendButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
         CodeStitchPartyPanel = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         partyScroll = new javax.swing.JScrollPane(partyBox);
@@ -837,7 +838,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(94, 87, 104));
 
-        jPanel1.setBackground(new java.awt.Color(94, 87, 104));
+        jPanel1.setBackground(new java.awt.Color(59, 51, 64));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel4.setBackground(new java.awt.Color(49, 46, 54));
@@ -1150,7 +1151,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         jLabel8.setText("jLabel5");
         jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        CodeStitchPanel.setBackground(new java.awt.Color(94, 87, 104));
+        MainLayeredPane.setBackground(new java.awt.Color(59, 51, 64));
+
+        CodeStitchPanel.setBackground(new java.awt.Color(59, 51, 64));
 
         TabbedPane.setBackground(new java.awt.Color(51, 51, 51));
         TabbedPane.setForeground(new java.awt.Color(204, 204, 255));
@@ -1176,6 +1179,18 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         SendSPanel.setLayout(new java.awt.BorderLayout());
         TabbedPane.addTab("Send a stitch", SendSPanel);
 
+        sendButton.setForeground(new java.awt.Color(255, 255, 255));
+        sendButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+        sendButton.setText("Send stitch");
+        sendButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 102, 102)));
+        sendButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        sendButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sendButtonMouseClicked(evt);
+            }
+        });
+
         saveButton.setForeground(new java.awt.Color(255, 255, 255));
         saveButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/save-file.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
         saveButton.setText("Save stitch");
@@ -1193,48 +1208,53 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             }
         });
 
-        sendButton.setForeground(new java.awt.Color(255, 255, 255));
-        sendButton.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource("/mintwire/res/pngs/send.png")).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
-        sendButton.setText("Send stitch");
-        sendButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 102, 102)));
-        sendButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        sendButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        sendButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                sendButtonMouseClicked(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(TabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1083, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sendButton, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
+                .addGap(23, 23, 23))
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addGap(73, 73, 73)
+                .addComponent(sendButton)
+                .addGap(18, 18, 18)
+                .addComponent(saveButton)
+                .addContainerGap(391, Short.MAX_VALUE))
+            .addGroup(jPanel10Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(TabbedPane)
+                .addContainerGap())
+        );
+
+        TabbedPane.getAccessibleContext().setAccessibleName("Send a Stitching");
 
         javax.swing.GroupLayout CodeStitchPanelLayout = new javax.swing.GroupLayout(CodeStitchPanel);
         CodeStitchPanel.setLayout(CodeStitchPanelLayout);
         CodeStitchPanelLayout.setHorizontalGroup(
             CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CodeStitchPanelLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(TabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 1036, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(sendButton, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                    .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(84, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CodeStitchPanelLayout.createSequentialGroup()
+                .addContainerGap(15, Short.MAX_VALUE)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
         );
         CodeStitchPanelLayout.setVerticalGroup(
             CodeStitchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CodeStitchPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(TabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(CodeStitchPanelLayout.createSequentialGroup()
-                .addGap(76, 76, 76)
-                .addComponent(sendButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(saveButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        TabbedPane.getAccessibleContext().setAccessibleName("Send a Stitching");
-
-        CodeStitchPartyPanel.setBackground(new java.awt.Color(94, 87, 104));
+        CodeStitchPartyPanel.setBackground(new java.awt.Color(59, 51, 64));
 
         partyScroll.setPreferredSize(new java.awt.Dimension(999, 136));
 
@@ -1291,20 +1311,18 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(partyScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                        .addGap(0, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel7Layout.createSequentialGroup()
                         .addComponent(startSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(joinSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(leaveSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20)
-                        .addComponent(saveSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(19, 19, 19)))
-                .addContainerGap())
+                        .addComponent(saveSessionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(PartyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE))
+                .addGap(14, 14, 14))
         );
 
         partyScroll.getViewport().setBackground(new Color(45,48,56));
@@ -1330,12 +1348,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         CodeStitchPartyPanelLayout.setVerticalGroup(
             CodeStitchPartyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CodeStitchPartyPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addGap(0, 15, Short.MAX_VALUE))
         );
 
-        MintLynxPanel.setBackground(new java.awt.Color(94, 87, 104));
+        MintLynxPanel.setBackground(new java.awt.Color(59, 51, 64));
 
         jPanel3.setBackground(new java.awt.Color(45, 48, 55));
 
@@ -1529,7 +1546,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        FileSporePanel.setBackground(new java.awt.Color(94, 87, 104));
+        FileSporePanel.setBackground(new java.awt.Color(59, 51, 64));
 
         jPanel8.setBackground(new java.awt.Color(45, 48, 56));
 
@@ -1571,7 +1588,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sporeText, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sporeSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(sporeScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 507, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(25, 25, 25))
         );
@@ -1616,7 +1633,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(386, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout FileSporePanelLayout = new javax.swing.GroupLayout(FileSporePanel);
@@ -1633,10 +1650,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         FileSporePanelLayout.setVerticalGroup(
             FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FileSporePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(FileSporePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -2136,6 +2152,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
