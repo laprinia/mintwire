@@ -13,42 +13,51 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.utils.Utils;
 import org.jdesktop.swingx.util.OS;
 
-
 public class PartyPeerPanel extends javax.swing.JPanel {
+   
     private String aliasPath = System.getenv("APPDATA") + "/MINTWIRE/";
-    private Utils utils=new Utils();
-    private boolean isLinux=OS.isLinux();
-    private Color hostColor=new Color(174,65,255);
+    private Utils utils = new Utils();
+    private boolean isLinux = OS.isLinux();
+    private Color hostColor = new Color(174, 65, 255);
     private Color availableColor = new Color(168, 255, 104);
     private Color awayColor = new Color(255, 190, 104);
     private Color doNotDisturbColor = new Color(255, 104, 168);
     private Color invisibleColor = new Color(104, 168, 255);
-private PeerInfo peerInfo;
+    private PeerInfo peerInfo;
 
     public PartyPeerPanel(PeerInfo peerInfo) {
-          try {
+        try {
             setFocusable(true);
             setRequestFocusEnabled(true);
-           
+
             if (isLinux) {
                 aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
             }
-            this.peerInfo=peerInfo;
-            
+            this.peerInfo = peerInfo;
+
             initComponents();
-            setPreferredSize(new Dimension(299,92));
+            setPreferredSize(new Dimension(299, 92));
             revalidate();
-            utils.setPfp(pfpLabel,aliasPath,peerInfo,true);
+            if (peerInfo.getStatus().equals("host")) {
+                utils.setPfp(pfpLabel, aliasPath, peerInfo, false);
+            } else if(peerInfo.isItResponse()){
+                
+                utils.setPfp(pfpLabel, aliasPath, peerInfo, false);
+            }else {
+                utils.setPfp(pfpLabel, aliasPath, peerInfo, true);
+            }
         } catch (IOException ex) {
             Logger.getLogger(ConnectedPeerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
-
+  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

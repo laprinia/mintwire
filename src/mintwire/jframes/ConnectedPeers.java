@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -20,11 +21,15 @@ import mintwire.p2pmodels.MintNode;
 import mintwire.p2pmodels.apps.SendPeerInfoApp;
 import mintwire.p2pmodels.messages.PeerInfo;
 import mintwire.panels.peerlist.ConnectedPeerPanel;
-import mintwire.panels.peerlist.PeerPanel;
+
 import mintwire.utils.StatusChecker;
 import mintwire.utils.Utils;
 
 public class ConnectedPeers extends javax.swing.JFrame {
+    @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+    }
 
     private ArrayList<ConnectedPeerPanel> peerPanels = new ArrayList<>();
     private JLabel label;
@@ -66,7 +71,7 @@ public class ConnectedPeers extends javax.swing.JFrame {
     }
 
     private ConnectedPeers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 
     public void paintPeers() {

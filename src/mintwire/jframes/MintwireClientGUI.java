@@ -436,7 +436,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             f3.mkdir();
 
             try {
-                BufferedImage bi = ImageIO.read(getClass().getResourceAsStream("/mintwire/res/pngs/pfp.png"));
+                BufferedImage bi = ImageIO.read(getClass().getResourceAsStream("/mintwire/res/pngs/profilepic.png"));
 
                 File outputF = new File(aliasPath + alias + "/pfp/pfp.png");
                 ImageIO.write(bi, "PNG", outputF);
@@ -450,16 +450,14 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         if (!(shared.exists())) {
             shared.mkdir();
         }
-        JSONObject jo = new JSONObject();
+        
         JSONArray ja = new JSONArray();
-        jo.put("files", ja);
-
         File historyFile = new File(aliasPath + alias + "/" + "downloadhistory.json");
         if (!(historyFile.exists())) {
             FileWriter fw;
             try {
                 fw = new FileWriter(historyFile.getAbsolutePath());
-                fw.write(jo.toJSONString());
+                fw.write(ja.toJSONString());
                 fw.close();
             } catch (IOException ex) {
                 System.err.println("JSON err: " + ex);
@@ -1112,17 +1110,16 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addComponent(IdentityLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(48, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(69, 69, 69))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(42, 42, 42))))
+                .addComponent(pfpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(42, 42, 42))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(74, 74, 74)
+                .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1776,6 +1773,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void FileHaulLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseEntered
         FileHaulLabel.setText("File Haul");
+        
     }//GEN-LAST:event_FileHaulLabelMouseEntered
 
     private void FileHaulLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseExited
@@ -1815,6 +1813,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void FileHaulLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FileHaulLabelMouseClicked
         FileHaulLabel.setBackground(new Color(53, 53, 53));
         FileHaul fh = FileHaul.getInstance(mintNode);
+        
         fh.pack();
         fh.setLocationRelativeTo(null);
         fh.setVisible(true);

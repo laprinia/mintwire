@@ -53,6 +53,12 @@ public class PeerInfo implements Message{
     public String toString() {
         return alias+" "+status+"["+nodeHandle.getId()+"]";
     }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    
     
     
 }

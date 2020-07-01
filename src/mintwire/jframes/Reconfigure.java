@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,6 +27,10 @@ import mintwire.utils.Utils;
 import org.jdesktop.swingx.util.OS;
 
 public class Reconfigure extends javax.swing.JFrame {
+    @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+    }
     
     private final boolean isLinux=OS.isLinux();
     private static Reconfigure instance=null;

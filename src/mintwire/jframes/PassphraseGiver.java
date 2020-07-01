@@ -148,7 +148,7 @@ public class PassphraseGiver extends javax.swing.JFrame {
             PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(hostInfo.getNodeHandle(), hostInfo.getAlias(), "host", false));
             partyPeerPanel.setPreferredSize(new Dimension(176, 132));
             
-            PartyPeerPanel partyPeerPanel2 = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false));
+            PartyPeerPanel partyPeerPanel2 = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(),mintNode.getNode().alias, mintNode.getNode().status, true));
             partyPeerPanel2.setPreferredSize(new Dimension(176, 132));
             
             

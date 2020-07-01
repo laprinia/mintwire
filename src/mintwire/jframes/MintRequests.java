@@ -9,6 +9,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import mintwire.p2pmodels.MintNode;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 
 import javax.swing.JLabel;
 import mintwire.p2pmodels.apps.CodeStitchApp;
@@ -21,6 +22,12 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
 public class MintRequests extends javax.swing.JFrame {
 
+    @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
+
+    
     private RSyntaxTextArea textArea;
     private ArrayList<RequestPanel> requests = new ArrayList<>();
     private MintNode mintNode;

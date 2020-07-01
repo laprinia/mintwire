@@ -6,11 +6,18 @@
 package mintwire.jframes;
 
 import java.util.Arrays;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 
 
 public class Preferences extends javax.swing.JFrame {
+
+    @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+    }
+    
 
     private static Preferences instance = null;
 
@@ -162,7 +169,7 @@ public class Preferences extends javax.swing.JFrame {
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
        //END SESSION
-        dispose();
+         dispose();
          instance=null;
        //SAVE INTO A FILE THE SETTINGS
        

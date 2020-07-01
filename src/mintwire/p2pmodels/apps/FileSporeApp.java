@@ -219,7 +219,7 @@ public class FileSporeApp implements Application {
                     String[] buttons2 = {"Yes", "No"};
                     int returnVal = JOptionPane.showOptionDialog(null, request.getAlias() + " is requesting " + path + ". Do you wish to transfer it?", "File Spore request from " + request.getAlias(),
                             JOptionPane.WARNING_MESSAGE, 0, null, buttons2, buttons2[0]);
-                    if (returnVal == 1) {
+                    if (returnVal == 0) {
                         sendFile(request.getNh(), path);
                     }
                 }else sendFile(request.getNh(), path);

@@ -3,6 +3,8 @@ package mintwire.jframes;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Image;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -26,6 +29,12 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class FileHaul extends javax.swing.JFrame {
+
+    @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    
 
     private ArrayList<HistoryFile> historyFiles = new ArrayList<>();
     private MintNode mintNode;
@@ -139,9 +148,10 @@ public class FileHaul extends javax.swing.JFrame {
     }
 
     private FileHaul(MintNode mintNode) {
+        
         setTitle("File Haul");
         initComponents();
-        this.mintNode=mintNode;
+        this.mintNode = mintNode;
         retrieveHistory();
     }
 
@@ -161,13 +171,13 @@ public class FileHaul extends javax.swing.JFrame {
             Object object = jSONParser.parse(new FileReader(aliasPath + mintNode.getNode().alias + "/" + "downloadhistory.json"));
 
             JSONArray arr = (JSONArray) object;
-            for(int i=0; i<arr.size(); i++ ){
-             JSONObject objectInArr = (JSONObject) arr.get(i);
-             historyFiles.add(new HistoryFile(objectInArr.get("fileName").toString(), objectInArr.get("size").toString(), objectInArr.get("alias").toString(), objectInArr.get("date").toString()));
-               
+            for (int i = 0; i < arr.size(); i++) {
+                JSONObject objectInArr = (JSONObject) arr.get(i);
+                historyFiles.add(new HistoryFile(objectInArr.get("fileName").toString(), objectInArr.get("size").toString(), objectInArr.get("alias").toString(), objectInArr.get("date").toString()));
+
             }
             System.err.println(historyFiles);
-            
+
         } catch (FileNotFoundException ex) {
             System.err.println("json parse exc " + ex);
         } catch (IOException ex) {
@@ -301,8 +311,8 @@ public class FileHaul extends javax.swing.JFrame {
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         // TODO add your handling code here:
-        File file = new File (mintNode.getSharedPath());
-Desktop desktop = Desktop.getDesktop();
+        File file = new File(mintNode.getSharedPath());
+        Desktop desktop = Desktop.getDesktop();
         try {
             desktop.open(file);
         } catch (IOException ex) {

@@ -192,7 +192,7 @@ public class Utils {
         String language = area.getSyntaxEditingStyle();
         //TODO GET EXT
         
-        String stitchPath = sharedPath + "\\" + "CodeStitch-" + formatter.format(new Date(System.currentTimeMillis())) + ExtensionSelector.select(language);
+        String stitchPath = sharedPath + "/" + "CodeStitch-" + formatter.format(new Date(System.currentTimeMillis())) + ExtensionSelector.select(language);
         
         PrintWriter printWriter;
         try {
@@ -217,20 +217,17 @@ public class Utils {
         try {
             
             Object object=jSONParser.parse(new FileReader(aliasPath + alias +"/"+ "downloadhistory.json"));
-//            JSONObject obj=(JSONObject) object;
-            JSONArray arr=(JSONArray) object;
-            System.out.println(arr);
-            
+            JSONArray array=(JSONArray) object;
             JSONObject currObj=new JSONObject();
            
             currObj.put("fileName", file.getFileName());
             currObj.put("size", file.getSize());
             currObj.put("alias", file.getAlias());
             currObj.put("date", file.getDate());
-            arr.add(currObj);
-            
+            array.add(currObj);
+           
             FileWriter fw = new FileWriter(aliasPath + alias +"/"+ "downloadhistory.json");
-            fw.write(arr.toJSONString());
+            fw.write(array.toJSONString());
             fw.flush();
             fw.close();
             

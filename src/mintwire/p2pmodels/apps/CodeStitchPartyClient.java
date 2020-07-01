@@ -202,14 +202,12 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
     @Override
     public void deliver(Topic topic, ScribeContent sc) {
-        // System.err.println("IN DELIVERY PART");
+       
         PartyStitch partyStitch = (PartyStitch) sc;
-        //int caretPosition = partyArea.getCaretPosition();
-
         partyArea.setText(partyStitch.getCode());
         System.out.println(partyStitch.toString());
         partyArea.setSyntaxEditingStyle(partyStitch.getLanguage());
-        // partyArea.setCaretPosition(caretPosition);
+      
 
     }
 
@@ -220,7 +218,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
     @Override
     public void childRemoved(Topic topic, NodeHandle nh) {
-        System.err.println("child removed");
+       
        PeerInfo peerInfo=connectedPeers.get(nh);
        connectedPeers.remove(nh);
        box.remove(peerPanels.get(nh)); box.revalidate(); peerPanels.remove(nh);
