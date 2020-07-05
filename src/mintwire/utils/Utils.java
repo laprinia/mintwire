@@ -13,9 +13,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -164,7 +162,7 @@ public class Utils {
 
             File file = new File(composedString);
             if (!(file.exists())) {
-                System.err.println("Step 1 pfp not existant");
+                
                 mn.getPfpApp().requestPfp(new PeerInfo(mn.getNode().getLocalHandle(), mn.getNode().alias, alias, false), info.getNodeHandle());
             }
         }
@@ -241,6 +239,28 @@ public class Utils {
         
                 
         
+    }
+    public void loadPreferences(File file, MintNode node){
+        JSONParser jSONParser = new JSONParser();
+        try {
+            Object object = jSONParser.parse(new FileReader(file));
+            JSONObject jsonobj = (JSONObject) object;
+            String sharedPath= (String) jsonobj.get("SharedPath");
+            node.setSharedPath(sharedPath);
+            String codeComments= (String) jsonobj.get("CodeComments");
+            node.setCodeComments(codeComments);
+            String languageAssist= (String) jsonobj.get("LanguageAssist");
+            node.setLanguageAssist(languageAssist);
+            
+            
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

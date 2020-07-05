@@ -250,15 +250,12 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private Utils utils = new Utils();
     private final boolean isLinux = OS.isLinux();
     private String alias;
-    private String password;
     private RSyntaxTextArea partyTextArea = new RSyntaxTextArea(20, 16);
     private RSyntaxTextArea requestTextArea = new RSyntaxTextArea(20, 60);
     private RSyntaxTextArea sendTextArea = new RSyntaxTextArea(20, 60);
     private LanguageSupport partyLang;
     private LanguageSupport requestLang;
     private LanguageSupport sendLang;
-    private String filePath;
-    ;
     private final String langPre = "SyntaxConstants.SYNTAX_STYLE_";
     private static JMenu requestLanguageToggle;
     private static JMenu sendLanguageToggle;
@@ -281,7 +278,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         mintNode.getMessagingApp().setCacher(cacher);
         peerInfoApp = mintNode.getPeerInfoApp();
         mintNode.getFileSporeApp().setCurrentAlias(alias);
-        this.password = password;
+       
         System.out.println(mintNode.getNode().getId());
 
         if (isLinux) {
@@ -290,6 +287,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         initComponents();
         initLayered();
+        initFileStructure(alias);
         initRSyntax(requestTextArea, RequestSPanel, requestLanguageToggle, "request", requestLang);
         initRSyntax(sendTextArea, SendSPanel, sendLanguageToggle, "send", sendLang);
         initRSyntax(partyTextArea, PartyPanel, partyLanguageToggle, "party", partyLang);
@@ -297,7 +295,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         setTabbedDesign();
         setStitchLabelOn();
 
-        initFileStructure(alias);
+        
 
         setPfp();
 
@@ -464,6 +462,26 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             }
 
         }
+        File preferenceFile= new File(aliasPath + alias+ "/" + "preferences.json");
+        if (!(preferenceFile.exists())) {
+            FileWriter fw;
+            try {
+                fw = new FileWriter(preferenceFile.getAbsolutePath());
+                JSONObject obj = new JSONObject();
+                if(isLinux){
+                    obj.put("SharedPath", System.getProperty("user.home") + "/MINTWIRE Shared/");
+                }else {
+                    obj.put("SharedPath", "C:\\MINTWIRE Shared");
+                }
+                obj.put("CodeComments", "On");
+                obj.put("LanguageAssist", "On");
+                fw.write(obj.toJSONString());
+                fw.close();
+            } catch (IOException ex) {
+                System.err.println("JSON err: " + ex);
+            }
+
+        }else utils.loadPreferences(preferenceFile,mintNode);
 
         Path path = Paths.get(aliasPath + alias);
         try {
@@ -587,6 +605,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
         textArea.setCodeFoldingEnabled(true);
+        if(mintNode.getCodeComments().equals("On")) {
+           textArea.setText("/*Default language is set to JAVA. Change it by right clicking.*/");
+        }
         ActionListener actionListener;
 
         RTextScrollPane sp = new RTextScrollPane(textArea);
@@ -594,6 +615,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         //configure scrollbars for rtextscrollpane
         configSbars(sp, panel);
         //configure language support 
+        if(mintNode.getLanguageAssist().equals("On")){
+            System.err.println("support is on");
         LanguageSupportFactory lsf = LanguageSupportFactory.get();
 
         lsf.register(textArea);
@@ -604,7 +627,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-
+        }
        
         //popup custom
         JPopupMenu syntaxMenu = textArea.getPopupMenu();
@@ -682,8 +705,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             String context = lang.select(e.getActionCommand());
 
             partyTextArea.setSyntaxEditingStyle(context);
+            if(mintNode.getLanguageAssist().equals("On")){
             RSTALanguageSupport.getLanguageSupport(partyTextArea);
-            
+            }
 
         }
     }
@@ -697,7 +721,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             String context = lang.select(e.getActionCommand());
 
             sendTextArea.setSyntaxEditingStyle(context);
+            if(mintNode.getLanguageAssist().equals("On")){
             RSTALanguageSupport.getLanguageSupport(sendTextArea);
+            }
 
         }
     }
@@ -711,8 +737,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             String context = lang.select(e.getActionCommand());
 
             requestTextArea.setSyntaxEditingStyle(context);
+            if(mintNode.getLanguageAssist().equals("On")){
             RSTALanguageSupport.getLanguageSupport(requestTextArea);
 
+            }
         }
     }
 
@@ -1823,7 +1851,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     private void PreferencesLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PreferencesLabelMouseClicked
         PreferencesLabel.setBackground(new Color(53, 53, 53));
         //START PREFERENCES
-        Preferences pr = Preferences.startPreferences(alias);
+        Preferences pr = Preferences.startPreferences(mintNode);
         pr.pack();
         pr.setLocationRelativeTo(null);
         pr.setVisible(true);
@@ -2053,6 +2081,8 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         if (partyState.equals(PartyState.NotStarted)) {
 
             //
+            partyTextArea.setEditable(false);
+            
             PassphraseGiver pg = PassphraseGiver.getInstance(mintNode, partyTextArea, partyBox);
             pg.pack();
             pg.setLocationRelativeTo(null);

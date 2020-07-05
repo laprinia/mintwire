@@ -61,7 +61,7 @@ public class ConnectedPeers extends javax.swing.JFrame {
             protected Object doInBackground() throws Exception {
                 Thread.sleep(60);
                 utils.updatePeerPfp(mn,mintNode.getPeerInfoApp().getPeerList());
-                Thread.sleep(60);
+                Thread.sleep(100);
                 paintPeers();
                 return null;
             }

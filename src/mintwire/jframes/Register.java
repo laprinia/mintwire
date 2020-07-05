@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -15,6 +16,12 @@ import mintwire.BCrypt;
 import mintwire.CredentialChecker;
 
 public class Register extends javax.swing.JFrame {
+
+    @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+    }
+    
  private JLabel label;
  private final int ACCOUNT_CAP=20;
  private Connection conn=null;

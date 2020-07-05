@@ -134,7 +134,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
     public void startPublishTask() {
 
-        publishTask = endpoint.scheduleMessage(new PublishContent(), 5000, 5000);
+        publishTask = endpoint.scheduleMessage(new PublishContent(), 500, 500);
 
     }
 
@@ -154,6 +154,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
         } else if (message instanceof TerminalMessage) {
             String hostAlias=((TerminalMessage) message).getAlias();
+            if (hostAlias.equals(mintNode.getNode().alias)) return;
             scribe.unsubscribe(topic, this);
             label = new JLabel("<html><center>"+hostAlias+"(host) stopped the session.");
             label.setHorizontalAlignment(SwingConstants.CENTER);
@@ -204,6 +205,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
     public void deliver(Topic topic, ScribeContent sc) {
        
         PartyStitch partyStitch = (PartyStitch) sc;
+        if(partyStitch.getSender().equals(mintNode.getNode().alias)) return;
         partyArea.setText(partyStitch.getCode());
         System.out.println(partyStitch.toString());
         partyArea.setSyntaxEditingStyle(partyStitch.getLanguage());
@@ -220,6 +222,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
     public void childRemoved(Topic topic, NodeHandle nh) {
        
        PeerInfo peerInfo=connectedPeers.get(nh);
+       if(peerInfo.getAlias().equals(mintNode.getNode().alias)) return;
        connectedPeers.remove(nh);
        box.remove(peerPanels.get(nh)); box.revalidate(); peerPanels.remove(nh);
         label=new JLabel("<html><center>Your peer "+ peerInfo.getAlias()+" left the party.");

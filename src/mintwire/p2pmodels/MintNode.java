@@ -28,7 +28,8 @@ import rice.pastry.standard.RandomNodeIdFactory;
 
 public class MintNode {
     private final boolean isLinux = OS.isLinux();
-    
+    private String languageAssist="On";
+    private String codeComments="On";
     private String sharedPath = "C:\\MINTWIRE Shared";
     private ProfilePictureApp pfpApp;
     private CodeStitchPartyClient partyClient;
@@ -130,6 +131,27 @@ public class MintNode {
     public CodeStitchPartyClient getPartyClient() {
         return partyClient;
     }
+
+    public void setSharedPath(String path) {
+        this.sharedPath=path;
+    }
+
+    public void setLanguageAssist(String languageAssist) {
+        this.languageAssist = languageAssist;
+    }
+
+    public void setCodeComments(String codeComments) {
+        this.codeComments = codeComments;
+    }
+
+    public String getLanguageAssist() {
+        return languageAssist;
+    }
+
+    public String getCodeComments() {
+        return codeComments;
+    }
+    
     
     
     
