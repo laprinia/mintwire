@@ -1,20 +1,26 @@
 package mintwire.jframes;
 
 import java.awt.Image;
+import java.io.File;
 
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -41,12 +47,14 @@ public class Login extends javax.swing.JFrame {
     private final int ACCOUNT_CAP = 20;
     
     private JLabel label;
+    private String databasePath= System.getenv("APPDATA") + "/MINTWIRE/db.sqlite";
     private String initfullPath = System.getenv("APPDATA") + "/MINTWIRE/init.txt";
 
     public Login() {
 
         if (isLinux) {
             initfullPath = System.getProperty("user.home") + "/MINTWIRE/init.txt";
+            databasePath = System.getProperty("user.home") + "/MINTWIRE/db.sqlite";
         }
         setTitle("Mintwire Login");
         try {
@@ -58,11 +66,51 @@ public class Login extends javax.swing.JFrame {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
+        File file = new File(databasePath);
+        if (!(file.exists())) {
+        createDatabase();
+        createTable();
+        }
 
         initComponents();
 
     }
 
+    private void createDatabase() {
+              
+   
+        try {  
+            String dbURL = "jdbc:sqlite:"
+                    + databasePath;
+            Connection conn = DriverManager.getConnection(dbURL);  
+            if (conn != null) {  
+                DatabaseMetaData meta = conn.getMetaData();  
+                 
+            }  
+   
+        } catch (SQLException e) {  
+            System.out.println(e.getMessage());  
+        }  
+    }
+    private void createTable() {
+                String sql = "CREATE TABLE IF NOT EXISTS aliases (\n"  
+                + " alias text NOT NULL,\n"  
+                + " password text NOT NULL\n"  
+                  
+                + ");";  
+          
+        try{  
+            String dbURL = "jdbc:sqlite:"
+                    + databasePath;
+            Connection conn = DriverManager.getConnection(dbURL);  
+            Statement stmt = conn.createStatement();  
+            stmt.execute(sql);  
+        } catch (SQLException e) {  
+            System.out.println(e.getMessage());  
+        }  
+    
+    }
+    
     private boolean connectToSQLite(String alias, String passw, String hAlias, String hPassw) throws SQLException {
 
         Connection conn = null;
@@ -78,10 +126,8 @@ public class Login extends javax.swing.JFrame {
 
         }
 
-       
-            String path = "resource:mintwire/jframes/dbs/login.sqlite";
-            String dbURL = "jdbc:sqlite::"
-                    + path;
+            String dbURL = "jdbc:sqlite:"
+                    + databasePath;
             conn = DriverManager.getConnection(dbURL);
             //check if it reaches cap
             String count = "SELECT COUNT(*) AS count from aliases";

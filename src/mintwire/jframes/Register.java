@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import mintwire.BCrypt;
 import mintwire.CredentialChecker;
+import org.jdesktop.swingx.util.OS;
 
 public class Register extends javax.swing.JFrame {
 
@@ -21,7 +22,8 @@ public class Register extends javax.swing.JFrame {
     public void setDefaultCloseOperation(int operation) {
         super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
     }
-    
+ private boolean isLinux=OS.isLinux();
+ private String databasePath= System.getenv("APPDATA") + "/MINTWIRE/db.sqlite";  
  private JLabel label;
  private final int ACCOUNT_CAP=20;
  private Connection conn=null;
@@ -44,13 +46,15 @@ public class Register extends javax.swing.JFrame {
         }catch(ClassNotFoundException ex){
             JOptionPane.showMessageDialog(null, "Problem with loading SQLite JDBC driver", "Login Error", JOptionPane.ERROR_MESSAGE);
         }
-       
+       if (isLinux) {
+            databasePath = System.getProperty("user.home") + "/MINTWIRE/db.sqlite";
+        }
     }
        private void insertToSQLite(String alias, String passw, String hAlias, String hPassw) throws SQLException {
 
-               String path = "src/mintwire/jframes/dbs/login.sqlite";
+            
             String dbURL = "jdbc:sqlite:"
-                    + path;
+                    + databasePath;
             conn = DriverManager.getConnection(dbURL);
             
             String count = "SELECT COUNT(*) AS count from aliases";
