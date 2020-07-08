@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -19,6 +20,10 @@ import mintwire.utils.StatusChecker;
 import mintwire.utils.Utils;
 
 public class SendCodeStitch extends javax.swing.JFrame {
+    @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
 
     private Utils utils = new Utils();
     private CodeStitch codeStitch;

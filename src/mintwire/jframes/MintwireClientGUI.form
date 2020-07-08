@@ -1292,6 +1292,9 @@
                           <Font name="Dialog" size="24" style="0"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="sporeTextKeyReleased"/>
+                      </Events>
                     </Component>
                     <Container class="javax.swing.JScrollPane" name="sporeScroll">
                       <Properties>
@@ -1358,6 +1361,9 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Search"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="sporeSearchMouseClicked"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

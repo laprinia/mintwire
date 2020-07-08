@@ -202,9 +202,13 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField1KeyReleased"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jLabel2MouseClicked"/>
+          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jLabel2.setIcon(new ImageIcon(new javax.swing.ImageIcon(getClass().getResource(&quot;/mintwire/res/pngs/historysearch.png&quot;)).getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH)));"/>
           </AuxValues>

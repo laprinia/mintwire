@@ -59,6 +59,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 
 import javax.swing.SwingWorker;
@@ -71,7 +72,10 @@ import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import mintwire.JDK9ClasspathLibraryInfo;
 
 import mintwire.LangSelector;
@@ -136,7 +140,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
             switch (columnIndex) {
                 case 0:
-                    return null;
+                    return mintNode.getSharedResourceApp().getMintFiles().get(0).getFileName().getClass();
                 case 1:
                     return mintNode.getSharedResourceApp().getMintFiles().get(0).getFileName().getClass();
                 case 2:
@@ -584,6 +588,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         panel.add(sp);
 
+    }
+    private void filterTable(String query){
+    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(sporeModel); 
+    sporeTable.setRowSorter(sorter);
+    sorter.setRowFilter(RowFilter.regexFilter(query));
     }
 
     public void setTabbedDesign() {
@@ -1577,6 +1586,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         sporeText.setBackground(new java.awt.Color(45, 48, 56));
         sporeText.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        sporeText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                sporeTextKeyReleased(evt);
+            }
+        });
 
         sporeScroll.setBackground(new java.awt.Color(45, 48, 56));
         sporeScroll.setBorder(null);
@@ -1591,6 +1605,11 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         sporeTable.getColumnModel().getColumn(0).setCellRenderer(new FileExtensionModel());
 
         sporeSearch.setText("Search");
+        sporeSearch.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sporeSearchMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -2122,6 +2141,20 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         utils.saveStitch(partyTextArea, mintNode);
     }//GEN-LAST:event_saveSessionButtonMouseClicked
+
+    private void sporeTextKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sporeTextKeyReleased
+        // TODO add your handling code here:
+        System.err.println(sporeText.getText());
+        if(sporeTable.getRowCount()>0){
+            filterTable(sporeText.getText());
+        }
+        
+    }//GEN-LAST:event_sporeTextKeyReleased
+
+    private void sporeSearchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sporeSearchMouseClicked
+        // TODO add your handling code here:
+        filterTable(sporeText.getText());
+    }//GEN-LAST:event_sporeSearchMouseClicked
 
     public static void main(String args[]) {
 

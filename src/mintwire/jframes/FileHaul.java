@@ -17,9 +17,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import mintwire.classes.HistoryFile;
 import mintwire.p2pmodels.MintNode;
 import org.jdesktop.swingx.util.OS;
@@ -63,7 +66,7 @@ public class FileHaul extends javax.swing.JFrame {
 
             switch (columnIndex) {
                 case 0:
-                    return null;
+                    return historyFiles.get(0).getFileName().getClass();
                 case 1:
                     return historyFiles.get(0).getFileName().getClass();
                 case 2:
@@ -186,6 +189,11 @@ public class FileHaul extends javax.swing.JFrame {
             System.err.println("json parse exc " + ex);
         }
     }
+    private void filterTable(String query){
+    TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(historyTable.getModel()); 
+    historyTable.setRowSorter(sorter);
+    sorter.setRowFilter(RowFilter.regexFilter(query));
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -251,6 +259,17 @@ public class FileHaul extends javax.swing.JFrame {
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
+            }
+        });
+        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField1KeyReleased(evt);
+            }
+        });
+
+        jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel2MouseClicked(evt);
             }
         });
 
@@ -319,6 +338,16 @@ public class FileHaul extends javax.swing.JFrame {
             Logger.getLogger(FileHaul.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+        // TODO add your handling code here:
+        filterTable(jTextField1.getText());
+    }//GEN-LAST:event_jTextField1KeyReleased
+
+    private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
+        // TODO add your handling code here:
+        filterTable(jTextField1.getText());
+    }//GEN-LAST:event_jLabel2MouseClicked
 
     /**
      * @param args the command line arguments
