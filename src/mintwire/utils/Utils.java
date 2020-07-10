@@ -247,6 +247,7 @@ public class Utils {
             JSONObject jsonobj = (JSONObject) object;
             String sharedPath= (String) jsonobj.get("SharedPath");
             node.setSharedPath(sharedPath);
+            node.getFileSporeApp().setSharedPath(sharedPath);
             String codeComments= (String) jsonobj.get("CodeComments");
             node.setCodeComments(codeComments);
             String languageAssist= (String) jsonobj.get("LanguageAssist");

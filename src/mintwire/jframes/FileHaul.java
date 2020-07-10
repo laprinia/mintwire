@@ -144,9 +144,9 @@ public class FileHaul extends javax.swing.JFrame {
     private static FileHaul instance = null;
 
     public static FileHaul getInstance(MintNode mintNode) {
-        if (instance == null) {
-            instance = new FileHaul(mintNode);
-        }
+       
+         instance = new FileHaul(mintNode);
+        
         return instance;
     }
 

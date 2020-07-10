@@ -292,6 +292,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
         initComponents();
         initLayered();
         initFileStructure(alias);
+        mintNode.getFileSporeApp().endpointRegister();
         initRSyntax(requestTextArea, RequestSPanel, requestLanguageToggle, "request", requestLang);
         initRSyntax(sendTextArea, SendSPanel, sendLanguageToggle, "send", sendLang);
         initRSyntax(partyTextArea, PartyPanel, partyLanguageToggle, "party", partyLang);

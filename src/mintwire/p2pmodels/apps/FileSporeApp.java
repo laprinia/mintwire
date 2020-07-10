@@ -53,7 +53,10 @@ public class FileSporeApp implements Application {
         this.pastryNode = pastryNode;
         this.endpoint = pastryNode.buildEndpoint(this, "sporeinstance");
         this.sharedPath = sharedPath;
-        endpoint.accept(new AppSocketReceiver() {
+     
+    }
+    public void endpointRegister() {
+           endpoint.accept(new AppSocketReceiver() {
             @Override
             public void receiveSocket(AppSocket as) throws IOException {
                 transfer = new FileTransferImpl(as, new FileTransferCallback() {
@@ -74,7 +77,7 @@ public class FileSporeApp implements Application {
                             JOptionPane.showMessageDialog(null, label, "FileSpore Transfer", JOptionPane.INFORMATION_MESSAGE);
                             SimpleDateFormat formatter=new SimpleDateFormat("MMM dd yyyy HH:mm");
                             
-                             HistoryFile historyFile=new HistoryFile(fileName,String.valueOf(destinationFile.length()),"mint",formatter.format(System.currentTimeMillis()));
+                             HistoryFile historyFile=new HistoryFile(fileName,String.valueOf(destinationFile.length()),currentAlias,formatter.format(System.currentTimeMillis()));
                              utils.saveHistoryFile(historyFile, currentAlias);
 
                         } catch (IOException ex) {
@@ -241,5 +244,10 @@ public class FileSporeApp implements Application {
         this.currentAlias = currentAlias;
     }
 
+    public void setSharedPath(String sharedPath) {
+        this.sharedPath = sharedPath;
+    }
+
+    
     
 }
