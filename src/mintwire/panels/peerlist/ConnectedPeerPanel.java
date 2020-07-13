@@ -135,12 +135,12 @@ public class ConnectedPeerPanel extends javax.swing.JPanel {
             utils.setPfp(pfpLabel, aliasPath, peerInfo,true);
         }catch(Exception ex){ex.printStackTrace();}
 
-        aliasLabel1.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
+        aliasLabel1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         aliasLabel1.setForeground(new java.awt.Color(204, 204, 204));
         aliasLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         aliasLabel1.setPreferredSize(new java.awt.Dimension(195, 86));
 
-        aliasLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        aliasLabel.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         aliasLabel.setForeground(new java.awt.Color(204, 204, 204));
         aliasLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         aliasLabel.setPreferredSize(new java.awt.Dimension(195, 86));

@@ -2072,6 +2072,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
     private void startSessionButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startSessionButtonMouseClicked
         if (partyState.equals(PartyState.NotStarted)) {
+             partyTextArea.setEditable(true);
             partyState = PartyState.Started;
             PartyPeerPanel partyPeerPanel = new PartyPeerPanel(new PeerInfo(mintNode.getNode().getLocalHandle(), alias, "host", false));
             partyPeerPanel.setPreferredSize(new Dimension(176, 132));

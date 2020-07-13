@@ -109,7 +109,7 @@ public class PeerPanel extends javax.swing.JPanel {
             }
         });
 
-        aliasLabel.setFont(new java.awt.Font("Dialog", 1, 20)); // NOI18N
+        aliasLabel.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         aliasLabel.setForeground(new java.awt.Color(204, 204, 204));
         aliasLabel.setPreferredSize(new java.awt.Dimension(195, 86));
 

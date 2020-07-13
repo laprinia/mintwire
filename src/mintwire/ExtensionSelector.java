@@ -29,11 +29,11 @@ public class ExtensionSelector {
             case "text/cpp":
                 res =".cpp";
                 break;
-            case "CSHARP":
-                res = "text/cs";
+            case "text/cs":
+                res =".cs" ;
                 break;
             case "text/css":
-                res = ".cs";
+                res = ".css";
                 break;
             case  "text/d":
                 res =".d";
