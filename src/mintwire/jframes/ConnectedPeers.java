@@ -47,6 +47,7 @@ public class ConnectedPeers extends javax.swing.JFrame {
     }
 
     private ConnectedPeers(MintNode mn) {
+        setResizable(false);
         setTitle("Connected Peers");
         this.mintNode = mn;
         this.peerInfoApp = mintNode.getPeerInfoApp();

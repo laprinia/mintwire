@@ -48,6 +48,7 @@ public class SendCodeStitch extends javax.swing.JFrame {
     }
 
     private SendCodeStitch(CodeStitch codeStitch, MintNode mainNode) {
+        setResizable(false);
         setTitle("Send a stitch");
         this.mintNode = mainNode;
         this.codeStitch = codeStitch;

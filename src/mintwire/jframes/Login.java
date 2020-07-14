@@ -56,6 +56,7 @@ public class Login extends javax.swing.JFrame {
             initfullPath = System.getProperty("user.home") + "/MINTWIRE/init.txt";
             databasePath = System.getProperty("user.home") + "/MINTWIRE/db.sqlite";
         }
+        setResizable(false);
         setTitle("Mintwire Login");
         try {
             UIManager.setLookAndFeel(new MaterialLookAndFeel());
@@ -316,10 +317,12 @@ public class Login extends javax.swing.JFrame {
         jTextField1.setBackground(new java.awt.Color(45, 48, 56));
         jTextField1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jTextField1.setForeground(new java.awt.Color(67, 207, 137));
+        jTextField1.setCaretColor(new java.awt.Color(219, 80, 74));
 
         jPasswordField1.setBackground(new java.awt.Color(45, 48, 56));
         jPasswordField1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jPasswordField1.setForeground(new java.awt.Color(67, 207, 137));
+        jPasswordField1.setCaretColor(new java.awt.Color(219, 80, 74));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

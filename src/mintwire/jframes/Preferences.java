@@ -52,7 +52,7 @@ public class Preferences extends javax.swing.JFrame {
         if (isLinux) {
             aliasPath = System.getProperty("user.home") + "/MINTWIRE/";
         }
-
+        setResizable(false);
         setTitle("Preferences");
         initComponents();
 

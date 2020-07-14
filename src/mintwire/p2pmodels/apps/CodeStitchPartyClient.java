@@ -9,6 +9,7 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import mintwire.PartyState;
 
 import mintwire.RandomString;
@@ -49,7 +50,7 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
     private Box box;
     private JLabel label;
-    private HashMap<NodeHandle, PartyPeerPanel> peerPanels=new HashMap<>();
+    private HashMap<NodeHandle, PartyPeerPanel> peerPanels = new HashMap<>();
     private HashMap<NodeHandle, PeerInfo> connectedPeers = new HashMap<>();
     private HashMap<String, HostTopic> availableTopics = new HashMap<>();
     private CancellableTask publishTask;
@@ -108,24 +109,34 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
         this.topic = topic;
         scribe.subscribe(topic, this, null, nh);
-        PeerInfo peerInfo=new PeerInfo((rice.pastry.NodeHandle)mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false);
-        endpoint.route(null,peerInfo ,host );
+        PeerInfo peerInfo = new PeerInfo((rice.pastry.NodeHandle) mintNode.getNode().getLocalHandle(), mintNode.getNode().alias, mintNode.getNode().status, false);
+        endpoint.route(null, peerInfo, host);
 
     }
 
     public void unsubscribe() {
         scribe.unsubscribe(topic, this);
-        
-        
 
     }
 
     public void destroy() {
-        Collection<NodeHandle> children= getChildren();
-        for (NodeHandle ch : children) {
-            endpoint.route(null, new TerminalMessage(mintNode.getNode().alias), ch);
-        }
-        
+        Collection<NodeHandle> children = getChildren();
+        SwingWorker sw = new SwingWorker() {
+            @Override
+            protected Object doInBackground() throws Exception {
+
+                for (NodeHandle ch : children) {
+                    endpoint.route(null, new TerminalMessage(mintNode.getNode().alias), ch);
+                }
+
+                Thread.sleep(300);
+
+                return null;
+            }
+
+        };
+        sw.execute();
+
         scribe.unsubscribe(topic, this);
         scribe.destroy();
         publishTask.cancel();
@@ -153,10 +164,12 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
             }
 
         } else if (message instanceof TerminalMessage) {
-            String hostAlias=((TerminalMessage) message).getAlias();
-            if (hostAlias.equals(mintNode.getNode().alias)) return;
+            String hostAlias = ((TerminalMessage) message).getAlias();
+            if (hostAlias.equals(mintNode.getNode().alias)) {
+                return;
+            }
             scribe.unsubscribe(topic, this);
-            label = new JLabel("<html><center>"+hostAlias+"(host) stopped the session.");
+            label = new JLabel("<html><center>" + hostAlias + "(host) stopped the session.");
             label.setHorizontalAlignment(SwingConstants.CENTER);
             JOptionPane.showMessageDialog(null, label, "Party stopped", JOptionPane.INFORMATION_MESSAGE);
             box.removeAll();
@@ -164,8 +177,8 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
             partyArea.setText("");
             partyArea.repaint();
             mintwire.jframes.MintwireClientGUI.partyState = PartyState.NotStarted;
-        } else if(message instanceof PeerInfo) {
-            PeerInfo peerInfo= (PeerInfo) message;
+        } else if (message instanceof PeerInfo) {
+            PeerInfo peerInfo = (PeerInfo) message;
             connectedPeers.put(peerInfo.getNodeHandle(), peerInfo);
             PartyPeerPanel partyPeerPanel = new PartyPeerPanel(peerInfo);
             partyPeerPanel.setPreferredSize(new Dimension(176, 132));
@@ -203,32 +216,37 @@ public class CodeStitchPartyClient implements Application, ScribeMultiClient {
 
     @Override
     public void deliver(Topic topic, ScribeContent sc) {
-       
+
         PartyStitch partyStitch = (PartyStitch) sc;
-        if(partyStitch.getSender().equals(mintNode.getNode().alias)) return;
+        if (partyStitch.getSender().equals(mintNode.getNode().alias)) {
+            return;
+        }
         partyArea.setText(partyStitch.getCode());
         System.out.println(partyStitch.toString());
         partyArea.setSyntaxEditingStyle(partyStitch.getLanguage());
-      
 
     }
 
     @Override
     public void childAdded(Topic topic, NodeHandle nh) {
-      
+
     }
 
     @Override
     public void childRemoved(Topic topic, NodeHandle nh) {
-       
-       PeerInfo peerInfo=connectedPeers.get(nh);
-       if(peerInfo.getAlias().equals(mintNode.getNode().alias)) return;
-       connectedPeers.remove(nh);
-       box.remove(peerPanels.get(nh)); box.revalidate(); peerPanels.remove(nh);
-        label=new JLabel("<html><center>Your peer "+ peerInfo.getAlias()+" left the party.");
-                    label.setHorizontalAlignment(SwingConstants.CENTER);
-                    JOptionPane.showMessageDialog(null, label, "Peer left", JOptionPane.INFORMATION_MESSAGE);
-        
+
+        PeerInfo peerInfo = connectedPeers.get(nh);
+        if (peerInfo.getAlias().equals(mintNode.getNode().alias)) {
+            return;
+        }
+        connectedPeers.remove(nh);
+        box.remove(peerPanels.get(nh));
+        box.revalidate();
+        peerPanels.remove(nh);
+        label = new JLabel("<html><center>Your peer " + peerInfo.getAlias() + " left the party.");
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        JOptionPane.showMessageDialog(null, label, "Peer left", JOptionPane.INFORMATION_MESSAGE);
+
     }
 
     @Override

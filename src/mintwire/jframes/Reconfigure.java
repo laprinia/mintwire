@@ -50,6 +50,7 @@ public class Reconfigure extends javax.swing.JFrame {
         if(isLinux){
             appData=System.getProperty("user.home");
         }
+        setResizable(false);
         setTitle("Mintwire Node Configure");
         initComponents();
 

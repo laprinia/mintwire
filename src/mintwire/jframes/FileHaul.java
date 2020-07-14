@@ -151,7 +151,7 @@ public class FileHaul extends javax.swing.JFrame {
     }
 
     private FileHaul(MintNode mintNode) {
-        
+        setResizable(false);
         setTitle("File Haul");
         initComponents();
         this.mintNode = mintNode;
@@ -256,6 +256,7 @@ public class FileHaul extends javax.swing.JFrame {
 
         jTextField1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jTextField1.setForeground(new java.awt.Color(97, 214, 28));
+        jTextField1.setCaretColor(new java.awt.Color(219, 80, 74));
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);

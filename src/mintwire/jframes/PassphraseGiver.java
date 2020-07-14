@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -27,12 +28,17 @@ public class PassphraseGiver extends javax.swing.JFrame {
     private MintNode mintNode;
     private RSyntaxTextArea textArea;
     private static PassphraseGiver instance = null;
+     @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
 
     public static PassphraseGiver getInstance(MintNode mintNode, RSyntaxTextArea textArea, Box box) {
         return instance = new PassphraseGiver(mintNode, textArea, box);
     }
 
     private PassphraseGiver(MintNode mintNode, RSyntaxTextArea textArea, Box box) {
+        setResizable(false);
         setTitle("Passphrase");
         this.mintNode = mintNode;
         this.textArea = textArea;

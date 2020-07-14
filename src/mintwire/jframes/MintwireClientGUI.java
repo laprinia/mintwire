@@ -273,6 +273,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
     }
 
     public MintwireClientGUI(String password, MintNode mintNode) {
+        setResizable(false);
 
         this.alias = mintNode.getNode().alias;
         this.mintNode = mintNode;
@@ -843,9 +844,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 }else setForeground(Color.YELLOW);
 
                 graphics.setColor(getBackground());
-                graphics.fillOval(0, 0, width-1, height-1);
+                graphics.fillOval(0, 0, width-1, height-3);
                 graphics.setColor(getForeground());
-                graphics.drawOval(0, 0, width-1, height-1);
+                graphics.drawOval(0, 0, width-1, height-3);
             }
         }
         ;
@@ -1393,6 +1394,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         currentAliasLabel.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         currentAliasLabel.setForeground(new java.awt.Color(97, 214, 28));
+        currentAliasLabel.setPreferredSize(new java.awt.Dimension(175, 49));
 
         currentPfpPanel.setPreferredSize(new java.awt.Dimension(92, 92));
 
@@ -1425,9 +1427,9 @@ public class MintwireClientGUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(currentPfpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
+                .addGap(90, 90, 90)
                 .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(307, Short.MAX_VALUE))
+                .addContainerGap(248, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1435,10 +1437,10 @@ public class MintwireClientGUI extends javax.swing.JFrame {
                 .addGap(22, 22, 22)
                 .addComponent(currentPfpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(currentAliasLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35))
         );
 
         jPanel11.setBackground(new java.awt.Color(75, 80, 92));
@@ -1587,6 +1589,7 @@ public class MintwireClientGUI extends javax.swing.JFrame {
 
         sporeText.setBackground(new java.awt.Color(45, 48, 56));
         sporeText.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        sporeText.setCaretColor(new java.awt.Color(219, 80, 74));
         sporeText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 sporeTextKeyReleased(evt);

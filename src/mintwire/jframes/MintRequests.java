@@ -48,6 +48,7 @@ public class MintRequests extends javax.swing.JFrame {
     private MintRequests(RSyntaxTextArea textArea, MintNode mintNode) {
         this.mintNode = mintNode;
         this.textArea = textArea;
+        setResizable(false);
         setTitle("Mint Requests");
         initComponents();
         requestScroll.getViewport().setBackground(new Color(94, 87, 104));

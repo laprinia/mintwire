@@ -39,6 +39,7 @@ public class Register extends javax.swing.JFrame {
     }
 
     private Register() {
+        setResizable(false);
         setTitle("Mint Register");
         initComponents();
         try{

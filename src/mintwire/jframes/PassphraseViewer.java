@@ -3,12 +3,17 @@ package mintwire.jframes;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  *
  * @author Lavinia
  */
 public class PassphraseViewer extends javax.swing.JFrame {
+     @Override
+    public void setDefaultCloseOperation(int operation) {
+        super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
 
     private static PassphraseViewer instance = null;
     private String key;
@@ -22,6 +27,7 @@ public class PassphraseViewer extends javax.swing.JFrame {
     }
 
     public PassphraseViewer(String key) {
+        setResizable(false);
         setTitle("Here's your passphrase");
         this.key = key;
         initComponents();
